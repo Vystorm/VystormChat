@@ -1,0 +1,484 @@
+# Vystorm Chat - English. MiniMessage formatting, placeholders in {curly braces}.
+
+vmenu-chat: "Chat"
+vmenu-chat-desc: "Channels, private messages, ignore list and chat settings"
+
+# ---------------------------------------------------------------- general
+no-permission: "<red>You may not do that."
+player-only: "<red>Only players can do that."
+player-not-found: "<red>{player} is not online."
+player-unknown: "<red>{player} has never played on this server."
+invalid-duration: "<red>'{input}' is no duration. Examples: 30s, 10m, 2h, 7d, 1h30m."
+permanent: "until unmuted"
+all-channels: "all channels"
+busy: "<red>The server is busy, please send your message again."
+chat-failed: "<red>Your message could not be sent because of an error. Nobody else saw it; please try again or tell the staff."
+settings-unavailable: "<red>The chat settings cannot be opened right now."
+reloaded: "<green>Vystorm Chat reloaded: {channels} channels, hooks: {hooks}."
+emojis-list: "<gold>Emojis <gray>– type the code in chat or a private message: <white>{list}"
+emojis-off: "<gray>Emoji codes are switched off."
+feature-off: "<red>This feature is turned off on this server."
+
+usage-msg: "<gray>Use: <yellow>/msg PLAYER MESSAGE</yellow>"
+usage-reply: "<gray>Use: <yellow>/r MESSAGE</yellow>"
+usage-unmute: "<gray>Use: <yellow>/unmute PLAYER</yellow>"
+usage-mute: "<gray>Use: <yellow>/mute PLAYER [TIME] [REASON]</yellow> <gray>with a time like 30m, 2h, 7d or <yellow>perm</yellow>"
+usage-slowmode: "<gray>Use: <yellow>/slowmode SECONDS [CHANNEL]</yellow> <gray>or</gray> <yellow>/slowmode off [CHANNEL]</yellow>"
+
+# ---------------------------------------------------------------- channels
+channel-unknown: "<red>There is no channel '{channel}'. <gray>/channel list"
+channel-focused: "<green>You now write in <white>{channel}</white>."
+channel-no-write: "<red>You cannot write in {channel}."
+channel-no-read: "<red>You cannot read {channel}."
+channel-not-leavable: "<red>{channel} cannot be hidden."
+channel-shown: "<green>You see {channel} again."
+channel-hidden: "<gray>{channel} is hidden now. Show it again in the chat menu or with /channel join."
+channel-wrong-world: "<red>{channel} is not available in this world."
+channel-no-party: "<red>You are not in a party."
+channel-no-city: "<red>You are not a member of a city."
+channel-no-faction: "<red>You do not belong to a faction."
+channel-no-region: "<red>You are not in an area with its own chat."
+nobody-heard: "<gray>Nobody heard you in {channel}."
+channel-list-header: "<gold>Channels <gray>(click to write there)"
+channel-list-entry: "<gray>- <white>{channel}</white> {state} <dark_gray>prefix {prefix}"
+channel-list-focus: "<green>(writing here)"
+channel-list-listening: "<gray>(listening)"
+channel-list-hidden: "<dark_gray>(hidden)"
+channel-list-hover: "<gray>Click to write in {channel}"
+
+# ---------------------------------------------------------------- sending
+too-long: "<red>Your message is too long (at most {max} characters)."
+cooldown: "<red>Please wait {time} before writing here again."
+slow-mode-wait: "<red>Slow mode is on: you can write again in {time}."
+spam-repeat: "<red>You just sent that. Please do not repeat yourself."
+spam-flood: "<red>Slow down a little, you are writing too fast."
+spam-caps: "<red>Please do not shout (too many capital letters)."
+filter-blocked: "<red>Your message contains a word that is not allowed here."
+link-blocked: "<red>You may not post links here."
+cost-too-poor: "<red>A message in {channel} costs {price}, which you do not have."
+muted: "<red>You are muted for {time}. Reason: <gray>{reason}"
+muted-permanent: "<red>You are muted. Reason: <gray>{reason}"
+mentioned-by: "<yellow>{player} mentioned you in {channel}"
+spy-prefix: "<dark_gray>[Spy] "
+timestamp-hover: "<gray>Sent at <white>{time}"
+link-hover: "<gray>Click to open\n<dark_gray>{url}"
+
+hover-card:
+  name: "<gold>{name}"
+  rank: "<gray>Rank: <white>{rank}"
+  world: "<gray>World: <white>{world}"
+  playtime: "<gray>Play time: <white>{time}"
+  party: "<gray>Party: <light_purple>{party}"
+  city: "<gray>City: <yellow>{city}"
+  faction: "<gray>Faction: <aqua>{faction}"
+  click: "<yellow>Click to send {player} a message"
+
+showcase-empty-hand: "<gray>[empty hand]"
+showcase-inventory: "<aqua>[Inventory of {player}]"
+showcase-inventory-hover: "<gray>Click to look at the inventory of {player}"
+showcase-inventory-title: "Inventory of {player}"
+showcase-expired: "<gray>This inventory view has expired."
+
+# ---------------------------------------------------------------- private messages
+msg-self: "<red>You cannot message yourself."
+msg-you-ignore: "<red>You ignore {player}. Unignore them first with /ignore {player}."
+msg-not-accepted: "<red>{player} does not accept your private messages."
+msg-name-hover: "<gray>Click to answer {player}"
+reply-nobody: "<red>Nobody has written to you yet."
+reply-offline: "<red>The player you last talked to is not online anymore."
+spy-on: "<green>Social spy is on: you see private messages and spy channels."
+spy-off: "<gray>Social spy is off."
+
+# ---------------------------------------------------------------- ignore
+ignore-self: "<red>You cannot ignore yourself."
+ignore-exempt: "<red>{player} cannot be ignored."
+ignore-on: "<gray>You now ignore {player}: no chat and no private messages from them."
+ignore-off: "<green>You no longer ignore {player}."
+ignore-list-empty: "<gray>You do not ignore anyone."
+ignore-list: "<gray>You ignore: <white>{players}"
+
+# ---------------------------------------------------------------- moderation
+chat-cleared: "<gray>The chat was cleared by {player}."
+slow-mode-on: "<gold>Slow mode: one message every {time} ({channel})."
+slow-mode-off: "<green>Slow mode is off ({channel})."
+slow-mode-status: "<gray>Slow mode for all channels: <white>{time}"
+slow-mode-status-off: "<gray>Slow mode for all channels is off."
+mute-done: "<green>{player} is muted ({time}). Reason: <gray>{reason}"
+mute-exempt: "<red>{player} cannot be muted."
+staff-muted: "<gray>{by} muted {player} ({time}): {reason}"
+not-muted: "<red>{player} is not muted."
+unmute-done: "<green>{player} may write again."
+unmuted: "<green>You may write in chat again."
+staff-filter-blocked: "<gray>[Filter] Blocked message from {player}: <white>{message}"
+mute-list-header: "<gold>Muted players ({count}):"
+mute-list-entry: "<gray>- <white>{player}</white> {time}, by {by}: {reason}"
+
+# ---------------------------------------------------------------- menus
+menu:
+  title: "Chat"
+  channel: "<white>{channel}"
+  state-focus: "<green>You write here"
+  state-listening: "<gray>You read this channel"
+  state-hidden: "<dark_gray>Hidden"
+  state-not-joined: "<dark_gray>Not joined"
+  state-write-only: "<gray>You can only write here"
+  scope-global: "<gray>Everyone on the server"
+  scope-world: "<gray>Everyone in your world"
+  scope-local: "<gray>Players within {radius} blocks"
+  scope-region: "<gray>Players in the same area"
+  scope-party: "<gray>Your party"
+  scope-city: "<gray>Your city"
+  scope-faction: "<gray>Your faction"
+  channel-prefix: "<gray>Quick: start a message with <yellow>{prefix}</yellow>"
+  channel-command: "<gray>Command: <yellow>{command}</yellow>"
+  channel-cost: "<gray>Costs <gold>{price}</gold> per message"
+  channel-slow: "<gold>Slow mode: {time}"
+  click-focus: "<yellow>Left-click: write here"
+  cannot-write: "<red>You cannot write here"
+  click-hide: "<yellow>Right-click: hide"
+  click-show: "<yellow>Right-click: show again"
+  message: "<green>Private message"
+  message-lore: "<gray>Write to a player who is online"
+  reply: "<green>Answer {player}"
+  reply-lore: "<gray>Your last conversation"
+  ignored: "<gold>Ignored players"
+  ignored-lore: "<gray>You ignore {count} players\n<yellow>Click to manage"
+  settings: "<gold>Chat settings"
+  settings-lore: "<gray>Sounds, timestamps, private messages\n<gray>and which channels you see"
+  spy-on: "<green>Social spy: on"
+  spy-off: "<gray>Social spy: off"
+  spy-lore: "<gray>See private messages and spy channels\n<yellow>Click to switch"
+  moderation: "<red>Moderation"
+  moderation-lore: "<gray>Clear chat, slow mode, mutes"
+  back: "<gray>Back"
+  ignored-title: "Ignored players"
+  ignored-entry: "<white>{player}"
+  ignored-entry-lore: "<yellow>Click to stop ignoring"
+  ignore-add: "<gold>Ignore a player"
+  ignore-add-lore: "<gray>Type a name"
+  moderation-title: "Chat moderation"
+  clear: "<red>Clear chat"
+  clear-lore: "<gray>Empties the chat of every player\n<gray>(staff keep theirs)"
+  slow-on: "<gold>Slow mode: {time}"
+  slow-off: "<gray>Slow mode: off"
+  slow-lore: "<gray>One message per player in this time\n<yellow>Left-click: longer, right-click: shorter"
+  mutes: "<gold>Muted players ({count})"
+  mutes-lore: "<gray>Click to see and unmute"
+  mute-player: "<red>Mute a player"
+  mute-player-lore: "<gray>Name, time and reason"
+  mutes-title: "Muted players"
+  mute-entry: "<white>{player}"
+  mute-entry-lore: "<gray>Time left: <white>{time}\n<gray>Reason: <white>{reason}\n<gray>By: <white>{by}\n<yellow>Click to unmute"
+
+announce:
+  prefix: "<gold>📢 </gold>"
+  disabled: "<gray>Announcements are switched off on this server."
+  title: "📢 Announcements"
+  title-new: "New announcement"
+  title-edit: "Announcement #{id}"
+  intro: "Timed broadcasts. Click one to edit, pause, send or delete it."
+  empty: "No announcements yet. Create the first one."
+  row: "#{id} · every {minutes} min · {text}"
+  row-off: "#{id} · paused · {text}"
+  new: "＋ New announcement"
+  help: "Text: MiniMessage or & codes. Interval 1–10080 minutes. World: empty = everyone."
+  input-text: "Text"
+  input-minutes: "Every … minutes"
+  input-world: "World (empty = all)"
+  save: "Save"
+  pause: "Pause"
+  resume: "Resume"
+  send-now: "Send now"
+  delete: "Delete"
+  saved: "<green>Announcement #{id} saved."
+  deleted: "<green>Announcement #{id} deleted."
+  error-text: "<red>Enter a text (up to 256 characters)."
+  error-minutes: "<red>The interval must be 1 to 10080 minutes."
+  error-world: "<red>There is no world called {world}."
+  error-storage: "<red>Announcements could not be saved."
+dialog:
+  cancel: "Cancel"
+  send: "Send"
+  message-title: "Private message"
+  message-player: "Player"
+  message-text: "Message"
+  ignore-title: "Ignore a player"
+  ignore-question: "Who do you want to ignore (or stop ignoring)?"
+  clear-title: "Clear chat"
+  clear-question: "Clear the chat for every player?"
+  unmute-title: "Unmute"
+  unmute-question: "Let this player write again?"
+  mute-title: "Mute a player"
+  mute-help: "Time like 30m, 2h or 7d. Leave it empty to mute until unmuted."
+  mute-player: "Player"
+  mute-time: "Time"
+  mute-reason: "Reason"
+  mute: "Mute"
+
+player-menu:
+  message: "<green>Message {player}"
+  message-lore: "<gray>Send a private message"
+  ignore: "<gray>Ignore {player}"
+  ignore-lore: "<gray>Hide their chat and private messages"
+  unignore: "<green>Stop ignoring {player}"
+  unignore-lore: "<gray>You ignore this player right now"
+  mute: "<red>Mute {player}"
+  mute-lore: "<gray>Choose time and reason"
+  unmute: "<green>Unmute {player}"
+  unmute-lore: "<gray>This player is muted right now"
+
+# ---------------------------------------------------------------- /vsettings
+settings:
+  bubbles: "Speech bubbles"
+  bubbles-desc: "Show chat messages above the heads of nearby players"
+  title: "Chat"
+  desc: "Sounds, timestamps, private messages and channels"
+  mention-sound: "Sound when mentioned"
+  mention-sound-desc: "Play a sound when someone writes your name"
+  message-sound: "Sound for private messages"
+  message-sound-desc: "Play a sound when you get a private message"
+  timestamps: "Timestamps"
+  timestamps-desc: "Show the time of a message when you point at it"
+  allow-messages: "Allow private messages"
+  allow-messages-desc: "Off: only staff can message you"
+  spy: "Social spy"
+  spy-desc: "See private messages and spy channels (staff)"
+  show-channel-desc: "Off: messages of this channel are hidden for you"
+  show:
+    global: "Show global chat"
+    local: "Show local chat"
+    world: "Show world chat"
+    trade: "Show trade chat"
+    staff: "Show staff chat"
+    party: "Show party chat"
+    city: "Show city chat"
+    faction: "Show faction chat"
+
+# Commands through Vystorm Core: description, help and tab completion per player. "aliases" directly under a command are
+# extra root commands (server-wide; the admin chooses the languages in Core's config commands.localized-aliases);
+# "name"/"aliases" of a subcommand work in every language, English always works. Overview of all commands: /vhelp
+commands:
+  vchat:
+    description: "Chat menu, mutes, moderation and reload"
+    aliases: []
+    sub:
+      report:
+        name: report
+        aliases: []
+        description: "Report a player"
+        args:
+          player: PLAYER
+          reason: REASON
+      reports:
+        name: reports
+        aliases: []
+        description: "Player reports"
+      menu:
+        name: menu
+        aliases: []
+        description: "Open the chat menu"
+      mutes:
+        name: mutes
+        aliases: []
+        description: "Muted players (menu, or a list in the console)"
+      announcements:
+        name: announcements
+        aliases: []
+        description: "Plan timed announcements"
+      moderation:
+        name: moderation
+        aliases: []
+        description: "Moderation menu: reports, slow mode, chat log"
+      emojis:
+        name: emojis
+        aliases: [emoji]
+        description: "Emoji codes you can type, like :heart:"
+      keywords:
+        name: keywords
+        aliases: []
+        description: "Personal keyword alerts"
+        sub:
+          add:
+            name: add
+            aliases: []
+            description: "Save a literal word or phrase"
+            args:
+              phrase: PHRASE
+          remove:
+            name: remove
+            aliases: []
+            description: "Remove a saved phrase"
+            args:
+              phrase: PHRASE
+          test:
+            name: test
+            aliases: []
+            description: "Privately preview a keyword match"
+            args:
+              message: TEXT
+          pause:
+            name: pause
+            aliases: []
+            description: "Pause keyword alerts"
+          resume:
+            name: resume
+            aliases: []
+            description: "Resume keyword alerts"
+      replylock:
+        name: replylock
+        aliases: []
+        description: "Lock or unlock your current /r partner until logout"
+      reload:
+        name: reload
+        aliases: []
+        description: "Reload config and language files"
+  channel:
+    description: "Switch the channel you write in, or write one message there"
+    aliases: []
+    args:
+      channel: CHANNEL
+      message: MESSAGE
+    sub:
+      list:
+        name: list
+        aliases: []
+        description: "All channels; click one to write there"
+      join:
+        name: join
+        aliases: []
+        description: "Show a channel again"
+        args:
+          channel: CHANNEL
+      leave:
+        name: leave
+        aliases: []
+        description: "Hide a channel"
+        args:
+          channel: CHANNEL
+  msg:
+    description: "Send a private message"
+    aliases: []
+    args:
+      player: PLAYER
+      message: MESSAGE
+  reply:
+    description: "Answer your last private message"
+    aliases: []
+    args:
+      message: MESSAGE
+  ignore:
+    description: "Ignore or unignore a player; without a name the ignore list opens"
+    aliases: []
+    args:
+      player: PLAYER
+    sub:
+      list:
+        name: list
+        aliases: []
+        description: "Players you ignore"
+  socialspy:
+    description: "See private messages and spy channels of other players"
+    aliases: []
+  mute:
+    description: "Mute a player for a time (30m, 2h, 7d) or until unmuted; without a name the mute list opens"
+    aliases: []
+    args:
+      player: PLAYER
+      time-reason: "[TIME] [REASON]"
+  unmute:
+    description: "Unmute a player"
+    aliases: []
+    args:
+      player: PLAYER
+  clearchat:
+    description: "Clear the chat for everyone (staff stay unaffected)"
+    aliases: []
+  slowmode:
+    description: "Slow mode for all channels or one channel"
+    aliases: []
+    args:
+      seconds: "SECONDS|off"
+      channel: CHANNEL
+
+reply-lock-on: "<green>Reply partner locked to {player} until you log out. Use /vchat replylock to unlock."
+reply-lock-off: "<green>Reply partner unlocked; /r follows your latest private conversation again."
+
+keyword-hit: "<yellow>{player} in {channel}: keyword {keyword}"
+keywords-list: "<gold>Keywords ({count}/{limit}): <white>{list}"
+keywords-disabled: "<gray>Keyword alerts are disabled by the server."
+keywords-active: "<green>Keyword alerts active. Manage with /vchat keywords add|remove PHRASE or pause|resume."
+keywords-paused: "<gray>Keyword alerts paused. Phrases remain saved; /vchat keywords resume enables them again."
+keyword-added: "<green>Keyword saved. Literal matches ignore letter case."
+keyword-invalid: "<red>Use a unique phrase of 2-48 characters without control characters. Limit: {limit} phrases."
+keyword-removed: "<green>Keyword removed."
+keyword-missing: "<red>That phrase is not on your keyword list."
+
+keyword-test-hit: "<green>Preview: matches {keyword}. This text was not sent to chat."
+keyword-test-miss: "<gray>Preview: no match among your active saved phrases."
+
+# Free feature release: reports
+reports:
+  previous: "Previous page"
+  next: "Next page"
+  mute-reason: "Report {id}: {reason}"
+  title: "Player reports"
+  submit: "Report a player"
+  player-prompt: "Player name"
+  reason-prompt: "Describe what happened (up to 500 characters). Staff will review your report."
+  by: "Reported by {player}"
+  open: "Open report · unverified allegation"
+  closed: "Resolved"
+  expired: "Expired after 30 days"
+  case: "Report: {player}"
+  current-mute: "Current chat restriction"
+  none: "None"
+  back: "Back"
+  note: "Add staff note"
+  note-prompt: "Staff note or decision reason (up to 500 characters)"
+  resolve: "Resolve report"
+  reopen: "Reopen report"
+  mute: "Apply timed mute"
+  unmute: "Remove mute"
+  duration-prompt: "Mute duration: e.g. 10m, 30m, 1h; maximum 7d"
+  action-confirm: "Apply this moderation action to the reported player? Verify the allegation first. The history records the request; the current restriction shows its outcome."
+  event-note: "Staff note"
+  event-resolve: "Report resolved"
+  event-reopen: "Report reopened"
+  event-mute-request: "Timed mute requested"
+  event-unmute-request: "Unmute requested"
+  result-saved: "<green>Report or case update saved."
+  result-invalid: "<red>Invalid player, text or duration. A report expires after 30 days."
+  result-limited: "<red>Wait one minute between reports; do not duplicate an open report. Storage limits: 10 open reports per player, 100 entries per case, 1000 cases."
+  result-missing: "<red>Report not found."
+  result-unavailable: "<red>Storage unavailable. The requested change was not saved."
+panel:
+  empty: "No entries."
+  stale: "This entry changed. Open the menu again."
+  page: "Page {page} of {pages}"
+  channels: "Channels"
+  select: "Select an entry to see its details."
+  audience: "Audience"
+  shortcut: "Shortcut"
+  command: "Command"
+  cost: "Cost per message"
+  slow: "Slow mode"
+  focus: "Write here"
+  listen: "Show this channel"
+  console: "Console"
+  moderation: "Manage chat and review player reports."
+  slow-seconds: "Slow mode (seconds; 0 = off)"
+  by: "By"
+  case-id: "Case ID"
+  reporter: "Reported by"
+  created: "Created"
+  state: "Status"
+  open-case: "Open case"
+  history: "Case history"
+  note: "Note"
+  inventory-slot: "Inventory slot {slot}"
+  equipment-slot: "Equipment slot {slot}"
+  item: "Item"
+  amount: "Amount"
+  read-only: "Read-only snapshot. Items cannot be moved."
+  inventory: "Inventory"
+  inventory-view: "View original inventory"

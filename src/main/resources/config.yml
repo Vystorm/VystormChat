@@ -1,0 +1,410 @@
+# Vystorm Chat
+# Formats use MiniMessage: https://docs.advntr.dev/minimessage/format.html
+# Placeholders in channel formats: <channel> (the tag), <channel_name>, <name> (player name with hover card),
+# <message>, <player>, <display_name>, <prefix>, <suffix>, <group>, <world>, <group_name> (party/city/faction name).
+# %placeholders% from PlaceholderAPI work in channel formats when PlaceholderAPI is installed.
+# Texts players read (hover card, buttons, errors) are in lang/en.yml and lang/de.yml.
+
+# Channel a player writes in until they choose another one (/ch CHANNEL or the chat menu).
+default-channel: global
+
+# Every channel. The key is the channel id (a-z, 0-9, _ and -). Keys of one channel:
+#   display-name: name in menus and messages
+#   tag: short tag for <channel> in the format
+#   color: colour of the message text (name like white or #ffaa00)
+#   scope: who hears it: global, world, local (radius), region (Core region), party, city, faction
+#   format: the line (see the placeholders above)
+#   quick-prefix: a message starting with this goes here without switching (empty = none)
+#   aliases: own commands for this channel, e.g. [g] gives /g MESSAGE (and /g alone switches to it)
+#   read-permission / write-permission: empty = everyone
+#   cooldown: seconds between two messages of one player (0 = none)
+#   cost: price per message through Vault (0 = free; without Vault every channel is free)
+#   leavable: players may hide the channel (menu, /vsettings, /ch leave)
+#   auto-join: players receive it from the start (false: only after /ch join or switching to it)
+#   spy: staff with /socialspy also see it when they would not hear it otherwise
+#   worlds: only in these worlds (empty list = all)
+#   radius: blocks for scope local
+#   region-kinds: for scope region, the Core region kinds that count (e.g. city, estate, arena; empty = any)
+#   client-tab: tab in the Vystorm client chat: global, party, trade, system or none
+#   forward-command: hand messages to this command instead (e.g. partychat), so one plugin keeps that chat
+#   icon: item in the chat menu
+#   core-trade: true = Core's /vtrade is delivered through this channel (only one channel)
+channels:
+  global:
+    display-name: "Global"
+    tag: "<gray>[<white>G</white>]</gray>"
+    color: "white"
+    scope: global
+    format: "<channel> <name><dark_gray>:</dark_gray> <message>"
+    quick-prefix: "!"
+    aliases: [g]
+    read-permission: ""
+    write-permission: ""
+    cooldown: 0
+    cost: 0.0
+    leavable: true
+    auto-join: true
+    spy: false
+    worlds: []
+    radius: 100
+    region-kinds: []
+    client-tab: global
+    forward-command: ""
+    icon: GLOBE_BANNER_PATTERN
+    core-trade: false
+  local:
+    display-name: "Local"
+    tag: "<gray>[<green>L</green>]</gray>"
+    color: "#e8f5e9"
+    scope: local
+    format: "<channel> <name><dark_gray>:</dark_gray> <message>"
+    quick-prefix: ""
+    aliases: [l]
+    read-permission: ""
+    write-permission: ""
+    cooldown: 0
+    cost: 0.0
+    leavable: true
+    auto-join: true
+    spy: true
+    worlds: []
+    radius: 100
+    region-kinds: []
+    client-tab: global
+    forward-command: ""
+    icon: OAK_SAPLING
+    core-trade: false
+  world:
+    display-name: "World"
+    tag: "<gray>[<aqua><world></aqua>]</gray>"
+    color: "white"
+    scope: world
+    format: "<channel> <name><dark_gray>:</dark_gray> <message>"
+    quick-prefix: ""
+    aliases: [wc]
+    read-permission: ""
+    write-permission: ""
+    cooldown: 0
+    cost: 0.0
+    leavable: true
+    auto-join: false
+    spy: false
+    worlds: []
+    radius: 100
+    region-kinds: []
+    client-tab: global
+    forward-command: ""
+    icon: GRASS_BLOCK
+    core-trade: false
+  trade:
+    display-name: "Trade"
+    tag: "<gold>[Trade]</gold>"
+    color: "#ffe0a0"
+    scope: global
+    format: "<channel> <name><dark_gray>:</dark_gray> <message>"
+    quick-prefix: "$"
+    aliases: [tc]
+    read-permission: "vystorm_core.chat.trade.receive"
+    write-permission: "vystorm_core.chat.trade.send"
+    cooldown: 2
+    cost: 0.0
+    leavable: true
+    auto-join: true
+    spy: false
+    worlds: []
+    radius: 100
+    region-kinds: []
+    client-tab: trade
+    forward-command: ""
+    icon: EMERALD
+    core-trade: true
+  staff:
+    display-name: "Staff"
+    tag: "<red>[Staff]</red>"
+    color: "#ffcccc"
+    scope: global
+    format: "<channel> <name><dark_gray>:</dark_gray> <message>"
+    quick-prefix: "#"
+    aliases: [sc]
+    read-permission: "vystormchat.channel.staff"
+    write-permission: "vystormchat.channel.staff"
+    cooldown: 0
+    cost: 0.0
+    leavable: true
+    auto-join: true
+    spy: false
+    worlds: []
+    radius: 100
+    region-kinds: []
+    client-tab: system
+    forward-command: ""
+    icon: IRON_BARS
+    core-trade: false
+  party:
+    display-name: "Party"
+    tag: "<light_purple>[Party]</light_purple>"
+    color: "light_purple"
+    scope: party
+    format: "<channel> <name><dark_gray>:</dark_gray> <message>"
+    quick-prefix: ""
+    aliases: []
+    read-permission: ""
+    write-permission: ""
+    cooldown: 0
+    cost: 0.0
+    leavable: false
+    auto-join: true
+    spy: true
+    worlds: []
+    radius: 100
+    region-kinds: []
+    client-tab: party
+    # Vystorm Parties has its own party chat (/pc): messages go there, so /pc and this channel are one chat.
+    # Empty: Vystorm Chat delivers party messages itself (party membership from Vystorm Core).
+    forward-command: "partychat"
+    icon: CAKE
+    core-trade: false
+  city:
+    display-name: "City"
+    tag: "<yellow>[<group_name>]</yellow>"
+    color: "#fff6c0"
+    scope: city
+    format: "<channel> <name><dark_gray>:</dark_gray> <message>"
+    quick-prefix: ""
+    aliases: [cityc]
+    read-permission: ""
+    write-permission: ""
+    cooldown: 0
+    cost: 0.0
+    leavable: true
+    auto-join: true
+    spy: true
+    worlds: []
+    radius: 100
+    region-kinds: []
+    client-tab: global
+    forward-command: ""
+    icon: BEACON
+    core-trade: false
+  faction:
+    display-name: "Faction"
+    tag: "<dark_aqua>[<group_name>]</dark_aqua>"
+    color: "#c0f0f0"
+    scope: faction
+    format: "<channel> <name><dark_gray>:</dark_gray> <message>"
+    quick-prefix: ""
+    aliases: [fc]
+    read-permission: ""
+    write-permission: ""
+    cooldown: 0
+    cost: 0.0
+    leavable: true
+    auto-join: true
+    spy: true
+    worlds: []
+    radius: 100
+    region-kinds: []
+    client-tab: global
+    forward-command: ""
+    icon: WHITE_BANNER
+    core-trade: false
+
+# How the player name looks. The first entry (top to bottom) whose permission the player has is used;
+# permission "" = everyone, so keep that one last. Tags: <player>, <display_name>, <prefix>, <suffix>, <group>, <world>.
+# Prefix and suffix come from Vault (e.g. LuckPerms) and may use &-codes or MiniMessage.
+name-formats:
+  admin:
+    permission: "vystormchat.nameformat.admin"
+    format: "<prefix><red><player></red><suffix>"
+  default:
+    permission: ""
+    format: "<prefix><white><player></white><suffix>"
+
+# Lines of the hover card on player names, in this order: name, rank, world, playtime, party, city, faction, click.
+# Lines without a value (no rank, no party ...) are left out.
+hover-card: [name, rank, world, playtime, party, city, faction, click]
+
+# Time format in the timestamp hover (players switch timestamps on in /vsettings).
+timestamp-format: "HH:mm:ss"
+
+# Tell players when nobody was close enough or in their group to read a non-global message.
+notify-nobody-heard: true
+
+# Print chat to the server console.
+console-log: true
+
+# Resolve %placeholders% in channel formats through PlaceholderAPI when it is installed.
+# Their results are inserted as plain text (colour codes removed, <tags> shown as written), because many placeholders
+# carry text players choose themselves (nicknames, town names ...), which must never add clicks, hovers or colours.
+placeholderapi: true
+# Placeholders whose results come only from admins and may keep their colours and tags, e.g. ["%luckperms_prefix%"].
+placeholderapi-trusted: []
+
+relay:
+  # Channels whose messages go through the normal server chat, where other plugins (DiscordSRV, chat loggers,
+  # chat bridges ...) see them. Messages of every other channel (staff, party, faction, local ...) are taken out
+  # of the server chat and delivered by Vystorm Chat itself, so no other plugin can relay them. "*" = all channels.
+  only-channels: [global]
+
+# Mark channel messages for the chat tabs of the Vystorm client mod (plain clients see no difference).
+client-tabs: true
+
+# Longest message players may send, in characters (16-256).
+max-message-length: 256
+
+mentions:
+  # Highlight @Name (and plain names) and ping the mentioned player.
+  enabled: true
+  # Also a plain name without @ (at least 3 letters) counts as mention.
+  plain-names: true
+  # Short note in the action bar of the mentioned player.
+  action-bar: true
+  # How mentions look for everyone else and for the mentioned player (<mention> = the written name).
+  highlight: "<aqua><mention></aqua>"
+  highlight-self: "<yellow><bold><mention></bold></yellow>"
+  # Sound for the mentioned player (players can switch it off in /vsettings); empty = no sound.
+  sound: "entity.experience_orb.pickup"
+  volume: 0.8
+  pitch: 1.4
+  # One player's mentions ping at most once in this many seconds.
+  cooldown-seconds: 3
+
+showcase:
+  # [item] shows the item in hand with its tooltip, [inv] a button to view the inventory, [pos] the position.
+  enabled: true
+  item: ["[item]", "[i]"]
+  inventory: ["[inv]", "[inventory]"]
+  position: ["[pos]", "[loc]"]
+
+emojis:
+  # :code: in chat and private messages becomes the symbol (any letter case). /vchat emojis lists them.
+  # Permission vystormchat.emoji (default: everyone).
+  enabled: true
+  codes:
+    heart: "❤"
+    star: "★"
+    smile: "☺"
+    sad: "☹"
+    check: "✔"
+    x: "✘"
+    sun: "☀"
+    cloud: "☁"
+    umbrella: "☂"
+    snow: "❄"
+    music: "♪"
+    skull: "☠"
+    arrow: "➜"
+    flower: "✿"
+    coffee: "☕"
+    warn: "⚠"
+    peace: "☮"
+    crown: "♔"
+
+links:
+  # How links look; clickable for players with vystormchat.links and for allowed domains.
+  format: "<aqua><underlined><link></underlined></aqua>"
+  # Links (also bare domains and IP addresses) from players without vystormchat.links: censor or block.
+  without-permission: censor
+  # Text that replaces a censored link.
+  replacement: "[link removed]"
+  # Domains everyone may post (subdomains included).
+  allowed-domains: [vystorm.net, minecraft.wiki]
+
+moderation:
+  spam:
+    # Anti-spam for players without vystormchat.bypass.spam.
+    enabled: true
+    # The same message again within this many seconds is blocked (case, spaces and punctuation ignored); 0 = off.
+    repeat-seconds: 30
+    # At most this many messages ...
+    flood-messages: 4
+    # ... within this many seconds.
+    flood-seconds: 5
+    # Shouting: messages with at least this many letters ...
+    caps-min-letters: 8
+    # ... and more than this share of capital letters (percent) ...
+    caps-max-percent: 70
+    # ... are lowered (lowercase) or refused (block).
+    caps-action: lowercase
+    # Letters repeated more often are shortened ("heeeeeey" -> "heeeey"); 0 = off.
+    max-repeated-characters: 4
+  filter:
+    # Word filter for players without vystormchat.bypass.filter.
+    enabled: true
+    # censor = replace the word, block = refuse the message.
+    action: censor
+    # One character repeats for every hidden letter; a longer text replaces the whole word.
+    replacement: "*"
+    # Whole words in any case; also found with spaces or dots between letters and with look-alikes (0 = o, 3 = e ...).
+    words: [fuck, shit, bitch, asshole, cunt, nigger, faggot, wichser, hurensohn, fotze, schlampe, missgeburt]
+    # Regular expressions for anything else (advanced).
+    regex: []
+  # Tell staff (vystormchat.notify) about blocked messages.
+  notify-staff: true
+  # Commands muted players cannot use.
+  muted-commands: [me, msg, tell, w, whisper, m, pm, dm, r, reply, partychat, pc, vtrade, say]
+  # Empty lines sent by /clearchat (10-300).
+  clear-lines: 100
+
+mutes:
+  # /mute, /unmute and the mute lists in the menus. Off: nobody is muted (not even players muted before);
+  # the saved mutes stay in mutes.yml and apply again when this is switched back on.
+  enabled: true
+
+reports:
+  # Player reports (/vchat report, chat menu) and the staff case history (/vchat reports).
+  # Off: no new reports and no case list; saved cases stay in reports.yml.
+  enabled: true
+
+private-messages:
+  # /msg, /reply, the reply lock and the message buttons in the menus. Off: nobody can send private messages.
+  enabled: true
+  # Line for the sender, the receiver and staff with /socialspy. <name> = the other player, <message> = the text.
+  format-to: "<gray>[<white>me</white> <dark_gray>→</dark_gray> <name>]</gray> <white><message>"
+  format-from: "<gray>[<name> <dark_gray>→</dark_gray> <white>me</white>]</gray> <white><message>"
+  format-spy: "<dark_gray>[Spy]</dark_gray> <gray><sender> → <receiver>:</gray> <message>"
+  # Sound for the receiver (players can switch it off in /vsettings); empty = none.
+  sound: "block.note_block.pling"
+  volume: 0.6
+  pitch: 1.6
+
+ignore:
+  # /ignore and the ignore list in the menus. Off: ignore lists are kept but have no effect,
+  # so everybody reads everybody again until this is switched back on.
+  enabled: true
+
+log:
+  # Write chat, private messages and moderation to plugins/VystormChat/logs/chat-DATE.log.
+  enabled: true
+  # Start a new file when one is bigger than this (megabytes).
+  max-file-mb: 10.0
+  # Delete log files older than this many days (0 = keep forever).
+  keep-days: 30
+
+# Personal literal, case-insensitive substring alerts in received channel messages.
+# No private messages, spy copies or messages forwarded to another plugin.
+keyword-alerts:
+  enabled: true
+  # 1-20 phrases per player (each 2-48 characters); lowering this activates only the first N saved phrases.
+  max-keywords: 10
+  # Per recipient, across all channels and senders; 0 disables the cooldown (maximum 3600).
+  cooldown-seconds: 10
+
+# Announcement planner: /vchat announcements (permission vystormchat.announce) opens a dialog to add, edit, pause,
+# send and delete timed broadcasts: a text (MiniMessage or & codes), an interval in minutes and optionally one world.
+# Stored in announcements.yml. A restart starts every timer anew.
+announcements:
+  enabled: true
+
+bubbles:
+  # Speech bubbles: public messages float above the writer's head for a few seconds. Only players who received the
+  # message, are within the radius and did not switch bubbles off in /vsettings see them. Never saved with the world.
+  enabled: true
+  # Channels with bubbles (channel ids); private messages and staff channels never get one.
+  channels: [global, local, world]
+  # How long a bubble stays (1-30 seconds).
+  seconds: 5
+  # Seen up to this many blocks away (4-128).
+  radius: 24
+  # Characters per line (10-60); at most three lines.
+  width: 24

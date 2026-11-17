@@ -1,0 +1,149 @@
+name: VystormChat
+version: '${version}'
+main: at.esoren.vystormchat.ChatPlugin
+api-version: '1.20.6'
+author: Esoren
+depend: [vystorm_core]
+softdepend: [Vault, VaultUnlocked, PlaceholderAPI, VystormCityClaim, Vystorm-Factions]
+# Enabled before Vystorm Parties so mutes are checked before the party chat toggle sees a message.
+loadbefore: [VystormParties]
+website: https://vystorm.net
+description: Chat channels, private messages, hover cards, item showcase, mentions and moderation - with menus.
+permissions:
+  vystormchat.use:
+    description: Chat menu, channels and channel commands.
+    default: true
+  vystormchat.msg:
+    description: Send private messages and reply.
+    default: true
+  vystormchat.ignore:
+    description: Ignore players.
+    default: true
+  vystormchat.emoji:
+    description: "Emoji codes like :heart: in chat and private messages."
+    default: true
+  vystormchat.keywords:
+    description: Manage personal keyword alerts.
+    default: true
+  vystormchat.mention:
+    description: Mention players with @name (they hear a sound).
+    default: true
+  vystormchat.showcase.item:
+    description: Show the item in hand with [item].
+    default: true
+  vystormchat.showcase.inventory:
+    description: Show the inventory with [inv].
+    default: true
+  vystormchat.showcase.position:
+    description: Share the position with [pos].
+    default: true
+  vystormchat.channel.staff:
+    description: Read and write the staff channel.
+    default: op
+  vystormchat.nameformat.admin:
+    description: Name format "admin" from config.yml (red name).
+    default: op
+  vystormchat.links:
+    description: Post clickable links (without it links are filtered, allowed domains excepted).
+    default: op
+  vystormchat.mention.everyone:
+    description: Use @everyone and @here.
+    default: op
+  vystormchat.format.color:
+    description: Colour tags like red or gold in own messages.
+    default: false
+  vystormchat.format.hex:
+    description: Hex colours like #ff8800 in own messages.
+    default: false
+  vystormchat.format.decoration:
+    description: Bold, italic, underlined and strikethrough in own messages.
+    default: false
+  vystormchat.format.magic:
+    description: Obfuscated text in own messages.
+    default: false
+  vystormchat.format.gradient:
+    description: Gradients and rainbow in own messages.
+    default: false
+  vystormchat.format.legacy:
+    description: Old &-colour codes in own messages (only the kinds allowed by the other format permissions).
+    default: false
+  vystormchat.format.*:
+    description: Every formatting option for own messages.
+    default: op
+    children:
+      vystormchat.format.color: true
+      vystormchat.format.hex: true
+      vystormchat.format.decoration: true
+      vystormchat.format.magic: true
+      vystormchat.format.gradient: true
+      vystormchat.format.legacy: true
+  vystormchat.msg.bypass:
+    description: Message players who switched private messages off or ignore you.
+    default: op
+  vystormchat.seehidden:
+    description: Message hidden (vanished) players.
+    default: op
+  vystormchat.ignore.exempt:
+    description: Cannot be ignored.
+    default: op
+  vystormchat.spy:
+    description: Social spy for private messages and spy channels.
+    default: op
+  vystormchat.notify:
+    description: Get notes about blocked messages and mutes.
+    default: op
+  vystormchat.mute:
+    description: Mute and unmute players.
+    default: op
+  vystormchat.mute.exempt:
+    description: Cannot be muted by other players.
+    default: op
+  vystormchat.clearchat:
+    description: Clear the chat.
+    default: op
+  vystormchat.clearchat.exempt:
+    description: Keep your chat when it is cleared.
+    default: op
+  vystormchat.slowmode:
+    description: Switch slow mode.
+    default: op
+  vystormchat.moderate:
+    description: Moderation page in the chat menu.
+    default: op
+    children:
+      vystormchat.mute: true
+      vystormchat.clearchat: true
+      vystormchat.slowmode: true
+      vystormchat.notify: true
+  vystormchat.bypass.cooldown:
+    description: No channel cooldown or slow mode.
+    default: op
+  vystormchat.bypass.spam:
+    description: No anti-spam checks.
+    default: op
+  vystormchat.bypass.filter:
+    description: No word filter.
+    default: op
+  vystormchat.bypass.cost:
+    description: Write in paid channels for free.
+    default: op
+  vystormchat.announce:
+    description: Plan timed announcements (/vchat announcements).
+    default: op
+  vystormchat.admin:
+    description: Everything, including /vchat reload.
+    default: op
+    children:
+      vystormchat.moderate: true
+      vystormchat.announce: true
+      vystormchat.spy: true
+      vystormchat.links: true
+      vystormchat.channel.staff: true
+      vystormchat.mention.everyone: true
+      vystormchat.msg.bypass: true
+      vystormchat.seehidden: true
+      vystormchat.clearchat.exempt: true
+      vystormchat.bypass.cooldown: true
+      vystormchat.bypass.spam: true
+      vystormchat.bypass.filter: true
+      vystormchat.bypass.cost: true

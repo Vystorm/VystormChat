@@ -1,0 +1,12 @@
+title: 'Chat'
+pages:
+  - title: 'Canali'
+    text: |
+      /vchat apre il menu della chat. Cambia canale (globale, locale, commercio…) con /channel.
+  - title: 'Messaggi e vetrine'
+    text: |
+      /msg PLAYER invia un messaggio privato e /reply risponde. Scrivi [item] per mostrare l’oggetto e :heart: per le emoji.
+  - title: 'Tranquillità e sicurezza'
+    text: |
+      /ignore PLAYER nasconde qualcuno, gli avvisi per parole chiave ti avvertono e puoi segnalare giocatori.
+      Scrivi /vchat help per vedere tutti i comandi.

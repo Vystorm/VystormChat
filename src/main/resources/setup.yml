@@ -1,0 +1,260 @@
+{
+  "version": 1,
+  "intro": {
+    "en": "A few quick choices for Vystorm Chat. Everything else stays on its defaults.",
+    "de": "Ein paar schnelle Entscheidungen für Vystorm Chat. Alles andere bleibt auf Standard.",
+    "fr": "Quelques choix rapides pour Vystorm Chat. Le reste garde ses valeurs par défaut.",
+    "it": "Alcune scelte rapide per Vystorm Chat. Il resto resta predefinito.",
+    "pt_br": "Algumas escolhas rápidas para Vystorm Chat. O resto fica no padrão.",
+    "ru": "Несколько быстрых решений для Vystorm Chat. Остальное останется по умолчанию.",
+    "zh_cn": "Vystorm Chat 的几个快速选项，其余保持默认。"
+  },
+  "questions": [
+    {
+      "id": "radius",
+      "text": {
+        "en": "How far should local chat reach, in blocks?",
+        "de": "Wie weit soll der lokale Chat reichen (Blöcke)?",
+        "fr": "Portée du chat local, en blocs ?",
+        "it": "Portata della chat locale, in blocchi?",
+        "pt_br": "Alcance do chat local, em blocos?",
+        "ru": "Дальность локального чата в блоках?",
+        "zh_cn": "本地聊天范围（格）？"
+      },
+      "type": "number",
+      "target": "config.yml:channels.local.radius",
+      "min": 1,
+      "max": 10000
+    },
+    {
+      "id": "local",
+      "text": {
+        "en": "Join the local channel automatically?",
+        "de": "Lokalen Kanal automatisch betreten?",
+        "fr": "Rejoindre automatiquement le canal local ?",
+        "it": "Entrare automaticamente nel canale locale?",
+        "pt_br": "Entrar automaticamente no canal local?",
+        "ru": "Автоматически входить в локальный канал?",
+        "zh_cn": "自动加入本地频道？"
+      },
+      "type": "choice",
+      "recommended": "on",
+      "options": [
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "de": "An",
+            "fr": "Activé",
+            "it": "Attivo",
+            "pt_br": "Ligado",
+            "ru": "Вкл.",
+            "zh_cn": "开启"
+          },
+          "set": {
+            "config.yml:channels.local.auto-join": true
+          }
+        },
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "de": "Aus",
+            "fr": "Désactivé",
+            "it": "Disattivo",
+            "pt_br": "Desligado",
+            "ru": "Выкл.",
+            "zh_cn": "关闭"
+          },
+          "set": {
+            "config.yml:channels.local.auto-join": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "trade",
+      "text": {
+        "en": "Join the trade channel automatically?",
+        "de": "Handelskanal automatisch betreten?",
+        "fr": "Rejoindre automatiquement le canal commerce ?",
+        "it": "Entrare automaticamente nel canale commercio?",
+        "pt_br": "Entrar automaticamente no canal de comércio?",
+        "ru": "Автоматически входить в торговый канал?",
+        "zh_cn": "自动加入交易频道？"
+      },
+      "type": "choice",
+      "recommended": "on",
+      "options": [
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "de": "An",
+            "fr": "Activé",
+            "it": "Attivo",
+            "pt_br": "Ligado",
+            "ru": "Вкл.",
+            "zh_cn": "开启"
+          },
+          "set": {
+            "config.yml:channels.trade.auto-join": true
+          }
+        },
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "de": "Aus",
+            "fr": "Désactivé",
+            "it": "Disattivo",
+            "pt_br": "Desligado",
+            "ru": "Выкл.",
+            "zh_cn": "关闭"
+          },
+          "set": {
+            "config.yml:channels.trade.auto-join": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "world",
+      "text": {
+        "en": "Join the world channel automatically?",
+        "de": "Weltkanal automatisch betreten?",
+        "fr": "Rejoindre automatiquement le canal monde ?",
+        "it": "Entrare automaticamente nel canale mondo?",
+        "pt_br": "Entrar automaticamente no canal do mundo?",
+        "ru": "Автоматически входить в канал мира?",
+        "zh_cn": "自动加入世界频道？"
+      },
+      "type": "choice",
+      "recommended": "off",
+      "options": [
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "de": "An",
+            "fr": "Activé",
+            "it": "Attivo",
+            "pt_br": "Ligado",
+            "ru": "Вкл.",
+            "zh_cn": "开启"
+          },
+          "set": {
+            "config.yml:channels.world.auto-join": true
+          }
+        },
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "de": "Aus",
+            "fr": "Désactivé",
+            "it": "Disattivo",
+            "pt_br": "Desligado",
+            "ru": "Выкл.",
+            "zh_cn": "关闭"
+          },
+          "set": {
+            "config.yml:channels.world.auto-join": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "bubbles",
+      "text": {
+        "en": "Show chat messages as speech bubbles above players' heads?",
+        "de": "Chatnachrichten als Sprechblasen über den Köpfen zeigen?",
+        "fr": "Afficher les messages en bulles au-dessus de la tête des joueurs ?",
+        "it": "Mostrare i messaggi come fumetti sopra la testa dei giocatori?",
+        "pt_br": "Mostrar mensagens como balões acima da cabeça dos jogadores?",
+        "ru": "Показывать сообщения облачками над головами игроков?",
+        "zh_cn": "在玩家头顶以气泡显示聊天消息？"
+      },
+      "type": "choice",
+      "recommended": "on",
+      "options": [
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "de": "An",
+            "fr": "Activé",
+            "it": "Attivo",
+            "pt_br": "Ligado",
+            "ru": "Вкл.",
+            "zh_cn": "开启"
+          },
+          "set": {
+            "config.yml:bubbles.enabled": true
+          }
+        },
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "de": "Aus",
+            "fr": "Désactivé",
+            "it": "Disattivo",
+            "pt_br": "Desligado",
+            "ru": "Выкл.",
+            "zh_cn": "关闭"
+          },
+          "set": {
+            "config.yml:bubbles.enabled": false
+          }
+        }
+      ]
+    },
+    {
+      "id": "announcements",
+      "text": {
+        "en": "Use the announcement planner (timed broadcasts)?",
+        "de": "Ankündigungsplaner nutzen (zeitgesteuerte Nachrichten)?",
+        "fr": "Utiliser le planificateur d’annonces ?",
+        "it": "Usare il pianificatore di annunci?",
+        "pt_br": "Usar o planejador de anúncios?",
+        "ru": "Использовать планировщик объявлений?",
+        "zh_cn": "使用公告规划（定时广播）？"
+      },
+      "type": "choice",
+      "recommended": "on",
+      "options": [
+        {
+          "id": "on",
+          "label": {
+            "en": "On",
+            "de": "An",
+            "fr": "Activé",
+            "it": "Attivo",
+            "pt_br": "Ligado",
+            "ru": "Вкл.",
+            "zh_cn": "开启"
+          },
+          "set": {
+            "config.yml:announcements.enabled": true
+          }
+        },
+        {
+          "id": "off",
+          "label": {
+            "en": "Off",
+            "de": "Aus",
+            "fr": "Désactivé",
+            "it": "Disattivo",
+            "pt_br": "Desligado",
+            "ru": "Выкл.",
+            "zh_cn": "关闭"
+          },
+          "set": {
+            "config.yml:announcements.enabled": false
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,484 @@
+# Vystorm Chat - 简体中文。MiniMessage 格式，占位符写在 {花括号} 中。
+
+vmenu-chat: "聊天"
+vmenu-chat-desc: "频道、私信、屏蔽列表和聊天设置"
+
+# ---------------------------------------------------------------- general
+no-permission: "<red>你没有权限执行此操作。"
+player-only: "<red>只有玩家才能执行此操作。"
+player-not-found: "<red>{player} 不在线。"
+player-unknown: "<red>{player} 从未在本服务器上游玩过。"
+invalid-duration: "<red>“{input}”不是有效的时长。示例：30s、10m、2h、7d、1h30m。"
+permanent: "直至解除禁言"
+all-channels: "所有频道"
+busy: "<red>服务器正忙，请重新发送你的消息。"
+chat-failed: "<red>由于发生错误，你的消息未能发送。其他人没有看到它；请重试或告知管理人员。"
+settings-unavailable: "<red>目前无法打开聊天设置。"
+reloaded: "<green>Vystorm Chat 已重新加载：{channels} 个频道，挂钩：{hooks}。"
+emojis-list: "<gold>表情 <gray>– 在聊天或私信中输入代码：<white>{list}"
+emojis-off: "<gray>表情代码已关闭。"
+feature-off: "<red>此功能已在本服务器上关闭。"
+
+usage-msg: "<gray>用法：<yellow>/msg PLAYER MESSAGE</yellow>"
+usage-reply: "<gray>用法：<yellow>/r MESSAGE</yellow>"
+usage-unmute: "<gray>用法：<yellow>/unmute PLAYER</yellow>"
+usage-mute: "<gray>用法：<yellow>/mute PLAYER [TIME] [REASON]</yellow> <gray>时长示例：30m、2h、7d 或 <yellow>perm</yellow>"
+usage-slowmode: "<gray>用法：<yellow>/slowmode SECONDS [CHANNEL]</yellow> <gray>或</gray> <yellow>/slowmode off [CHANNEL]</yellow>"
+
+# ---------------------------------------------------------------- channels
+channel-unknown: "<red>不存在频道“{channel}”。<gray>/channel list"
+channel-focused: "<green>你现在在 <white>{channel}</white> 中发言。"
+channel-no-write: "<red>你无法在 {channel} 中发言。"
+channel-no-read: "<red>你无法阅读 {channel}。"
+channel-not-leavable: "<red>{channel} 无法隐藏。"
+channel-shown: "<green>你重新可以看到 {channel} 了。"
+channel-hidden: "<gray>{channel} 现已隐藏。可在聊天菜单中或用 /channel join 重新显示。"
+channel-wrong-world: "<red>{channel} 在此世界中不可用。"
+channel-no-party: "<red>你不在任何队伍中。"
+channel-no-city: "<red>你不是任何城市的成员。"
+channel-no-faction: "<red>你不属于任何阵营。"
+channel-no-region: "<red>你不在拥有独立聊天的区域内。"
+nobody-heard: "<gray>{channel} 中没有人听到你。"
+channel-list-header: "<gold>频道 <gray>（点击即可在该频道发言）"
+channel-list-entry: "<gray>- <white>{channel}</white> {state} <dark_gray>前缀 {prefix}"
+channel-list-focus: "<green>（正在此发言）"
+channel-list-listening: "<gray>（收听中）"
+channel-list-hidden: "<dark_gray>（已隐藏）"
+channel-list-hover: "<gray>点击在 {channel} 中发言"
+
+# ---------------------------------------------------------------- sending
+too-long: "<red>你的消息过长（最多 {max} 个字符）。"
+cooldown: "<red>请等待 {time} 后再在此发言。"
+slow-mode-wait: "<red>慢速模式已开启：你可以在 {time} 后再次发言。"
+spam-repeat: "<red>你刚刚发送过这条消息，请不要重复。"
+spam-flood: "<red>请慢一点，你发言太快了。"
+spam-caps: "<red>请不要大喊（大写字母过多）。"
+filter-blocked: "<red>你的消息包含此处不允许使用的词语。"
+link-blocked: "<red>你不能在此发布链接。"
+cost-too-poor: "<red>在 {channel} 中发送一条消息需要 {price}，而你的钱不够。"
+muted: "<red>你已被禁言 {time}。原因：<gray>{reason}"
+muted-permanent: "<red>你已被禁言。原因：<gray>{reason}"
+mentioned-by: "<yellow>{player} 在 {channel} 中提到了你"
+spy-prefix: "<dark_gray>[监听] "
+timestamp-hover: "<gray>发送于 <white>{time}"
+link-hover: "<gray>点击打开\n<dark_gray>{url}"
+
+hover-card:
+  name: "<gold>{name}"
+  rank: "<gray>头衔：<white>{rank}"
+  world: "<gray>世界：<white>{world}"
+  playtime: "<gray>游戏时间：<white>{time}"
+  party: "<gray>队伍：<light_purple>{party}"
+  city: "<gray>城市：<yellow>{city}"
+  faction: "<gray>阵营：<aqua>{faction}"
+  click: "<yellow>点击给 {player} 发送消息"
+
+showcase-empty-hand: "<gray>[空手]"
+showcase-inventory: "<aqua>[{player} 的物品栏]"
+showcase-inventory-hover: "<gray>点击查看 {player} 的物品栏"
+showcase-inventory-title: "{player} 的物品栏"
+showcase-expired: "<gray>此物品栏视图已过期。"
+
+# ---------------------------------------------------------------- private messages
+msg-self: "<red>你不能给自己发私信。"
+msg-you-ignore: "<red>你屏蔽了 {player}。请先用 /ignore {player} 取消屏蔽。"
+msg-not-accepted: "<red>{player} 不接受你的私信。"
+msg-name-hover: "<gray>点击回复 {player}"
+reply-nobody: "<red>还没有人给你发过消息。"
+reply-offline: "<red>你上次对话的玩家已不在线。"
+spy-on: "<green>私信监听已开启：你可以看到私信和监听频道。"
+spy-off: "<gray>私信监听已关闭。"
+
+# ---------------------------------------------------------------- ignore
+ignore-self: "<red>你不能屏蔽自己。"
+ignore-exempt: "<red>{player} 无法被屏蔽。"
+ignore-on: "<gray>你已屏蔽 {player}：不再接收其聊天消息和私信。"
+ignore-off: "<green>你已取消屏蔽 {player}。"
+ignore-list-empty: "<gray>你没有屏蔽任何人。"
+ignore-list: "<gray>你屏蔽了：<white>{players}"
+
+# ---------------------------------------------------------------- moderation
+chat-cleared: "<gray>聊天已被 {player} 清空。"
+slow-mode-on: "<gold>慢速模式：每 {time} 一条消息（{channel}）。"
+slow-mode-off: "<green>慢速模式已关闭（{channel}）。"
+slow-mode-status: "<gray>所有频道的慢速模式：<white>{time}"
+slow-mode-status-off: "<gray>所有频道的慢速模式已关闭。"
+mute-done: "<green>{player} 已被禁言（{time}）。原因：<gray>{reason}"
+mute-exempt: "<red>{player} 无法被禁言。"
+staff-muted: "<gray>{by} 禁言了 {player}（{time}）：{reason}"
+not-muted: "<red>{player} 未被禁言。"
+unmute-done: "<green>{player} 可以再次发言了。"
+unmuted: "<green>你可以再次在聊天中发言了。"
+staff-filter-blocked: "<gray>[过滤] 已拦截 {player} 的消息：<white>{message}"
+mute-list-header: "<gold>被禁言的玩家（{count}）："
+mute-list-entry: "<gray>- <white>{player}</white> {time}，执行者 {by}：{reason}"
+
+# ---------------------------------------------------------------- menus
+menu:
+  title: "聊天"
+  channel: "<white>{channel}"
+  state-focus: "<green>你在此发言"
+  state-listening: "<gray>你在阅读此频道"
+  state-hidden: "<dark_gray>已隐藏"
+  state-not-joined: "<dark_gray>未加入"
+  state-write-only: "<gray>你只能在此发言"
+  scope-global: "<gray>服务器上的所有人"
+  scope-world: "<gray>你所在世界的所有人"
+  scope-local: "<gray>{radius} 格内的玩家"
+  scope-region: "<gray>同一区域内的玩家"
+  scope-party: "<gray>你的队伍"
+  scope-city: "<gray>你的城市"
+  scope-faction: "<gray>你的阵营"
+  channel-prefix: "<gray>快捷方式：消息以 <yellow>{prefix}</yellow> 开头"
+  channel-command: "<gray>命令：<yellow>{command}</yellow>"
+  channel-cost: "<gray>每条消息花费 <gold>{price}</gold>"
+  channel-slow: "<gold>慢速模式：{time}"
+  click-focus: "<yellow>左键：在此发言"
+  cannot-write: "<red>你无法在此发言"
+  click-hide: "<yellow>右键：隐藏"
+  click-show: "<yellow>右键：重新显示"
+  message: "<green>私信"
+  message-lore: "<gray>给在线玩家发送消息"
+  reply: "<green>回复 {player}"
+  reply-lore: "<gray>你的上一次对话"
+  ignored: "<gold>已屏蔽的玩家"
+  ignored-lore: "<gray>你屏蔽了 {count} 名玩家\n<yellow>点击管理"
+  settings: "<gold>聊天设置"
+  settings-lore: "<gray>提示音、时间戳、私信\n<gray>以及你能看到的频道"
+  spy-on: "<green>私信监听：开启"
+  spy-off: "<gray>私信监听：关闭"
+  spy-lore: "<gray>查看私信和监听频道\n<yellow>点击切换"
+  moderation: "<red>管理"
+  moderation-lore: "<gray>清空聊天、慢速模式、禁言"
+  back: "<gray>返回"
+  ignored-title: "已屏蔽的玩家"
+  ignored-entry: "<white>{player}"
+  ignored-entry-lore: "<yellow>点击取消屏蔽"
+  ignore-add: "<gold>屏蔽玩家"
+  ignore-add-lore: "<gray>输入名称"
+  moderation-title: "聊天管理"
+  clear: "<red>清空聊天"
+  clear-lore: "<gray>清空每位玩家的聊天\n<gray>（管理人员的保留）"
+  slow-on: "<gold>慢速模式：{time}"
+  slow-off: "<gray>慢速模式：关闭"
+  slow-lore: "<gray>每位玩家在此时间内只能发一条消息\n<yellow>左键：延长，右键：缩短"
+  mutes: "<gold>被禁言的玩家（{count}）"
+  mutes-lore: "<gray>点击查看并解除禁言"
+  mute-player: "<red>禁言玩家"
+  mute-player-lore: "<gray>名称、时长和原因"
+  mutes-title: "被禁言的玩家"
+  mute-entry: "<white>{player}"
+  mute-entry-lore: "<gray>剩余时间：<white>{time}\n<gray>原因：<white>{reason}\n<gray>执行者：<white>{by}\n<yellow>点击解除禁言"
+
+announce:
+  prefix: "<gold>📢 </gold>"
+  disabled: "<gray>本服务器已关闭公告。"
+  title: "📢 公告"
+  title-new: "新公告"
+  title-edit: "公告 #{id}"
+  intro: "定时广播。点击一条进行编辑、暂停、发送或删除。"
+  empty: "还没有公告。创建第一条吧。"
+  row: "#{id} · 每 {minutes} 分钟 · {text}"
+  row-off: "#{id} · 已暂停 · {text}"
+  new: "＋ 新公告"
+  help: "文本：MiniMessage 或 & 代码。间隔 1–10080 分钟。世界：留空 = 所有人。"
+  input-text: "文本"
+  input-minutes: "每隔 … 分钟"
+  input-world: "世界（留空 = 全部）"
+  save: "保存"
+  pause: "暂停"
+  resume: "继续"
+  send-now: "立即发送"
+  delete: "删除"
+  saved: "<green>公告 #{id} 已保存。"
+  deleted: "<green>公告 #{id} 已删除。"
+  error-text: "<red>请输入文本（最多 256 个字符）。"
+  error-minutes: "<red>间隔必须为 1 到 10080 分钟。"
+  error-world: "<red>没有名为 {world} 的世界。"
+  error-storage: "<red>无法保存公告。"
+dialog:
+  cancel: "取消"
+  send: "发送"
+  message-title: "私信"
+  message-player: "玩家"
+  message-text: "消息"
+  ignore-title: "屏蔽玩家"
+  ignore-question: "你想屏蔽（或取消屏蔽）谁？"
+  clear-title: "清空聊天"
+  clear-question: "要为所有玩家清空聊天吗？"
+  unmute-title: "解除禁言"
+  unmute-question: "允许此玩家再次发言吗？"
+  mute-title: "禁言玩家"
+  mute-help: "时长如 30m、2h 或 7d。留空则禁言直至手动解除。"
+  mute-player: "玩家"
+  mute-time: "时长"
+  mute-reason: "原因"
+  mute: "禁言"
+
+player-menu:
+  message: "<green>私信 {player}"
+  message-lore: "<gray>发送私信"
+  ignore: "<gray>屏蔽 {player}"
+  ignore-lore: "<gray>隐藏其聊天消息和私信"
+  unignore: "<green>取消屏蔽 {player}"
+  unignore-lore: "<gray>你目前屏蔽了此玩家"
+  mute: "<red>禁言 {player}"
+  mute-lore: "<gray>选择时长和原因"
+  unmute: "<green>解除 {player} 的禁言"
+  unmute-lore: "<gray>此玩家目前处于禁言状态"
+
+# ---------------------------------------------------------------- /vsettings
+settings:
+  bubbles: "聊天气泡"
+  bubbles-desc: "在附近玩家头顶显示聊天消息"
+  title: "聊天"
+  desc: "提示音、时间戳、私信和频道"
+  mention-sound: "被提及时的提示音"
+  mention-sound-desc: "有人写到你的名字时播放提示音"
+  message-sound: "私信提示音"
+  message-sound-desc: "收到私信时播放提示音"
+  timestamps: "时间戳"
+  timestamps-desc: "指向消息时显示其发送时间"
+  allow-messages: "允许私信"
+  allow-messages-desc: "关闭：只有管理人员可以给你发私信"
+  spy: "私信监听"
+  spy-desc: "查看私信和监听频道（管理人员）"
+  show-channel-desc: "关闭：此频道的消息将对你隐藏"
+  show:
+    global: "显示全局聊天"
+    local: "显示本地聊天"
+    world: "显示世界聊天"
+    trade: "显示交易聊天"
+    staff: "显示管理人员聊天"
+    party: "显示队伍聊天"
+    city: "显示城市聊天"
+    faction: "显示阵营聊天"
+
+# 通过 Vystorm Core 提供的命令：每位玩家看到自己语言的说明、帮助和 Tab 补全。命令下直接的 "aliases" 是额外的主命令
+# （全服生效；由管理员在 Core 配置 commands.localized-aliases 中选择语言）；子命令的 "name"/"aliases" 在所有语言中
+# 都可使用，英文始终有效。所有命令一览：/vhelp
+commands:
+  vchat:
+    description: "聊天菜单、禁言、管理和重载"
+    aliases: [聊天]
+    sub:
+      report:
+        name: report
+        aliases: []
+        description: "举报玩家"
+        args:
+          player: PLAYER
+          reason: REASON
+      reports:
+        name: reports
+        aliases: []
+        description: "玩家举报"
+      menu:
+        name: 菜单
+        aliases: []
+        description: "打开聊天菜单"
+      mutes:
+        name: 禁言列表
+        aliases: []
+        description: "被禁言的玩家（菜单；控制台中为列表）"
+      announcements:
+        name: announcements
+        aliases: []
+        description: "规划定时公告"
+      moderation:
+        name: 管理
+        aliases: []
+        description: "管理菜单：举报、慢速模式、聊天记录"
+      emojis:
+        name: 表情
+        aliases: []
+        description: "可输入的表情代码，例如 :heart:"
+      keywords:
+        name: 关键词
+        aliases: []
+        description: "个人关键词提醒"
+        sub:
+          add:
+            name: 添加
+            aliases: []
+            description: "保存一个词或短语"
+            args:
+              phrase: 短语
+          remove:
+            name: 移除
+            aliases: []
+            description: "移除已保存的短语"
+            args:
+              phrase: 短语
+          test:
+            name: 测试
+            aliases: []
+            description: "私下预览关键词匹配"
+            args:
+              message: TEXT
+          pause:
+            name: 暂停
+            aliases: []
+            description: "暂停关键词提醒"
+          resume:
+            name: 恢复
+            aliases: []
+            description: "恢复关键词提醒"
+      replylock:
+        name: 锁定回复
+        aliases: []
+        description: "锁定或解锁当前 /r 回复对象，退出后自动解除"
+      reload:
+        name: 重载
+        aliases: []
+        description: "重新加载配置和语言文件"
+  channel:
+    description: "切换你发言的频道，或向该频道发送一条消息"
+    aliases: [频道]
+    args:
+      channel: 频道
+      message: 消息
+    sub:
+      list:
+        name: 列表
+        aliases: []
+        description: "所有频道；点击一个即可在那里发言"
+      join:
+        name: 加入
+        aliases: [显示]
+        description: "重新显示一个频道"
+        args:
+          channel: 频道
+      leave:
+        name: 离开
+        aliases: [隐藏]
+        description: "隐藏一个频道"
+        args:
+          channel: 频道
+  msg:
+    description: "发送私聊消息"
+    aliases: [私聊]
+    args:
+      player: 玩家
+      message: 消息
+  reply:
+    description: "回复你收到的最后一条私聊"
+    aliases: [回复]
+    args:
+      message: 消息
+  ignore:
+    description: "屏蔽或取消屏蔽一名玩家；不填名字则打开屏蔽列表"
+    aliases: [屏蔽]
+    args:
+      player: 玩家
+    sub:
+      list:
+        name: 列表
+        aliases: []
+        description: "你屏蔽的玩家"
+  socialspy:
+    description: "查看其他玩家的私聊和监听频道"
+    aliases: [监听]
+  mute:
+    description: "禁言一名玩家一段时间（30m、2h、7d）或直到解除；不填名字则打开禁言列表"
+    aliases: [禁言]
+    args:
+      player: 玩家
+      time-reason: "[时间] [原因]"
+  unmute:
+    description: "解除一名玩家的禁言"
+    aliases: [解除禁言]
+    args:
+      player: 玩家
+  clearchat:
+    description: "为所有人清空聊天（管理人员不受影响）"
+    aliases: [清屏]
+  slowmode:
+    description: "为所有频道或某个频道开启慢速模式"
+    aliases: [慢速]
+    args:
+      seconds: "秒数|关"
+      channel: 频道
+
+reply-lock-on: "<green>回复对象已锁定为 {player}，退出服务器后解除。使用 /vchat replylock 可解除锁定。"
+reply-lock-off: "<green>回复对象已解锁；/r 将再次回复最近的私聊对象。"
+
+keyword-hit: "<yellow>{player} 在 {channel}：关键词 {keyword}"
+keywords-list: "<gold>关键词（{count}/{limit}）：<white>{list}"
+keywords-disabled: "<gray>服务器已禁用关键词提醒。"
+keywords-active: "<green>关键词提醒已启用。使用 /vchat keywords add|remove 短语 或 pause|resume 管理。"
+keywords-paused: "<gray>关键词提醒已暂停，短语仍会保留。使用 /vchat keywords resume 恢复。"
+keyword-added: "<green>关键词已保存。按文字匹配，不区分大小写。"
+keyword-invalid: "<red>请输入不重复的 2-48 字符短语，不含控制字符。上限：{limit} 个短语。"
+keyword-removed: "<green>关键词已移除。"
+keyword-missing: "<red>你的关键词列表中没有该短语。"
+
+keyword-test-hit: "<green>预览：匹配 {keyword}。此文本未发送到聊天。"
+keyword-test-miss: "<gray>预览：未匹配当前启用的已保存关键词。"
+
+# Free feature release: reports
+reports:
+  previous: "上一页"
+  next: "下一页"
+  mute-reason: "举报{id}：{reason}"
+  title: "玩家举报"
+  submit: "举报玩家"
+  player-prompt: "玩家名称"
+  reason-prompt: "描述事件（最多500字），管理员将审核举报。"
+  by: "举报人：{player}"
+  open: "待处理举报 · 未核实的指控"
+  closed: "已处理"
+  expired: "30天后已过期"
+  case: "举报：{player}"
+  current-mute: "当前禁言状态"
+  none: "无"
+  back: "返回"
+  note: "添加管理员备注"
+  note-prompt: "管理员备注或处理理由（最多500字）"
+  resolve: "完成处理"
+  reopen: "重新打开举报"
+  mute: "设置限时禁言"
+  unmute: "解除禁言"
+  duration-prompt: "禁言时长：如10m、30m、1h；最长7d"
+  action-confirm: "对被举报玩家执行操作？请先核实指控。历史记录操作请求，当前禁言状态显示结果。"
+  event-note: "管理员备注"
+  event-resolve: "举报已处理"
+  event-reopen: "举报已重新打开"
+  event-mute-request: "已请求限时禁言"
+  event-unmute-request: "已请求解除禁言"
+  result-saved: "<green>举报或处理记录已保存。"
+  result-invalid: "<red>玩家、文本或时长无效。举报30天后过期。"
+  result-limited: "<red>举报间隔一分钟，不可重复举报待处理对象。上限：每人10条待处理举报、每案100条记录、总计1000案。"
+  result-missing: "<red>未找到举报。"
+  result-unavailable: "<red>存储不可用，未保存请求的更改。"
+panel:
+  empty: "暂无条目。"
+  stale: "此条目已更改，请重新打开菜单。"
+  page: "第 {page} 页，共 {pages} 页"
+  channels: "频道"
+  select: "选择一个条目以查看详情。"
+  audience: "接收范围"
+  shortcut: "快捷前缀"
+  command: "命令"
+  cost: "每条消息费用"
+  slow: "慢速模式"
+  focus: "在此发言"
+  listen: "显示此频道"
+  console: "控制台"
+  moderation: "管理聊天并审核玩家举报。"
+  slow-seconds: "慢速模式（秒；0 表示关闭）"
+  by: "操作者"
+  case-id: "举报编号"
+  reporter: "举报人"
+  created: "创建时间"
+  state: "状态"
+  open-case: "打开举报"
+  history: "处理记录"
+  note: "备注"
+  inventory-slot: "背包栏位 {slot}"
+  equipment-slot: "装备栏位 {slot}"
+  item: "物品"
+  amount: "数量"
+  read-only: "只读快照，无法移动物品。"
+  inventory: "背包"
+  inventory-view: "查看原始背包"

@@ -1,0 +1,12 @@
+title: 'Chat'
+pages:
+  - title: 'Channels'
+    text: |
+      /vchat opens the chat menu. Switch between global, local, trade and other channels with /channel.
+  - title: 'Messages and showcases'
+    text: |
+      /msg PLAYER sends a private message and /reply answers. Write [item] to show the item in your hand, and :heart: for emoji.
+  - title: 'Quiet and safe'
+    text: |
+      /ignore PLAYER hides someone, keyword alerts tell you when your name comes up, and you can report players from the menu.
+      Type /vchat help to see every command.

@@ -1,0 +1,12 @@
+title: 'Chat'
+pages:
+  - title: 'Kanäle'
+    text: |
+      /vchat öffnet das Chatmenü. Wechsle mit /channel zwischen globalem, lokalem, Handels- und anderen Kanälen.
+  - title: 'Nachrichten und Vorzeigen'
+    text: |
+      /msg PLAYER schickt eine private Nachricht, /reply antwortet. Schreib [item], um das Item in deiner Hand zu zeigen, und :heart: für Emojis.
+  - title: 'Ruhe und Schutz'
+    text: |
+      /ignore PLAYER blendet jemanden aus, Stichwort-Alarme melden, wenn dein Name fällt, und über das Menü kannst du Spieler melden.
+      Mit /vchat help siehst du alle Befehle.

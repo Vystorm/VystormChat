@@ -1,0 +1,476 @@
+# Русский — UTF-8. Keep keys, placeholders and formatting tokens unchanged.
+vmenu-chat: Чат
+vmenu-chat-desc: Каналы, личные сообщения, игнорируйте список и настройки чата
+no-permission: <red>Ты можешь этого не делать.
+player-only: <red>Это могут сделать только игроки.
+player-not-found: <red>{player} не в сети.
+player-unknown: <red>{player} никогда не играли на этом сервере.
+invalid-duration: '<red>"{input}" не является продолжительностью. Примеры: 30s, 10m, 2h, 7d, 1h30m.'
+permanent: Пока не мутируют
+all-channels: Все каналы
+busy: <red>Сервер занят, пожалуйста, отправьте сообщение еще раз.
+chat-failed: <red>Ваше сообщение не может быть отправлено из-за ошибки. Никто больше не видел, пожалуйста, попробуйте еще
+  раз или скажите сотрудникам.
+settings-unavailable: <red>Настройки чата не могут быть открыты прямо сейчас.
+reloaded: '<green>Vystorm Перезагрузка чата: {channels} каналов, крючки: {hooks}.'
+emojis-list: '<gold>Эмодзи <gray>Введите код в чате или личное сообщение: <white>{list}'
+emojis-off: <gray>Коды эмодзи выключены.
+feature-off: <red>Эта функция отключена на этом сервере.
+usage-msg: '<gray>Использовать: <yellow>/msg PLAYER MESSAGE</yellow>'
+usage-reply: '<gray>Использовать: <yellow>/r MESSAGE</yellow>'
+usage-unmute: '<gray>Использовать: <yellow>/unmute PLAYER</yellow>'
+usage-mute: '<gray>Использовать: <yellow>/mute PLAYER [TIME] [REASON]</yellow> <gray>с таким временем, как 30 м, 2 ч, 7 д
+  или <yellow>perm</yellow>'
+usage-slowmode: '<gray>Использовать: <yellow>/slowmode SECONDS [CHANNEL]</yellow> <gray>или</gray> <yellow>/slowmode off [CHANNEL]</yellow>'
+channel-unknown: <red>Нет никакого канала '{channel}'. <gray>/channel list
+channel-focused: <green>Теперь вы пишете в <white>{channel}</white>.
+channel-no-write: <red>Вы не можете написать в {channel}.
+channel-no-read: <red>Вы не можете прочитать {channel}.
+channel-not-leavable: <red>{channel} не могут быть скрыты.
+channel-shown: <green>Вы снова видите {channel}.
+channel-hidden: <gray>{channel} Теперь она скрыта. Показать его снова в меню чата или с /channel join.
+channel-wrong-world: <red>{channel} недоступно в мире.
+channel-no-party: <red>Ты не на группе.
+channel-no-city: <red>Вы не являетесь членом какого-либо города.
+channel-no-faction: <red>Вы не принадлежите к какой-либо фракции.
+channel-no-region: <red>Вы не находитесь в районе с собственным чатом.
+nobody-heard: <gray>Никто не слышал тебя в {channel}.
+channel-list-header: <gold>каналы <gray>(нажмите, чтобы написать там)
+channel-list-entry: <gray>- <white>{channel}</white> {state} <dark_gray>префикс {prefix}
+channel-list-focus: <green>(письмо здесь)
+channel-list-listening: <gray>(слушает)
+channel-list-hidden: <dark_gray>(скрыто)
+channel-list-hover: <gray>Нажмите, чтобы написать в {channel}
+too-long: <red>Ваше сообщение слишком длинное (почти {max} символов).
+cooldown: <red>Пожалуйста, подождите {time}, прежде чем писать здесь снова.
+slow-mode-wait: '<red>Медленный режим включен: вы можете написать снова в {time}.'
+spam-repeat: <red>Ты только что прислал это. Пожалуйста, не повторяйтесь.
+spam-flood: <red>Помедленнее, вы пишете слишком быстро.
+spam-caps: <red>Пожалуйста, не кричи (слишком много заглавных букв).
+filter-blocked: <red>Ваше сообщение содержит слово, которое здесь не допускается.
+link-blocked: <red>Вы не можете размещать ссылки здесь.
+cost-too-poor: <red>Сообщение в {channel} стоит {price}, которого у вас нет.
+muted: '<red>Вы приглушены на {time}. Причина: <gray>{reason}'
+muted-permanent: '<red>Ты приглушен. Причина: <gray>{reason}'
+mentioned-by: <yellow>{player} упоминал вас в {channel}
+spy-prefix: '<dark_gray>[Spy] '
+timestamp-hover: <gray>Отправлено в <white>{time}
+link-hover: |-
+  <gray>Нажмите, чтобы открыть
+  <dark_gray>{url}
+hover-card:
+  name: <gold>{name}
+  rank: '<gray>Ранг: <white>{rank}'
+  world: '<gray>Мир: <white>{world}'
+  playtime: '<gray>Время игры: <white>{time}'
+  party: '<gray>Партия: <light_purple>{party}'
+  city: '<gray>Город: <yellow>{city}'
+  faction: '<gray>Фракция: <aqua>{faction}'
+  click: <yellow>Нажмите, чтобы отправить сообщение {player}
+showcase-empty-hand: <gray>[empty hand]
+showcase-inventory: <aqua>[Inventory of {player}]
+showcase-inventory-hover: <gray>Нажмите, чтобы посмотреть инвентарь {player}
+showcase-inventory-title: инвентарь {player}
+showcase-expired: <gray>Этот обзор инвентаря истек.
+msg-self: <red>Вы не можете передать себя.
+msg-you-ignore: <red>Ты игнорируешь {player}. Узнать их первыми /ignore {player}.
+msg-not-accepted: <red>{player} не принимает ваши личные сообщения.
+msg-name-hover: <gray>Нажмите, чтобы ответить {player}
+reply-nobody: <red>Тебе еще никто не писал.
+reply-offline: <red>Игрок, с которым вы в последний раз разговаривали, больше не онлайн.
+spy-on: '<green>Социальный шпион: вы видите личные сообщения и шпионские каналы.'
+spy-off: <gray>Социальный шпион выключен.
+ignore-self: <red>Вы не можете игнорировать себя.
+ignore-exempt: <red>{player} не может быть проигнорировано.
+ignore-on: '<gray>Теперь вы игнорируете {player}: никаких чатов и никаких личных сообщений от них.'
+ignore-off: <green>Вы больше не игнорируете {player}.
+ignore-list-empty: <gray>Вы никого не игнорируете.
+ignore-list: '<gray>Вы игнорируете: <white>{players}'
+chat-cleared: <gray>Чат был очищен {player}.
+slow-mode-on: '<gold>Медленный режим: одно сообщение каждые {time} ({channel}).'
+slow-mode-off: <green>Медленный режим выключен ({channel}).
+slow-mode-status: '<gray>Медленный режим для всех каналов: <white>{time}'
+slow-mode-status-off: <gray>Медленный режим для всех каналов отключен.
+mute-done: '<green>{player} приглушен ({time}). Причина: <gray>{reason}'
+mute-exempt: <red>{player} нельзя приглушить.
+staff-muted: '<gray>{by} приглушенный {player} ({time}): {reason}'
+not-muted: <red>{player} не приглушены.
+unmute-done: <green>{player} может писать снова.
+unmuted: <green>Вы можете снова писать в чате.
+staff-filter-blocked: '<gray>[Filter] Заблокированное сообщение от {player}: <white>{message}'
+mute-list-header: '<gold>Приглушенные игроки ({count}):'
+mute-list-entry: '<gray>- <white>{player}</white> {time}, к {by}: {reason}'
+menu:
+  title: Чат
+  channel: <white>{channel}
+  state-focus: <green>Вы пишете здесь
+  state-listening: <gray>Вы читаете этот канал
+  state-hidden: <dark_gray>скрытый
+  state-not-joined: <dark_gray>Не присоединился
+  state-write-only: <gray>Писать можно только здесь
+  scope-global: <gray>Все на сервере
+  scope-world: <gray>Все в вашем мире
+  scope-local: <gray>Игроки в пределах {radius} блоков
+  scope-region: <gray>Игроки в одной области
+  scope-party: <gray>Твоя группа
+  scope-city: <gray>Твой город
+  scope-faction: <gray>Ваша фракция
+  channel-prefix: '<gray>Быстро: начните сообщение с <yellow>{prefix}</yellow>'
+  channel-command: '<gray>Командир: <yellow>{command}</yellow>'
+  channel-cost: <gray>Затраты <gold>{price}</gold> за сообщение
+  channel-slow: '<gold>Медленный режим: {time}'
+  click-focus: '<yellow>Левый клик: напишите здесь'
+  cannot-write: <red>Вы не можете писать здесь
+  click-hide: '<yellow>Правый клик: скрыть'
+  click-show: '<yellow>Оригинальное название: Show Again'
+  message: <green>Частное сообщение
+  message-lore: <gray>Напишите игроку, который находится в сети
+  reply: <green>Ответ {player}
+  reply-lore: <gray>Ваш последний разговор
+  ignored: <gold>Игнорирование игроков
+  ignored-lore: |-
+    <gray>Вы игнорируете {count} игроков
+    <yellow>Нажмите, чтобы управлять
+  settings: <gold>Настройка чата
+  settings-lore: |-
+    <gray>Звуки, метки времени, личные сообщения
+    <gray>Какие каналы вы видите
+  spy-on: '<green>Социальный шпион: на'
+  spy-off: '<gray>Социальный шпион: прочь'
+  spy-lore: |-
+    <gray>Смотрите личные сообщения и шпионские каналы
+    <yellow>Нажмите, чтобы переключиться
+  moderation: <red>Умеренность
+  moderation-lore: <gray>Ясный чат, медленный режим, немые
+  back: <gray>Назад
+  ignored-title: Игнорирование игроков
+  ignored-entry: <white>{player}
+  ignored-entry-lore: <yellow>Кликните, чтобы перестать игнорировать
+  ignore-add: <gold>Игнорировать игрока
+  ignore-add-lore: <gray>Введите имя
+  moderation-title: Модерация чата
+  clear: <red>Чистый чат
+  clear-lore: |-
+    <gray>Скачать чат каждого игрока
+    <gray>(сохраняет свои)
+  slow-on: '<gold>Медленный режим: {time}'
+  slow-off: '<gray>Медленный режим: выключен'
+  slow-lore: |-
+    <gray>Одно сообщение на одного игрока за это время
+    <yellow>Левый клик: длинный, правый клик: короче
+  mutes: <gold>Приглушенные игроки ({count})
+  mutes-lore: <gray>Click to see и unmute смотреть
+  mute-player: <red>Мут игрок
+  mute-player-lore: <gray>Имя, время и причина
+  mutes-title: Приглушенные игроки
+  mute-entry: <white>{player}
+  mute-entry-lore: |-
+    <gray>Время вышло: <white>{time}
+    <gray>Причина: <white>{reason}
+    <gray>К: <white>{by}
+    <yellow>Кликните на Unmute
+announce:
+  prefix: "<gold>📢 </gold>"
+  disabled: "<gray>Объявления на этом сервере отключены."
+  title: "📢 Объявления"
+  title-new: "Новое объявление"
+  title-edit: "Объявление #{id}"
+  intro: "Сообщения по расписанию. Нажмите, чтобы изменить, приостановить, отправить или удалить."
+  empty: "Объявлений пока нет. Создайте первое."
+  row: "#{id} · каждые {minutes} мин · {text}"
+  row-off: "#{id} · пауза · {text}"
+  new: "＋ Новое объявление"
+  help: "Текст: MiniMessage или &-коды. Интервал 1–10080 минут. Мир: пусто = все."
+  input-text: "Текст"
+  input-minutes: "Каждые … минут"
+  input-world: "Мир (пусто = все)"
+  save: "Сохранить"
+  pause: "Пауза"
+  resume: "Продолжить"
+  send-now: "Отправить сейчас"
+  delete: "Удалить"
+  saved: "<green>Объявление #{id} сохранено."
+  deleted: "<green>Объявление #{id} удалено."
+  error-text: "<red>Введите текст (до 256 символов)."
+  error-minutes: "<red>Интервал должен быть от 1 до 10080 минут."
+  error-world: "<red>Мира {world} нет."
+  error-storage: "<red>Не удалось сохранить объявления."
+dialog:
+  cancel: Отмена
+  send: Отправить
+  message-title: Частное сообщение
+  message-player: Игрок
+  message-text: Послание
+  ignore-title: Игнорировать игрока
+  ignore-question: Кого вы хотите игнорировать (или перестать игнорировать)?
+  clear-title: Чистый чат
+  clear-question: Очистить чат для каждого игрока?
+  unmute-title: Безмятежный
+  unmute-question: Позволить этому игроку снова писать?
+  mute-title: Мут игрок
+  mute-help: Время 30 м, 2 ч или 7 д. Оставьте его пустым, чтобы приглушить до неизмененного.
+  mute-player: Игрок
+  mute-time: Время
+  mute-reason: Причина
+  mute: Мут
+player-menu:
+  message: <green>Сообщение {player}
+  message-lore: <gray>Отправить личное сообщение
+  ignore: <gray>Игнорировать {player}
+  ignore-lore: <gray>Скрыть свой чат и личные сообщения
+  unignore: <green>Прекратите игнорировать {player}
+  unignore-lore: <gray>Вы игнорируете этого игрока прямо сейчас
+  mute: <red>Mute {player}
+  mute-lore: <gray>Выберите время и причину
+  unmute: <green>Безымянный {player}
+  unmute-lore: <gray>Этот игрок сейчас приглушен
+settings:
+  bubbles: "Облачка с текстом"
+  bubbles-desc: "Показывать сообщения над головами игроков рядом"
+  title: Чат
+  desc: Звуки, метки времени, личные сообщения и каналы
+  mention-sound: Звук, упомянутый
+  mention-sound-desc: Играйте звук, когда кто-то пишет ваше имя
+  message-sound: Звук для личных сообщений
+  message-sound-desc: Играйте звук, когда получаете личное сообщение
+  timestamps: временные метки
+  timestamps-desc: Покажите время сообщения, когда вы указываете на него
+  allow-messages: Разрешить личные сообщения
+  allow-messages-desc: Только сотрудники могут сообщить вам
+  spy: Социальный шпион
+  spy-desc: Частные сообщения и шпионские каналы (штабы)
+  show-channel-desc: Сообщения этого канала скрыты для вас
+  show:
+    global: Показать глобальный чат
+    local: Показать местный чат
+    world: Показать мир чат
+    trade: Показать торговый чат
+    staff: Показать персонал чат
+    party: Шоу-группа
+    city: Показать город чат
+    faction: Показать чат фракции
+commands:
+  vchat:
+    description: Меню чата, приглушения, модерация и перезагрузка
+    aliases: []
+    sub:
+      report:
+        name: report
+        aliases: []
+        description: "Пожаловаться на игрока"
+        args:
+          player: PLAYER
+          reason: REASON
+      reports:
+        name: reports
+        aliases: []
+        description: "Жалобы игроков"
+      menu:
+        name: menu
+        aliases: []
+        description: Откройте меню чата
+      mutes:
+        name: mutes
+        aliases: []
+        description: Приглушенные игроки (меню или список в консоли)
+      announcements:
+        name: announcements
+        aliases: []
+        description: "Планировщик объявлений"
+      moderation:
+        name: moderation
+        aliases: []
+        description: 'Меню умеренности: отчеты, медленный режим, журнал чата'
+      emojis:
+        name: emojis
+        aliases:
+        - emoji
+        description: 'Коды эмодзи можно печатать, например:heart:'
+      keywords:
+        name: keywords
+        aliases: []
+        description: Личные оповещения по ключевым словам
+        sub:
+          add:
+            name: add
+            aliases: []
+            description: Сохранить буквальное слово или фразу
+            args:
+              phrase: PHRASE
+          remove:
+            name: remove
+            aliases: []
+            description: Удалить сохраненную фразу
+            args:
+              phrase: PHRASE
+          test:
+            name: test
+            aliases: []
+            description: Частный предварительный просмотр совпадения ключевых слов
+            args:
+              message: TEXT
+          pause:
+            name: pause
+            aliases: []
+            description: Пауза оповещения ключевых слов
+          resume:
+            name: resume
+            aliases: []
+            description: Резюме оповещений по ключевым словам
+      replylock:
+        name: replylock
+        aliases: []
+        description: Заблокируйте или разблокируйте текущий /r Партнер до выхода
+      reload:
+        name: reload
+        aliases: []
+        description: Перезагрузка конфигурационных и языковых файлов
+  channel:
+    description: Переключите канал, в котором вы пишете, или напишите там одно сообщение
+    aliases: []
+    args:
+      channel: CHANNEL
+      message: MESSAGE
+    sub:
+      list:
+        name: list
+        aliases: []
+        description: Все каналы; нажмите один, чтобы написать там
+      join:
+        name: join
+        aliases: []
+        description: Показать канал еще раз
+        args:
+          channel: CHANNEL
+      leave:
+        name: leave
+        aliases: []
+        description: Скрыть канал
+        args:
+          channel: CHANNEL
+  msg:
+    description: Отправить личное сообщение
+    aliases: []
+    args:
+      player: PLAYER
+      message: MESSAGE
+  reply:
+    description: Ответьте на последнее личное сообщение
+    aliases: []
+    args:
+      message: MESSAGE
+  ignore:
+    description: Игнорировать или неигнорировать игрока; без имени открывается список игнорирования
+    aliases: []
+    args:
+      player: PLAYER
+    sub:
+      list:
+        name: list
+        aliases: []
+        description: Игроки, которых вы игнорируете
+  socialspy:
+    description: Смотрите личные сообщения и шпионские каналы других игроков
+    aliases: []
+  mute:
+    description: Подсматривайте игрока в течение некоторого времени (30 м, 2 ч, 7 д) или до неизмененного; без имени открывается
+      немой список
+    aliases: []
+    args:
+      player: PLAYER
+      time-reason: '[TIME] [REASON]'
+  unmute:
+    description: Разгромить игрока
+    aliases: []
+    args:
+      player: PLAYER
+  clearchat:
+    description: Очистите чат для всех (сотрудники остаются незатронутыми)
+    aliases: []
+  slowmode:
+    description: Медленный режим для всех каналов или одного канала
+    aliases: []
+    args:
+      seconds: SECONDS |off
+      channel: CHANNEL
+reply-lock-on: <green>Партнёр, запертый {player} Пока ты не выйдешь. Использовать /vchat replylock разблокировать.
+reply-lock-off: <green>Ответить Партнер разблокирован; /r В очередной раз следите за вашей личной беседой.
+keyword-hit: '<yellow>{player} в {channel}: ключевое слово {keyword}'
+keywords-list: '<gold>Ключевые слова ({count}/{limit}): <white>{list}'
+keywords-disabled: <gray>Оповещения ключевых слов отключаются сервером.
+keywords-active: <green>Ключевые слова активны. Управление /vchat keywords add|remove PHRASE или pause|resume.
+keywords-paused: <gray>Предупреждения по ключевым словам приостановлены. Фразы остаются спасенными; /vchat keywords resume
+  Позволяет им снова.
+keyword-added: <green>Ключевое слово сохранено. Буквальные совпадения игнорируют дело о письме.
+keyword-invalid: '<red>Используйте уникальную фразу из 2-48 символов без управляющих символов. Предел: {limit} фраз.'
+keyword-removed: <green>Ключевое слово удалено.
+keyword-missing: <red>Эта фраза не входит в список ключевых слов.
+keyword-test-hit: '<green>Предварительный просмотр: матчи {keyword}. Этот текст не был отправлен в чат.'
+keyword-test-miss: '<gray>Предварительный просмотр: нет совпадения между вашими активными сохраненными фразами.'
+
+# Free feature release: reports
+reports:
+  previous: "Предыдущая страница"
+  next: "Следующая страница"
+  mute-reason: "Жалоба {id}: {reason}"
+  title: "Жалобы игроков"
+  submit: "Пожаловаться на игрока"
+  player-prompt: "Имя игрока"
+  reason-prompt: "Опишите случившееся (до 500 символов). Модератор рассмотрит жалобу."
+  by: "Автор жалобы: {player}"
+  open: "Открытая жалоба · непроверенное обвинение"
+  closed: "Закрыта"
+  expired: "Истекла через 30 дней"
+  case: "Жалоба: {player}"
+  current-mute: "Текущее ограничение чата"
+  none: "Нет"
+  back: "Назад"
+  note: "Добавить заметку"
+  note-prompt: "Заметка или основание решения (до 500 символов)"
+  resolve: "Закрыть жалобу"
+  reopen: "Открыть жалобу снова"
+  mute: "Временно запретить чат"
+  unmute: "Снять запрет чата"
+  duration-prompt: "Срок: 10m, 30m, 1h; не более 7d"
+  action-confirm: "Применить действие к игроку? Сначала проверьте обвинение. История хранит запрос; текущее ограничение показывает результат."
+  event-note: "Заметка модератора"
+  event-resolve: "Жалоба закрыта"
+  event-reopen: "Жалоба снова открыта"
+  event-mute-request: "Запрошен временный запрет чата"
+  event-unmute-request: "Запрошено снятие запрета"
+  result-saved: "<green>Жалоба или изменение сохранены."
+  result-invalid: "<red>Неверный игрок, текст или срок. Жалоба истекает через 30 дней."
+  result-limited: "<red>Подождите минуту; не повторяйте открытую жалобу. Лимиты: 10 открытых на игрока, 100 записей на дело, 1000 дел."
+  result-missing: "<red>Жалоба не найдена."
+  result-unavailable: "<red>Хранилище недоступно. Изменение не сохранено."
+panel:
+  empty: "Нет записей."
+  stale: "Эта запись изменилась. Откройте меню заново."
+  page: "Страница {page} из {pages}"
+  channels: "Каналы"
+  select: "Выберите запись, чтобы увидеть подробности."
+  audience: "Получатели"
+  shortcut: "Префикс"
+  command: "Команда"
+  cost: "Цена за сообщение"
+  slow: "Медленный режим"
+  focus: "Писать здесь"
+  listen: "Показывать этот канал"
+  console: "Консоль"
+  moderation: "Управляйте чатом и рассматривайте жалобы на игроков."
+  slow-seconds: "Медленный режим (секунды; 0 = выкл.)"
+  by: "Автор"
+  case-id: "Номер дела"
+  reporter: "Отправитель жалобы"
+  created: "Дата создания"
+  state: "Статус"
+  open-case: "Открыть дело"
+  history: "История дела"
+  note: "Заметка"
+  inventory-slot: "Ячейка инвентаря {slot}"
+  equipment-slot: "Ячейка снаряжения {slot}"
+  item: "Предмет"
+  amount: "Количество"
+  read-only: "Снимок только для просмотра. Перемещать предметы нельзя."
+  inventory: "Инвентарь"
+  inventory-view: "Посмотреть исходный инвентарь"

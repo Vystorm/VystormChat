@@ -1,0 +1,12 @@
+title: '聊天'
+pages:
+  - title: '频道'
+    text: |
+      /vchat 打开聊天菜单。用 /channel 在全局、本地、交易等频道之间切换。
+  - title: '私信与展示'
+    text: |
+      /msg PLAYER 发送私信，/reply 回复。输入 [item] 展示手中物品，:heart: 插入表情。
+  - title: '安静与安全'
+    text: |
+      /ignore PLAYER 屏蔽某人，关键词提醒会在提到你时通知你，还可以在菜单中举报玩家。
+      输入 /vchat help 查看全部命令。

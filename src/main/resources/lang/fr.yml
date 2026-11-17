@@ -1,0 +1,476 @@
+# Français — UTF-8. Keep keys, placeholders and formatting tokens unchanged.
+vmenu-chat: Chat
+vmenu-chat-desc: Chaînes, messages privés, ignorez la liste et les paramètres de chat
+no-permission: <red>Vous ne pouvez pas faire ça.
+player-only: <red>Seuls les joueurs peuvent le faire.
+player-not-found: <red>{player} n'est pas en ligne.
+player-unknown: <red>{player} n'a jamais joué sur ce serveur.
+invalid-duration: '<red>''{input}'' n''est pas une durée. Exemples: 30s, 10m, 2h, 7d, 1h30m.'
+permanent: jusqu'à ce que non mutés
+all-channels: toutes chaînes
+busy: <red>Le serveur est occupé, veuillez envoyer votre message à nouveau.
+chat-failed: <red>Votre message n'a pas pu être envoyé à cause d'une erreur. Personne d'autre ne l'a vu; essayez encore ou
+  dites-le au personnel.
+settings-unavailable: <red>Les paramètres de chat ne peuvent pas être ouverts dès maintenant.
+reloaded: '<green>Vystorm Chat rechargé: {channels} canaux, crochets: {hooks}.'
+emojis-list: '<gold>Emojis <gray>– tapez le code dans chat ou un message privé: <white>{list}'
+emojis-off: <gray>Les codes Emoji sont éteints.
+feature-off: <red>Cette fonctionnalité est désactivée sur ce serveur.
+usage-msg: '<gray>Utilisation: <yellow>/msg PLAYER MESSAGE</yellow>'
+usage-reply: '<gray>Utilisation: <yellow>/r MESSAGE</yellow>'
+usage-unmute: '<gray>Utilisation: <yellow>/unmute PLAYER</yellow>'
+usage-mute: '<gray>Utilisation: <yellow>/mute PLAYER [TIME] [REASON]</yellow> <gray>avec un temps de 30m, 2h, 7d ou <yellow>perm</yellow>'
+usage-slowmode: '<gray>Utilisation: <yellow>/slowmode SECONDS [CHANNEL]</yellow> <gray>ou</gray> <yellow>/slowmode off [CHANNEL]</yellow>'
+channel-unknown: <red>Il n'y a aucun canal '{channel}'. <gray>/channel list
+channel-focused: <green>Tu écris maintenant <white>{channel}</white>.
+channel-no-write: <red>Vous ne pouvez pas écrire en {channel}.
+channel-no-read: <red>Vous ne pouvez pas lire {channel}.
+channel-not-leavable: <red>{channel} ne peut être caché.
+channel-shown: <green>Vous revoyez {channel}.
+channel-hidden: <gray>{channel} est caché maintenant. Afficher à nouveau dans le menu chat ou avec /channel join.
+channel-wrong-world: <red>{channel} n'est pas disponible dans ce monde.
+channel-no-party: <red>Tu n'es pas dans une groupe.
+channel-no-city: <red>Vous n'êtes pas membre d'une ville.
+channel-no-faction: <red>Vous n'appartenez pas à une faction.
+channel-no-region: <red>Vous n'êtes pas dans une zone avec son propre chat.
+nobody-heard: <gray>Personne ne t'a entendu en {channel}.
+channel-list-header: <gold>Canaux <gray>(cliquez pour y écrire)
+channel-list-entry: <gray>- <white>{channel}</white> {state} <dark_gray>préfixe {prefix}
+channel-list-focus: <green>(écrire ici)
+channel-list-listening: <gray>(écoute)
+channel-list-hidden: <dark_gray>(caché)
+channel-list-hover: <gray>Cliquez pour écrire en {channel}
+too-long: <red>Votre message est trop long (au plus {max} caractères).
+cooldown: <red>Veuillez patienter {time} avant d'écrire à nouveau ici.
+slow-mode-wait: '<red>Le mode lent est activé : vous pouvez réécrire en {time}.'
+spam-repeat: <red>Tu viens d'envoyer ça. Ne vous répétez pas.
+spam-flood: <red>Ralentissez un peu, vous écrivez trop vite.
+spam-caps: <red>Ne criez pas (trop de lettres majuscules).
+filter-blocked: <red>Votre message contient un mot qui n'est pas autorisé ici.
+link-blocked: <red>Vous ne pouvez pas poster de liens ici.
+cost-too-poor: <red>Un message en {channel} coûte {price}, que vous n'avez pas.
+muted: '<red>Vous êtes muet pour {time}. Motif: <gray>{reason}'
+muted-permanent: '<red>Tu es muet. Motif: <gray>{reason}'
+mentioned-by: <yellow>{player} vous ont mentionné en {channel}
+spy-prefix: '<dark_gray>[Spy] '
+timestamp-hover: <gray>Envoyé à <white>{time}
+link-hover: |-
+  <gray>Cliquez pour ouvrir
+  <dark_gray>{url}
+hover-card:
+  name: <gold>{name}
+  rank: '<gray>Classement : <white>{rank}'
+  world: '<gray>Monde: <white>{world}'
+  playtime: '<gray>Temps de jeu: <white>{time}'
+  party: '<gray>Partie: <light_purple>{party}'
+  city: '<gray>Ville: <yellow>{city}'
+  faction: '<gray>Faction: <aqua>{faction}'
+  click: <yellow>Cliquez pour envoyer un message à {player}
+showcase-empty-hand: <gray>[empty hand]
+showcase-inventory: <aqua>[Inventory of {player}]
+showcase-inventory-hover: <gray>Cliquez pour regarder l'inventaire de {player}
+showcase-inventory-title: Inventaire de {player}
+showcase-expired: <gray>Cette vue d'inventaire a expiré.
+msg-self: <red>Vous ne pouvez pas vous envoyer un message.
+msg-you-ignore: <red>Vous ignorez {player}. Unignore-les d'abord avec /ignore {player}.
+msg-not-accepted: <red>{player} n'accepte pas vos messages privés.
+msg-name-hover: <gray>Cliquez pour répondre à {player}
+reply-nobody: <red>Personne ne t'a encore écrit.
+reply-offline: <red>Le joueur à qui vous avez parlé pour la dernière fois n'est plus en ligne.
+spy-on: '<green>L''espion social est sur : vous voyez des messages privés et des canaux espions.'
+spy-off: <gray>L'espion social est parti.
+ignore-self: <red>Tu ne peux pas t'ignorer.
+ignore-exempt: <red>{player} ne peut être ignoré.
+ignore-on: '<gray>Vous ignorez maintenant {player}: pas de chat et aucun message privé d''eux.'
+ignore-off: <green>Vous n'ignorez plus {player}.
+ignore-list-empty: <gray>Vous n'ignorez personne.
+ignore-list: '<gray>Vous ignorez : <white>{players}'
+chat-cleared: <gray>Le chat a été effacé par {player}.
+slow-mode-on: '<gold>Mode lent : un message tous les {time} ({channel}).'
+slow-mode-off: <green>Le mode lent est désactivé ({channel}).
+slow-mode-status: '<gray>Mode lent pour tous les canaux: <white>{time}'
+slow-mode-status-off: <gray>Le mode lent pour tous les canaux est désactivé.
+mute-done: '<green>{player} est muté ({time}). Motif: <gray>{reason}'
+mute-exempt: <red>{player} ne peut être muté.
+staff-muted: '<gray>{by} mutés {player} ({time}): {reason}'
+not-muted: <red>{player} n'est pas muet.
+unmute-done: <green>{player} peuvent écrire à nouveau.
+unmuted: <green>Vous pouvez écrire à nouveau dans chat.
+staff-filter-blocked: '<gray>[Filter] Message bloqué de {player}: <white>{message}'
+mute-list-header: '<gold>Joueurs mutés ({count}):'
+mute-list-entry: '<gray>- <white>{player}</white> {time}, par {by}: {reason}'
+menu:
+  title: Chat
+  channel: <white>{channel}
+  state-focus: <green>Vous écrivez ici
+  state-listening: <gray>Vous lisez cette chaîne
+  state-hidden: <dark_gray>Caché
+  state-not-joined: <dark_gray>Non joint
+  state-write-only: <gray>Vous pouvez seulement écrire ici
+  scope-global: <gray>Tout le monde sur le serveur
+  scope-world: <gray>Tout le monde dans votre monde
+  scope-local: <gray>Joueurs dans les {radius} blocs
+  scope-region: <gray>Joueurs dans la même zone
+  scope-party: <gray>Votre groupe
+  scope-city: <gray>Votre ville
+  scope-faction: <gray>Votre faction
+  channel-prefix: '<gray>Quick: lancez un message avec <yellow>{prefix}</yellow>'
+  channel-command: '<gray>Commande & #160;: <yellow>{command}</yellow>'
+  channel-cost: <gray>Coûts <gold>{price}</gold> par message
+  channel-slow: '<gold>Mode lent: {time}'
+  click-focus: '<yellow>Cliquez à gauche : écrivez ici'
+  cannot-write: <red>Vous ne pouvez pas écrire ici
+  click-hide: '<yellow>Clic droit : masquer'
+  click-show: '<yellow>Clic droit : afficher à nouveau'
+  message: <green>Message privé
+  message-lore: <gray>Écrivez à un joueur qui est en ligne
+  reply: <green>Réponse {player}
+  reply-lore: <gray>Votre dernière conversation
+  ignored: <gold>Joueurs ignorés
+  ignored-lore: |-
+    <gray>Vous ignorez {count} joueurs
+    <yellow>Cliquez pour gérer
+  settings: <gold>Paramètres de discussion
+  settings-lore: |-
+    <gray>Sons, horodatages, messages privés
+    <gray>et quelles chaînes voyez-vous
+  spy-on: '<green>Espion social : sur'
+  spy-off: '<gray>Espérance sociale: hors'
+  spy-lore: |-
+    <gray>Voir les messages privés et les canaux espions
+    <yellow>Cliquez pour changer
+  moderation: <red>Modération
+  moderation-lore: <gray>Chat clair, mode lent, muets
+  back: <gray>Retour
+  ignored-title: Joueurs ignorés
+  ignored-entry: <white>{player}
+  ignored-entry-lore: <yellow>Cliquez pour ne plus ignorer
+  ignore-add: <gold>Ignorer un joueur
+  ignore-add-lore: <gray>Saisissez un nom
+  moderation-title: Clavardage modération
+  clear: <red>Effacer le chat
+  clear-lore: |-
+    <gray>Vide le chat de chaque joueur
+    <gray>(le personnel garde le leur)
+  slow-on: '<gold>Mode lent: {time}'
+  slow-off: '<gray>Mode lent: éteint'
+  slow-lore: |-
+    <gray>Un message par lecteur en ce moment
+    <yellow>Clic gauche : plus long, clic droit : plus court
+  mutes: <gold>Joueurs mutés ({count})
+  mutes-lore: <gray>Cliquez pour voir et désactiver
+  mute-player: <red>Mute un joueur
+  mute-player-lore: <gray>Nom, heure et raison
+  mutes-title: Joueurs mutés
+  mute-entry: <white>{player}
+  mute-entry-lore: |-
+    <gray>Temps restant : <white>{time}
+    <gray>Motif: <white>{reason}
+    <gray>Par: <white>{by}
+    <yellow>Cliquez pour annuler
+announce:
+  prefix: "<gold>📢 </gold>"
+  disabled: "<gray>Les annonces sont désactivées sur ce serveur."
+  title: "📢 Annonces"
+  title-new: "Nouvelle annonce"
+  title-edit: "Annonce #{id}"
+  intro: "Messages programmés. Clique sur une annonce pour la modifier, la mettre en pause, l’envoyer ou la supprimer."
+  empty: "Aucune annonce pour l’instant. Crée la première."
+  row: "#{id} · toutes les {minutes} min · {text}"
+  row-off: "#{id} · en pause · {text}"
+  new: "＋ Nouvelle annonce"
+  help: "Texte : MiniMessage ou codes &. Intervalle 1–10080 minutes. Monde : vide = tous."
+  input-text: "Texte"
+  input-minutes: "Toutes les … minutes"
+  input-world: "Monde (vide = tous)"
+  save: "Enregistrer"
+  pause: "Pause"
+  resume: "Reprendre"
+  send-now: "Envoyer maintenant"
+  delete: "Supprimer"
+  saved: "<green>Annonce #{id} enregistrée."
+  deleted: "<green>Annonce #{id} supprimée."
+  error-text: "<red>Saisis un texte (256 caractères max.)."
+  error-minutes: "<red>L’intervalle doit être de 1 à 10080 minutes."
+  error-world: "<red>Aucun monde nommé {world}."
+  error-storage: "<red>Les annonces n’ont pas pu être enregistrées."
+dialog:
+  cancel: Annuler
+  send: Envoyer
+  message-title: Message privé
+  message-player: Joueur
+  message-text: Message
+  ignore-title: Ignorer un joueur
+  ignore-question: Qui voulez-vous ignorer (ou arrêter d'ignorer) ?
+  clear-title: Effacer le chat
+  clear-question: Effacer la conversation pour chaque joueur ?
+  unmute-title: Sans changement
+  unmute-question: Laisser ce joueur écrire encore ?
+  mute-title: Mute un joueur
+  mute-help: Temps comme 30m, 2h ou 7d. Laissez-le vider jusqu'à ce qu'il ne soit pas muté.
+  mute-player: Joueur
+  mute-time: Temps
+  mute-reason: Motif
+  mute: Mignon
+player-menu:
+  message: <green>Message {player}
+  message-lore: <gray>Envoyer un message privé
+  ignore: <gray>Ignorer {player}
+  ignore-lore: <gray>Cacher leur chat et leurs messages privés
+  unignore: <green>Ne pas ignorer {player}
+  unignore-lore: <gray>Vous ignorez ce joueur maintenant
+  mute: <red>Mute {player}
+  mute-lore: <gray>Choisir le temps et la raison
+  unmute: <green>Sans objet {player}
+  unmute-lore: <gray>Ce joueur est muet en ce moment
+settings:
+  bubbles: "Bulles de dialogue"
+  bubbles-desc: "Afficher les messages au-dessus de la tête des joueurs proches"
+  title: Chat
+  desc: Sons, horodatages, messages privés et canaux
+  mention-sound: Sonne quand il est mentionné
+  mention-sound-desc: Jouer un son quand quelqu'un écrit votre nom
+  message-sound: Son pour les messages privés
+  message-sound-desc: Jouer un son lorsque vous obtenez un message privé
+  timestamps: Timbres
+  timestamps-desc: Afficher l'heure d'un message lorsque vous le pointez
+  allow-messages: Permettre des messages privés
+  allow-messages-desc: 'Off: seul le personnel peut vous envoyer un message'
+  spy: Espion sociale
+  spy-desc: Voir les messages privés et les canaux espions (personnel)
+  show-channel-desc: 'Off: les messages de ce canal sont cachés pour vous'
+  show:
+    global: Afficher le chat global
+    local: Afficher le chat local
+    world: Afficher le chat du monde
+    trade: Afficher le chat commercial
+    staff: Afficher le chat du personnel
+    party: Afficher le chat de la groupe
+    city: Afficher le chat de ville
+    faction: Afficher le chat de faction
+commands:
+  vchat:
+    description: Menu de discussion, mutes, modération et recharge
+    aliases: []
+    sub:
+      report:
+        name: report
+        aliases: []
+        description: "Signaler un joueur"
+        args:
+          player: PLAYER
+          reason: REASON
+      reports:
+        name: reports
+        aliases: []
+        description: "Signalements"
+      menu:
+        name: menu
+        aliases: []
+        description: Ouvrir le menu chat
+      mutes:
+        name: mutes
+        aliases: []
+        description: Joueurs mutés (menu, ou une liste dans la console)
+      announcements:
+        name: announcements
+        aliases: []
+        description: "Planifier des annonces"
+      moderation:
+        name: moderation
+        aliases: []
+        description: 'Menu de modération : rapports, mode lent, journal de chat'
+      emojis:
+        name: emojis
+        aliases:
+        - emoji
+        description: 'Codes Emoji que vous pouvez taper, comme :heart:'
+      keywords:
+        name: keywords
+        aliases: []
+        description: Alertes de mots clés personnels
+        sub:
+          add:
+            name: add
+            aliases: []
+            description: Enregistrer un mot littéral ou une phrase
+            args:
+              phrase: PHRASE
+          remove:
+            name: remove
+            aliases: []
+            description: Supprime une phrase enregistrée
+            args:
+              phrase: PHRASE
+          test:
+            name: test
+            aliases: []
+            description: Prévisualiser en privé une correspondance par mot-clé
+            args:
+              message: TEXT
+          pause:
+            name: pause
+            aliases: []
+            description: Pas d'alertes par mot-clé
+          resume:
+            name: resume
+            aliases: []
+            description: Reprendre les alertes par mot-clé
+      replylock:
+        name: replylock
+        aliases: []
+        description: Verrouillez ou déverrouillez votre courant /r partenaire jusqu'à la fermeture
+      reload:
+        name: reload
+        aliases: []
+        description: Recharger les fichiers de configuration et de langue
+  channel:
+    description: Changer la chaîne dans laquelle vous écrivez, ou écrire un message là-bas
+    aliases: []
+    args:
+      channel: CHANNEL
+      message: MESSAGE
+    sub:
+      list:
+        name: list
+        aliases: []
+        description: Tous les canaux; cliquez sur un pour y écrire
+      join:
+        name: join
+        aliases: []
+        description: Afficher encore une chaîne
+        args:
+          channel: CHANNEL
+      leave:
+        name: leave
+        aliases: []
+        description: Cacher un canal
+        args:
+          channel: CHANNEL
+  msg:
+    description: Envoyer un message privé
+    aliases: []
+    args:
+      player: PLAYER
+      message: MESSAGE
+  reply:
+    description: Répondez à votre dernier message privé
+    aliases: []
+    args:
+      message: MESSAGE
+  ignore:
+    description: Ignorer ou désigner un joueur ; sans nom, la liste d'exclusion s'ouvre
+    aliases: []
+    args:
+      player: PLAYER
+    sub:
+      list:
+        name: list
+        aliases: []
+        description: Joueurs que vous ignorez
+  socialspy:
+    description: Voir les messages privés et les canaux espions d'autres joueurs
+    aliases: []
+  mute:
+    description: Mute un joueur pour un temps (30m, 2h, 7d) ou jusqu'à ce qu'il ne soit pas muté ; sans nom la liste des muets
+      s'ouvre
+    aliases: []
+    args:
+      player: PLAYER
+      time-reason: '[TIME] [REASON]'
+  unmute:
+    description: Démutez un joueur
+    aliases: []
+    args:
+      player: PLAYER
+  clearchat:
+    description: Effacer le chat pour tout le monde (le personnel reste inchangé)
+    aliases: []
+  slowmode:
+    description: Mode lent pour tous les canaux ou un seul canal
+    aliases: []
+    args:
+      seconds: SECONDSArrêt
+      channel: CHANNEL
+reply-lock-on: <green>Répondre partenaire verrouillé à {player} jusqu'à ce que vous vous déconnectiez. Utilisation /vchat
+  replylock pour débloquer.
+reply-lock-off: <green>Partenaire de réponse déverrouillé; /r suit à nouveau votre dernière conversation privée.
+keyword-hit: '<yellow>{player} dans {channel}: mot clé {keyword}'
+keywords-list: '<gold>Mots clés ({count}/{limit}): <white>{list}'
+keywords-disabled: <gray>Les alertes par mots clés sont désactivées par le serveur.
+keywords-active: <green>Alertes par mots clés actives. Gérer avec /vchat keywords add|remove PHRASE ou pause|resume.
+keywords-paused: <gray>Les alertes par mots clés ont été interrompues. Les phrases restent sauvées; /vchat keywords resume
+  permet de nouveau.
+keyword-added: <green>Mot-clé enregistré. Les correspondances littéraires ignorent le cas des lettres.
+keyword-invalid: '<red>Utilisez une phrase unique de 2-48 caractères sans caractères de contrôle. Limite : {limit} phrases.'
+keyword-removed: <green>Mot-clé enlevé.
+keyword-missing: <red>Cette phrase n'est pas sur votre liste de mots clés.
+keyword-test-hit: '<green>Aperçu : matches {keyword}. Ce texte n''a pas été envoyé au chat.'
+keyword-test-miss: '<gray>Aperçu: aucune correspondance entre vos phrases actives enregistrées.'
+
+# Free feature release: reports
+reports:
+  previous: "Page précédente"
+  next: "Page suivante"
+  mute-reason: "Signalement {id} : {reason}"
+  title: "Signalements"
+  submit: "Signaler un joueur"
+  player-prompt: "Nom du joueur"
+  reason-prompt: "Décrivez les faits (500 caractères maximum). L’équipe examinera le signalement."
+  by: "Signalé par {player}"
+  open: "Signalement ouvert · allégation non vérifiée"
+  closed: "Résolu"
+  expired: "Expiré après 30 jours"
+  case: "Signalement : {player}"
+  current-mute: "Restriction de chat actuelle"
+  none: "Aucune"
+  back: "Retour"
+  note: "Ajouter une note"
+  note-prompt: "Note ou motif de décision (500 caractères maximum)"
+  resolve: "Résoudre le signalement"
+  reopen: "Rouvrir le signalement"
+  mute: "Appliquer un silence temporaire"
+  unmute: "Lever le silence"
+  duration-prompt: "Durée : 10m, 30m, 1h ; maximum 7d"
+  action-confirm: "Appliquer cette action au joueur signalé ? Vérifiez les faits. L’historique garde la demande ; la restriction actuelle indique le résultat."
+  event-note: "Note de l’équipe"
+  event-resolve: "Signalement résolu"
+  event-reopen: "Signalement rouvert"
+  event-mute-request: "Silence temporaire demandé"
+  event-unmute-request: "Levée du silence demandée"
+  result-saved: "<green>Signalement ou modification enregistré."
+  result-invalid: "<red>Joueur, texte ou durée invalide. Un signalement expire après 30 jours."
+  result-limited: "<red>Attendez une minute ; pas de doublon ouvert. Limites : 10 signalements ouverts par joueur, 100 notes par dossier, 1000 dossiers."
+  result-missing: "<red>Signalement introuvable."
+  result-unavailable: "<red>Stockage indisponible. Modification non enregistrée."
+panel:
+  empty: "Aucune entrée."
+  stale: "Cette entrée a changé. Rouvrez le menu."
+  page: "Page {page} sur {pages}"
+  channels: "Canaux"
+  select: "Sélectionnez une entrée pour voir ses détails."
+  audience: "Destinataires"
+  shortcut: "Raccourci"
+  command: "Commande"
+  cost: "Coût par message"
+  slow: "Mode lent"
+  focus: "Écrire ici"
+  listen: "Afficher ce canal"
+  console: "Console"
+  moderation: "Gérez le chat et examinez les signalements."
+  slow-seconds: "Mode lent (secondes ; 0 = désactivé)"
+  by: "Par"
+  case-id: "Identifiant du dossier"
+  reporter: "Signalé par"
+  created: "Créé le"
+  state: "État"
+  open-case: "Ouvrir le dossier"
+  history: "Historique du dossier"
+  note: "Note"
+  inventory-slot: "Emplacement d’inventaire {slot}"
+  equipment-slot: "Emplacement d’équipement {slot}"
+  item: "Objet"
+  amount: "Quantité"
+  read-only: "Copie en lecture seule. Les objets ne peuvent pas être déplacés."
+  inventory: "Inventaire"
+  inventory-view: "Voir l’inventaire original"
