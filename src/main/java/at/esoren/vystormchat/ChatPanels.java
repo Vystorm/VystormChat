@@ -126,6 +126,8 @@ final class ChatPanels {
             case "ignored" -> Settings.Feature.IGNORE;
             case "mutes" -> Settings.Feature.MUTES;
             case "reports", "report" -> Settings.Feature.REPORTS;
+            case "chat", "moderation" -> Settings.Feature.CHAT_MENU;
+            case "showcase" -> Settings.Feature.SHOWCASE;
             default -> null;
         };
     }
@@ -137,6 +139,11 @@ final class ChatPanels {
             case "ignored", "unignore", "add-ignore" -> Settings.Feature.IGNORE;
             case "mutes", "unmute", "mute-player", "case-mute", "case-unmute" -> Settings.Feature.MUTES;
             case "reports", "submit", "case", "note", "status" -> Settings.Feature.REPORTS;
+            case "listen" -> Settings.Feature.CHANNEL_CHOICE;
+            case "spy" -> Settings.Feature.SOCIAL_SPY;
+            case "clear" -> Settings.Feature.CLEAR_CHAT;
+            case "slow" -> Settings.Feature.SLOW_MODE;
+            case "settings" -> Settings.Feature.CHAT_MENU;
             default -> null;
         };
     }
@@ -282,7 +289,7 @@ final class ChatPanels {
             if (slow > 0) fields.add(new Field(text(p, "panel.slow"), Durations.format(slow * 1000L)));
             List<Control> controls = new ArrayList<>();
             if (!focused && c.writable(p::hasPermission)) controls.add(button(p, "focus", "panel.focus", Material.FEATHER, c.id(), false));
-            if (c.readable(p::hasPermission) && c.leavable()) controls.add(new Control("listen", text(p, "panel.listen"), Material.OAK_SIGN, c.id(), Kind.TOGGLE, profile.listening(c), false, null));
+            if (c.readable(p::hasPermission) && c.leavable() && !off(Settings.Feature.CHANNEL_CHOICE)) controls.add(new Control("listen", text(p, "panel.listen"), Material.OAK_SIGN, c.id(), Kind.TOGGLE, profile.listening(c), false, null));
             Material icon = Material.matchMaterial(c.icon());
             rows.add(new Row(c.id(), c.displayName(), text(p, "menu.state-" + state), Ui.item(icon == null ? Material.OAK_SIGN : icon), fields, controls));
         }
@@ -292,7 +299,7 @@ final class ChatPanels {
             UUID partner = plugin.messages().partner(p.getUniqueId());
             if (partner != null) controls.add(new Control("reply", text(p, "menu.reply", "player", partner.equals(PrivateMessages.CONSOLE) ? text(p, "panel.console") : ChatMenu.name(partner)), Material.FEATHER, "", Kind.BUTTON, null, true, null));
         }
-        if (permission(p, "spy")) controls.add(new Control("spy", text(p, "settings.spy"), Material.ENDER_EYE, "", Kind.TOGGLE, profile.spy(), false, null));
+        if (permission(p, "spy") && !off(Settings.Feature.SOCIAL_SPY)) controls.add(new Control("spy", text(p, "settings.spy"), Material.ENDER_EYE, "", Kind.TOGGLE, profile.spy(), false, null));
         controls.add(button(p, "settings", "menu.settings", Material.COMPARATOR, "", true));
         if (!off(Settings.Feature.REPORTS)) controls.add(button(p, "submit", "reports.submit", Material.WRITABLE_BOOK, "", true));
         if (permission(p, "ignore") && !off(Settings.Feature.IGNORE)) footer.add(button(p, "ignored", "menu.ignored-title", Material.STRUCTURE_VOID, "", true));
@@ -318,8 +325,8 @@ final class ChatPanels {
 
     private Data moderation(Player p) {
         List<Control> controls = new ArrayList<>(), footer = new ArrayList<>();
-        if (permission(p, "clearchat")) controls.add(new Control("clear", text(p, "menu.clear"), Material.SPONGE, "", Kind.BUTTON, null, false, text(p, "dialog.clear-question")));
-        if (permission(p, "slowmode")) controls.add(new Control("slow", text(p, "panel.slow-seconds"), Material.CLOCK, "", Kind.NUMBER, plugin.service().slowMode(null), false, null));
+        if (permission(p, "clearchat") && !off(Settings.Feature.CLEAR_CHAT)) controls.add(new Control("clear", text(p, "menu.clear"), Material.SPONGE, "", Kind.BUTTON, null, false, text(p, "dialog.clear-question")));
+        if (permission(p, "slowmode") && !off(Settings.Feature.SLOW_MODE)) controls.add(new Control("slow", text(p, "panel.slow-seconds"), Material.CLOCK, "", Kind.NUMBER, plugin.service().slowMode(null), false, null));
         if (permission(p, "mute") && !off(Settings.Feature.MUTES)) {
             footer.add(button(p, "mutes", "menu.mutes-title", Material.PAPER, "", true));
             controls.add(button(p, "mute-player", "menu.mute-player", Material.LEAD, "", true));

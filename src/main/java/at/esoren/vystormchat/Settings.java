@@ -14,8 +14,63 @@ import org.bukkit.configuration.file.FileConfiguration;
 final class Settings {
     enum FilterAction { CENSOR, BLOCK }
 
-    /** Features with an own on/off switch: reports.enabled, private-messages.enabled, ignore.enabled, mutes.enabled. */
-    enum Feature { REPORTS, PRIVATE_MESSAGES, IGNORE, MUTES }
+    /**
+     * Every feature with its on/off key in config.yml (all on by default; a missing key counts as on). The description
+     * in {@code /vadmin features} is the language key {@code switches.<id>}. Keys that existed before 1.17.0 keep
+     * their names. While {@link #CHAT} is off every other feature counts as off too.
+     */
+    enum Feature {
+        /** Master switch: Vystorm Chat leaves the server chat alone and its commands are switched off. */
+        CHAT("chat.enabled"),
+        QUICK_PREFIXES("quick-prefixes.enabled"),
+        PAID_CHANNELS("paid-channels.enabled"),
+        CHANNEL_CHOICE("channel-choice.enabled"),
+        NOBODY_HEARD("notify-nobody-heard"),
+        FAMILY_LINKS("family-links.enabled"),
+        CLIENT_TABS("client-tabs"),
+        NAME_FORMATS("name-formats.enabled"),
+        PLACEHOLDERAPI("placeholderapi"),
+        HOVER_CARDS("hover-cards.enabled"),
+        TIMESTAMPS("timestamps.enabled"),
+        SHOWCASE("showcase.enabled"),
+        EMOJIS("emojis.enabled"),
+        LINKS("links.enabled"),
+        MENTIONS("mentions.enabled"),
+        PLAIN_NAMES("mentions.plain-names"),
+        MENTION_ACTION_BAR("mentions.action-bar"),
+        PLAYER_FORMATTING("player-formatting.enabled"),
+        KEYWORDS("keyword-alerts.enabled"),
+        PRIVATE_MESSAGES("private-messages.enabled"),
+        IGNORE("ignore.enabled"),
+        SOCIAL_SPY("social-spy.enabled"),
+        SPAM("moderation.spam.enabled"),
+        FILTER("moderation.filter.enabled"),
+        NOTIFY_STAFF("moderation.notify-staff"),
+        MUTES("mutes.enabled"),
+        CLEAR_CHAT("clear-chat.enabled"),
+        SLOW_MODE("slow-mode.enabled"),
+        REPORTS("reports.enabled"),
+        LOG("log.enabled"),
+        CONSOLE_LOG("console-log"),
+        ANNOUNCEMENTS("announcements.enabled"),
+        BUBBLES("bubbles.enabled"),
+        CHAT_MENU("chat-menu.enabled"),
+        RELAY("relay.enabled"),
+        /** Read once when the plugin starts. */
+        TUTORIAL("tutorial.enabled");
+
+        final String path;
+
+        Feature(String path) { this.path = path; }
+
+        /** Language key of the one-line description. */
+        String description() { return "switches." + name().toLowerCase(Locale.ROOT).replace('_', '-'); }
+
+        boolean needsRestart() { return this == TUTORIAL; }
+    }
+
+    /** Switched-off features as written in config.yml (without the master rule). */
+    final Set<Feature> off;
 
     final Map<String, Channel> channels;
     final String defaultChannel;
@@ -67,6 +122,9 @@ final class Settings {
     final Set<String> relayChannels;
 
     Settings(FileConfiguration config, Logger log) {
+        Set<Feature> switchedOff = java.util.EnumSet.noneOf(Feature.class);
+        for (Feature feature : Feature.values()) if (!config.getBoolean(feature.path, true)) switchedOff.add(feature);
+        off = java.util.Collections.unmodifiableSet(switchedOff);
         channels = Channel.parseAll(config.getConfigurationSection("channels"), log);
         if (channels.isEmpty()) {
             log.warning("No valid channel in config.yml; using a plain global channel");
@@ -91,18 +149,18 @@ final class Settings {
             pattern = "HH:mm:ss";
         }
         timestampFormat = pattern;
-        notifyNobodyHeard = config.getBoolean("notify-nobody-heard", true);
-        consoleLog = config.getBoolean("console-log", true);
-        placeholderApi = config.getBoolean("placeholderapi", true);
+        notifyNobodyHeard = enabled(Feature.NOBODY_HEARD);
+        consoleLog = enabled(Feature.CONSOLE_LOG);
+        placeholderApi = enabled(Feature.PLACEHOLDERAPI);
         trustedPlaceholders = new HashSet<>();
         for (String token : config.getStringList("placeholderapi-trusted")) trustedPlaceholders.add(placeholderKey(token));
         relayChannels = new HashSet<>(config.isList("relay.only-channels") ? lower(config.getStringList("relay.only-channels")) : List.of("global"));
-        clientTabs = config.getBoolean("client-tabs", true);
+        clientTabs = enabled(Feature.CLIENT_TABS);
         maxLength = Math.clamp(config.getInt("max-message-length", 256), 16, 256);
 
-        mentionsEnabled = config.getBoolean("mentions.enabled", true);
-        mentionsPlainNames = config.getBoolean("mentions.plain-names", true);
-        mentionActionBar = config.getBoolean("mentions.action-bar", true);
+        mentionsEnabled = enabled(Feature.MENTIONS);
+        mentionsPlainNames = enabled(Feature.PLAIN_NAMES);
+        mentionActionBar = enabled(Feature.MENTION_ACTION_BAR);
         mentionHighlight = config.getString("mentions.highlight", "<aqua><mention></aqua>");
         mentionHighlightSelf = config.getString("mentions.highlight-self", "<yellow><bold><mention></bold></yellow>");
         mentionSound = config.getString("mentions.sound", "entity.experience_orb.pickup");
@@ -110,8 +168,8 @@ final class Settings {
         mentionPitch = (float) config.getDouble("mentions.pitch", 1.4);
         mentionCooldownMillis = Math.max(0, config.getInt("mentions.cooldown-seconds", 3)) * 1000L;
 
-        showcaseEnabled = config.getBoolean("showcase.enabled", true);
-        emojisEnabled = config.getBoolean("emojis.enabled", true);
+        showcaseEnabled = enabled(Feature.SHOWCASE);
+        emojisEnabled = enabled(Feature.EMOJIS);
         emojis = Emojis.read(config.getConfigurationSection("emojis.codes"));
         itemTokens = tokens(config.getStringList("showcase.item"), List.of("[item]", "[i]"));
         inventoryTokens = tokens(config.getStringList("showcase.inventory"), List.of("[inv]", "[inventory]"));
@@ -124,7 +182,7 @@ final class Settings {
 
         ConfigurationSection spamSection = config.getConfigurationSection("moderation.spam");
         spam = spamSection == null ? SpamGuard.Settings.OFF : new SpamGuard.Settings(
-                spamSection.getBoolean("enabled", true),
+                spamSection.getBoolean("enabled", true) && enabled(Feature.CHAT),
                 Math.max(0, spamSection.getInt("repeat-seconds", 30)) * 1000L,
                 Math.max(0, spamSection.getInt("flood-messages", 4)),
                 Math.max(0, spamSection.getInt("flood-seconds", 5)) * 1000L,
@@ -132,19 +190,19 @@ final class Settings {
                 Math.clamp(spamSection.getInt("caps-max-percent", 70), 1, 100),
                 "block".equalsIgnoreCase(spamSection.getString("caps-action", "lowercase")),
                 Math.max(0, spamSection.getInt("max-repeated-characters", 4)));
-        boolean filterOn = config.getBoolean("moderation.filter.enabled", true);
+        boolean filterOn = enabled(Feature.FILTER);
         filter = filterOn ? WordFilter.of(config.getStringList("moderation.filter.words"), config.getStringList("moderation.filter.regex"),
                 config.getString("moderation.filter.replacement", "*"), log) : WordFilter.NONE;
         filterAction = action(config.getString("moderation.filter.action", "censor"));
-        notifyStaffOnBlock = config.getBoolean("moderation.notify-staff", true);
+        notifyStaffOnBlock = enabled(Feature.NOTIFY_STAFF);
         mutedCommands = new HashSet<>();
         for (String command : config.getStringList("moderation.muted-commands")) mutedCommands.add(command.toLowerCase(Locale.ROOT).replaceFirst("^/", "").trim());
         clearLines = Math.clamp(config.getInt("moderation.clear-lines", 100), 10, 300);
 
-        reportsEnabled = config.getBoolean("reports.enabled", true);
-        privateMessagesEnabled = config.getBoolean("private-messages.enabled", true);
-        ignoreEnabled = config.getBoolean("ignore.enabled", true);
-        mutesEnabled = config.getBoolean("mutes.enabled", true);
+        reportsEnabled = enabled(Feature.REPORTS);
+        privateMessagesEnabled = enabled(Feature.PRIVATE_MESSAGES);
+        ignoreEnabled = enabled(Feature.IGNORE);
+        mutesEnabled = enabled(Feature.MUTES);
 
         pmTo = config.getString("private-messages.format-to", "<gray>[<white>me</white> <dark_gray>→</dark_gray> <name>]</gray> <white><message>");
         pmFrom = config.getString("private-messages.format-from", "<gray>[<name> <dark_gray>→</dark_gray> <white>me</white>]</gray> <white><message>");
@@ -153,11 +211,11 @@ final class Settings {
         pmVolume = (float) config.getDouble("private-messages.volume", 0.6);
         pmPitch = (float) config.getDouble("private-messages.pitch", 1.6);
 
-        keywordsEnabled = config.getBoolean("keyword-alerts.enabled", true);
+        keywordsEnabled = enabled(Feature.KEYWORDS);
         keywordLimit = Math.clamp(config.getInt("keyword-alerts.max-keywords", 10), 1, KeywordAlerts.MAX_KEYWORDS);
         keywordCooldownMillis = Math.clamp(config.getInt("keyword-alerts.cooldown-seconds", 10), 0, 3600) * 1000L;
 
-        logEnabled = config.getBoolean("log.enabled", true);
+        logEnabled = enabled(Feature.LOG);
         logMaxMegabytes = Math.max(0.1, config.getDouble("log.max-file-mb", 10.0));
         logKeepDays = Math.max(0, config.getInt("log.keep-days", 30));
 
@@ -204,7 +262,11 @@ final class Settings {
     }
 
     /** Whether messages of this channel stay in the server chat, where other plugins (DiscordSRV ...) see them. */
-    boolean relayed(Channel channel) { return relayChannels.contains("*") || relayChannels.contains(channel.id().toLowerCase(Locale.ROOT)); }
+    boolean relayed(Channel channel) {
+        // relay.enabled off: no message stays in the server chat, so no other plugin sees any of them
+        if (!enabled(Feature.RELAY)) return false;
+        return relayChannels.contains("*") || relayChannels.contains(channel.id().toLowerCase(Locale.ROOT));
+    }
 
     /** Whether a PlaceholderAPI token (with or without %) may keep its colours and tags. */
     boolean trustedPlaceholder(String token) { return trustedPlaceholders.contains(placeholderKey(token)); }
@@ -216,14 +278,9 @@ final class Settings {
         return key;
     }
 
-    /** Whether the feature is switched on in config.yml. */
+    /** Whether the feature is switched on in config.yml (every feature is off while chat.enabled is off). */
     boolean enabled(Feature feature) {
-        return switch (feature) {
-            case REPORTS -> reportsEnabled;
-            case PRIVATE_MESSAGES -> privateMessagesEnabled;
-            case IGNORE -> ignoreEnabled;
-            case MUTES -> mutesEnabled;
-        };
+        return !off.contains(feature) && (feature == Feature.CHAT || !off.contains(Feature.CHAT));
     }
 
     Channel channel(String id) { return id == null ? null : channels.get(id.toLowerCase(Locale.ROOT)); }

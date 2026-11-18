@@ -41,6 +41,46 @@ final class ChatListener implements Listener {
         plugin.lang().send(event.getPlayer(), denied.key(), denied.placeholders());
     }
 
+    /**
+     * chat.enabled off: the plugin's /msg (any of its names) steps aside and the vanilla /msg runs instead, so private
+     * messages work as on a server without the plugin. Applies at once, no restart. An explicit namespace
+     * ({@code /vystormchat:msg}) and /reply (vanilla has none) keep the plugin's off message.
+     */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPrivateMessageWhileOff(PlayerCommandPreprocessEvent event) {
+        if (!plugin.off(Settings.Feature.CHAT)) return;
+        String vanilla = vanillaMessage(event.getMessage(), this::ownMsgLabel);
+        if (vanilla != null) event.setMessage(vanilla);
+    }
+
+    /** The same for the console. */
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onConsolePrivateMessageWhileOff(org.bukkit.event.server.ServerCommandEvent event) {
+        if (!plugin.off(Settings.Feature.CHAT)) return;
+        String vanilla = vanillaMessage(event.getCommand(), this::ownMsgLabel);
+        if (vanilla != null) event.setCommand(vanilla);
+    }
+
+    /** {@code line} sent to the vanilla /msg when its label reaches this plugin's /msg, else {@code null}. */
+    static String vanillaMessage(String line, java.util.function.Predicate<String> ownMsgLabel) {
+        boolean slash = line.startsWith("/");
+        String[] parts = (slash ? line.substring(1) : line).split(" ", 2);
+        String label = parts[0].toLowerCase(Locale.ROOT);
+        if (label.isEmpty() || label.indexOf(':') >= 0 || !ownMsgLabel.test(label)) return null;
+        return (slash ? "/" : "") + "minecraft:msg" + (parts.length > 1 ? " " + parts[1] : "");
+    }
+
+    /**
+     * Whether {@code label} reaches this plugin's /msg: its English name (unless another plugin has /msg), a fixed alias
+     * no other command took, or an active localized alias. Labels of other plugins (an Essentials /msg, a /pm) stay theirs.
+     */
+    private boolean ownMsgLabel(String label) {
+        return plugin.core().command().find(label)
+                .filter(r -> r.plugin() == plugin && "msg".equals(r.label()))
+                .filter(r -> !label.equals("msg") || r.labelConflict() == null)
+                .isPresent();
+    }
+
     /** The English label of a localized Core alias (/nachricht → msg), else the label itself. */
     private String english(String label) {
         return plugin.core().command().find(label).map(r -> r.label()).orElse(label);

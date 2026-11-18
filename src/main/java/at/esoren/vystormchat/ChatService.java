@@ -81,6 +81,8 @@ final class ChatService {
     }
 
     int slowMode(String channel) {
+        Settings s = settings;
+        if (s != null && !s.enabled(Settings.Feature.SLOW_MODE)) return 0; // slow-mode.enabled off: the set times wait
         return Math.max(slowMode.getOrDefault(SLOW_ALL, 0), channel == null ? 0 : slowMode.getOrDefault(channel, 0));
     }
 
@@ -95,6 +97,7 @@ final class ChatService {
      */
     Outcome prepare(Player sender, Channel channel, String input, Source source, Collection<? extends Player> candidates) {
         Settings s = settings;
+        if (!s.enabled(Settings.Feature.CHAT)) return new Denied("feature-off");
         long now = System.currentTimeMillis();
         UUID id = sender.getUniqueId();
         MuteStore.Mute mute = plugin.mutes().active(id, now);
@@ -105,6 +108,8 @@ final class ChatService {
         if (state == null) return new Denied("busy");
         String problem = Visibility.writeProblem(channel, state, sender::hasPermission);
         if (problem != null) return new Denied(problem, "channel", channel.displayName());
+        // family-links.enabled off: party, city, faction and region chats and forwarded channels are switched off
+        if (!s.enabled(Settings.Feature.FAMILY_LINKS) && familyLink(channel)) return new Denied("feature-off");
 
         String text = clean(input);
         if (text.isEmpty()) return new Ignored();
@@ -119,7 +124,7 @@ final class ChatService {
         }
 
         Set<PlayerText.Style> styles = EnumSet.noneOf(PlayerText.Style.class);
-        styles.addAll(PlayerText.Style.of(sender::hasPermission));
+        if (s.enabled(Settings.Feature.PLAYER_FORMATTING)) styles.addAll(PlayerText.Style.of(sender::hasPermission));
         Object screened = screen(sender, text, styles, channel.id(), id.toString());
         if (screened instanceof Denied denied) return denied;
         text = (String) screened;
@@ -132,7 +137,7 @@ final class ChatService {
         boolean inventory = !forward && s.showcaseEnabled && containsAny(lower, s.inventoryTokens) && sender.hasPermission("vystormchat.showcase.inventory");
         boolean position = !forward && s.showcaseEnabled && containsAny(lower, s.positionTokens) && sender.hasPermission("vystormchat.showcase.position");
         Money money = plugin.hooks().money();
-        double cost = channel.cost() > 0 && money != null && !sender.hasPermission("vystormchat.bypass.cost") ? channel.cost() : 0;
+        double cost = channel.cost() > 0 && money != null && s.enabled(Settings.Feature.PAID_CHANNELS) && !sender.hasPermission("vystormchat.bypass.cost") ? channel.cost() : 0;
         Showcase.Snapshot snapshot = Showcase.Snapshot.NONE;
         if (item || inventory || position || cost > 0) {
             Paid paid = plugin.onMain(() -> {
@@ -145,7 +150,7 @@ final class ChatService {
         }
 
         Profile own = plugin.profiles().cached(id);
-        if (own != null && !own.listening(channel)) own.listen(channel, true);
+        if (own != null && s.enabled(Settings.Feature.CHANNEL_CHOICE) && !own.listening(channel)) own.listen(channel, true);
         lastSent.computeIfAbsent(id, key -> new ConcurrentHashMap<>()).put(channel.id(), now);
         if (forward) return new Forward(channel.forwardCommand(), text);
 
@@ -160,9 +165,9 @@ final class ChatService {
             PlayerState viewerState = plugin.states().get(viewer.getUniqueId());
             if (viewerState == null) continue;
             Profile profile = plugin.profiles().cached(viewer.getUniqueId());
-            boolean listening = profile == null || profile.listening(channel);
+            boolean listening = listens(s, profile, channel);
             boolean ignoring = !exempt && s.ignoreEnabled && profile != null && profile.ignores(id);
-            boolean spying = profile != null && profile.spy() && viewer.hasPermission("vystormchat.spy");
+            boolean spying = s.enabled(Settings.Feature.SOCIAL_SPY) && profile != null && profile.spy() && viewer.hasPermission("vystormchat.spy");
             Visibility.Reach result = Visibility.reach(channel, state, viewerState, viewer::hasPermission, listening, ignoring, spying);
             if (result != Visibility.Reach.NONE) reach.put(viewer.getUniqueId(), result);
         }
@@ -198,7 +203,7 @@ final class ChatService {
                 else text = raw.text();
             }
         }
-        if (!sender.hasPermission("vystormchat.links")) {
+        if (s.enabled(Settings.Feature.LINKS) && !sender.hasPermission("vystormchat.links")) {
             String censored = Links.censor(text, s.allowedDomains, s.linkReplacement);
             if (censored != null) {
                 if (s.linkAction == Settings.FilterAction.BLOCK) return new Denied("link-blocked");
@@ -206,6 +211,20 @@ final class ChatService {
             }
         }
         return text;
+    }
+
+    /** A channel that needs another Vystorm plugin: party, city, faction, region chat and channels forwarded to a command. */
+    static boolean familyLink(Channel channel) {
+        return channel.scope().group() || channel.scope() == Channel.Scope.REGION || !channel.forwardCommand().isEmpty();
+    }
+
+    /**
+     * Whether a viewer receives a channel: their own choice, or with channel-choice.enabled off the channel's default
+     * (auto-join channels for everyone, opt-in channels for nobody).
+     */
+    static boolean listens(Settings s, Profile profile, Channel channel) {
+        if (!s.enabled(Settings.Feature.CHANNEL_CHOICE)) return !channel.leavable() || channel.autoJoin();
+        return profile == null || profile.listening(channel);
     }
 
     static boolean containsAny(String lower, Set<String> tokens) {

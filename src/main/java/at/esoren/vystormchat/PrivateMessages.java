@@ -113,7 +113,7 @@ final class PrivateMessages {
                     return;
                 }
             }
-            styles.addAll(PlayerText.Style.of(sender::hasPermission));
+            if (s.enabled(Settings.Feature.PLAYER_FORMATTING)) styles.addAll(PlayerText.Style.of(sender::hasPermission));
             Object screened = plugin.service().screen(sender, text, styles, "msg", sender.getUniqueId() + ":msg:" + to.getName());
             if (screened instanceof ChatService.Denied denied) { lang.send(sender, denied.key(), denied.placeholders()); return; }
             text = (String) screened;
@@ -132,7 +132,7 @@ final class PrivateMessages {
         }
         Component spy = Formats.render(s.pmSpy, null, Placeholder.unparsed("sender", from.getName()), Placeholder.unparsed("receiver", to.getName()),
                 Placeholder.component("message", body));
-        for (Player staff : Bukkit.getOnlinePlayers()) {
+        if (s.enabled(Settings.Feature.SOCIAL_SPY)) for (Player staff : Bukkit.getOnlinePlayers()) {
             if (staff == from || staff == to || !staff.hasPermission("vystormchat.spy")) continue;
             Profile profile = plugin.profiles().cached(staff.getUniqueId());
             if (profile != null && profile.spy()) plugin.core().compat().platform().sendMessage(staff, spy);
@@ -152,6 +152,7 @@ final class PrivateMessages {
 
     private Component body(String text, Set<PlayerText.Style> styles, boolean linksAllowed, Settings s) {
         Component body = PlayerText.parse(text, styles);
+        if (!s.enabled(Settings.Feature.LINKS)) return body;
         return body.replaceText(TextReplacementConfig.builder().match(Links.LINK).replacement((match, builder) -> {
             String link = Links.trimTrailing(match.group(1));
             if (!linksAllowed && !Links.allowed(link, s.allowedDomains)) return builder;

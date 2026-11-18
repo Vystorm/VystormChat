@@ -88,7 +88,7 @@ final class Delivery {
         if (!(viewer instanceof Player player)) return line("en", null, false, false, false);
         UUID id = player.getUniqueId();
         Profile profile = service.plugin().profiles().cached(id);
-        boolean timestamps = profile != null && profile.timestamps();
+        boolean timestamps = settings.enabled(Settings.Feature.TIMESTAMPS) && profile != null && profile.timestamps();
         boolean spy = reach.get(id) == Visibility.Reach.SPY;
         String language = lang.language(player);
         if (mentions(id)) return line(language, id, spy, timestamps);
@@ -123,8 +123,10 @@ final class Delivery {
     /** The sender's name from the name format, with hover card and click-to-message. */
     Component name(String language) {
         return names.computeIfAbsent(language, code -> {
-            Formats.NameFormat format = settings.formats.nameFormat(sender::hasPermission);
-            Component name = Formats.render(format.format(), null, Formats.playerTags(state));
+            // name-formats.enabled off: the plain player name for everyone
+            String nameFormat = settings.enabled(Settings.Feature.NAME_FORMATS) ? settings.formats.nameFormat(sender::hasPermission).format() : "<player>";
+            Component name = Formats.render(nameFormat, null, Formats.playerTags(state));
+            if (!settings.enabled(Settings.Feature.HOVER_CARDS)) return name;
             return name.hoverEvent(HoverEvent.showText(service.hoverCard(code, state)))
                     .clickEvent(ClickEvent.suggestCommand("/msg " + state.name() + " "));
         });
@@ -144,7 +146,8 @@ final class Delivery {
         Component body = PlayerText.parse(text, styles);
         TextColor color = Formats.color(channel.color());
         if (color != null) body = body.colorIfAbsent(color);
-        body = body.replaceText(TextReplacementConfig.builder().match(Links.LINK).replacement((match, builder) -> {
+        // links.enabled off: links stay plain text, neither clickable nor removed
+        if (settings.enabled(Settings.Feature.LINKS)) body = body.replaceText(TextReplacementConfig.builder().match(Links.LINK).replacement((match, builder) -> {
             String link = Links.trimTrailing(match.group(1));
             if (!linksAllowed && !Links.allowed(link, settings.allowedDomains)) return builder;
             Component clickable = Formats.render(settings.linkFormat, null, Placeholder.unparsed("link", link))

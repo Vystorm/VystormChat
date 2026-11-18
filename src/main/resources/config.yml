@@ -3,10 +3,68 @@
 # Placeholders in channel formats: <channel> (the tag), <channel_name>, <name> (player name with hover card),
 # <message>, <player>, <display_name>, <prefix>, <suffix>, <group>, <world>, <group_name> (party/city/faction name).
 # %placeholders% from PlaceholderAPI work in channel formats when PlaceholderAPI is installed.
-# Texts players read (hover card, buttons, errors) are in lang/en.yml and lang/de.yml.
+# Texts players read (hover card, buttons, errors) are in the seven files in lang/ (en, de, fr, it, pt_br, ru, zh_cn).
+
+# Every feature has an on/off switch (all on by default). They are listed in Vystorm Core's /vadmin features and
+# apply at once without a restart, except tutorial.enabled. A switched-off feature does nothing, its commands answer
+# "This feature is switched off on this server." and its placeholders are empty. Profiles, mutes, reports, logs and
+# announcements stay saved and are used again when the switch is turned back on.
+
+# The whole plugin. Off: Vystorm Chat leaves the server chat alone (no channels, formats, filters or mutes), and every
+# command of it except /vchat reload is switched off. /msg and its aliases then go to the vanilla /msg (at once, no
+# restart); /reply has no vanilla counterpart and answers the off message.
+chat:
+  enabled: true
 
 # Channel a player writes in until they choose another one (/ch CHANNEL or the chat menu).
 default-channel: global
+
+# Quick prefixes of the channels (quick-prefix below). Off: a prefix is part of the message.
+quick-prefixes:
+  enabled: true
+
+# Prices per message (cost below). Off: every channel is free.
+paid-channels:
+  enabled: true
+
+# Players hide channels and join opt-in ones (menu, /vsettings, /channel join|leave). Off: everybody hears the channels
+# with auto-join: true and nobody the others; the choices players made are kept.
+channel-choice:
+  enabled: true
+
+# Party, city, faction and region chats, channels with a forward-command and Core's /vtrade through the trade channel.
+# Off: those channels answer that the feature is switched off and /vtrade stays Core's own.
+family-links:
+  enabled: true
+
+# Hover card on player names (lines in hover-card below) with click to message. Off: plain names.
+hover-cards:
+  enabled: true
+
+# Timestamp on hover, for players who switch it on in /vsettings. Off: no timestamps and no setting.
+timestamps:
+  enabled: true
+
+# Players with the vystormchat.format.* permissions format their own messages. Off: tags stay text for everyone.
+player-formatting:
+  enabled: true
+
+# /socialspy: staff read private messages and spy channels. Off: nobody spies; the spy choice is kept.
+social-spy:
+  enabled: true
+
+# /clearchat. Off: the command and the menu button are switched off.
+clear-chat:
+  enabled: true
+
+# /slowmode. Off: the command and the menu control are switched off and no slow mode applies.
+slow-mode:
+  enabled: true
+
+# The chat menu (/vchat, /channel without arguments, Core main menu), the chat page in /vsettings and the moderation
+# menu. Off: the menus and the page are switched off; the commands still work.
+chat-menu:
+  enabled: true
 
 # Every channel. The key is the channel id (a-z, 0-9, _ and -). Keys of one channel:
 #   display-name: name in menus and messages
@@ -213,6 +271,8 @@ channels:
 # permission "" = everyone, so keep that one last. Tags: <player>, <display_name>, <prefix>, <suffix>, <group>, <world>.
 # Prefix and suffix come from Vault (e.g. LuckPerms) and may use &-codes or MiniMessage.
 name-formats:
+  # Name formats below. Off: the plain player name for everyone.
+  enabled: true
   admin:
     permission: "vystormchat.nameformat.admin"
     format: "<prefix><red><player></red><suffix>"
@@ -241,6 +301,8 @@ placeholderapi: true
 placeholderapi-trusted: []
 
 relay:
+  # Relay control. Off: no message stays in the server chat, so plugins like DiscordSRV see no chat at all.
+  enabled: true
   # Channels whose messages go through the normal server chat, where other plugins (DiscordSRV, chat loggers,
   # chat bridges ...) see them. Messages of every other channel (staff, party, faction, local ...) are taken out
   # of the server chat and delivered by Vystorm Chat itself, so no other plugin can relay them. "*" = all channels.
@@ -301,6 +363,8 @@ emojis:
     crown: "♔"
 
 links:
+  # Link filter and clickable links. Off: links are plain text, neither clickable nor censored or blocked.
+  enabled: true
   # How links look; clickable for players with vystormchat.links and for allowed domains.
   format: "<aqua><underlined><link></underlined></aqua>"
   # Links (also bare domains and IP addresses) from players without vystormchat.links: censor or block.
@@ -394,6 +458,10 @@ keyword-alerts:
 # send and delete timed broadcasts: a text (MiniMessage or & codes), an interval in minutes and optionally one world.
 # Stored in announcements.yml. A restart starts every timer anew.
 announcements:
+  enabled: true
+
+# Tutorial in the Vystorm Core main menu (/vmenu -> Tutorials). Needs a server restart to apply.
+tutorial:
   enabled: true
 
 bubbles:

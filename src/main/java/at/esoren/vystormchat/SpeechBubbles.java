@@ -25,7 +25,7 @@ final class SpeechBubbles implements Listener {
 
     SpeechBubbles(ChatPlugin plugin) { this.plugin = plugin; }
 
-    boolean enabled() { return plugin.getConfig().getBoolean("bubbles.enabled", true); }
+    boolean enabled() { return plugin.getConfig().getBoolean("bubbles.enabled", true) && !plugin.off(Settings.Feature.CHAT); }
 
     boolean wants(Player player) {
         try { return plugin.core().settings().prefs().bool(plugin, player, PREF, true); }

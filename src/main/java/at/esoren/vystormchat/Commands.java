@@ -35,25 +35,30 @@ final class Commands {
     static List<CommandSpec> specs(ChatPlugin plugin, java.util.function.Predicate<String> taken) {
         Commands c = new Commands(plugin);
         return List.of(
-                CommandSpec.command("vchat").permission("vystormchat.use").aliases("chatmenu")
-                        .executes(ctx -> { if (ctx.sender() instanceof Player p) plugin.menu().open(p); else ctx.registration().help(ctx.sender(), ctx.label(), 1); })
-                        .sub("menu", s -> s.playerOnly().executes(ctx -> plugin.menu().open(ctx.player())))
-                        .sub("report", s -> s.playerOnly().arg(Arg.playerName("player")).arg(Arg.greedy("reason"))
+                gate(CommandSpec.command("vchat"), plugin, Settings.Feature.CHAT).permission("vystormchat.use").aliases("chatmenu")
+                        .executes(ctx -> {
+                            if (ctx.sender() instanceof Player p && !plugin.off(Settings.Feature.CHAT_MENU)) plugin.menu().open(p);
+                            else if (plugin.refuse(ctx.sender(), Settings.Feature.CHAT)) return;
+                            else ctx.registration().help(ctx.sender(), ctx.label(), 1);
+                        })
+                        .sub("menu", s -> gate(s, plugin, Settings.Feature.CHAT_MENU).playerOnly().executes(ctx -> plugin.menu().open(ctx.player())))
+                        .sub("report", s -> gate(s, plugin, Settings.Feature.REPORTS).playerOnly().arg(Arg.playerName("player")).arg(Arg.greedy("reason"))
                                 .executes(ctx -> plugin.reports().submit(ctx.player(), ctx.get("player"), ctx.get("reason"))))
-                        .sub("reports", s -> s.playerOnly().permission("vystormchat.moderate").executes(ctx -> plugin.reports().list(ctx.player(), 0)))
-                        .sub("mutes", s -> s.permission("vystormchat.mute").executes(ctx -> {
+                        .sub("reports", s -> gate(s, plugin, Settings.Feature.REPORTS).playerOnly().permission("vystormchat.moderate").executes(ctx -> plugin.reports().list(ctx.player(), 0)))
+                        .sub("mutes", s -> gate(s, plugin, Settings.Feature.MUTES).permission("vystormchat.mute").executes(ctx -> {
                             if (ctx.sender() instanceof Player p) plugin.menu().mutes(p); else c.listMutes(ctx.sender());
                         }))
-                        .sub("announcements", s -> s.permission("vystormchat.announce").playerOnly().executes(ctx -> plugin.announcements().open(ctx.player())))
-                        .sub("moderation", s -> s.aliases("mod").permission("vystormchat.moderate").playerOnly().executes(ctx -> plugin.menu().moderation(ctx.player())))
-                        .sub("emojis", s -> s.executes(ctx -> {
+                        .sub("announcements", s -> gate(s, plugin, Settings.Feature.ANNOUNCEMENTS).permission("vystormchat.announce").playerOnly().executes(ctx -> plugin.announcements().open(ctx.player())))
+                        .sub("moderation", s -> gate(s, plugin, Settings.Feature.CHAT_MENU).aliases("mod").permission("vystormchat.moderate").playerOnly().executes(ctx -> plugin.menu().moderation(ctx.player())))
+                        .sub("emojis", s -> gate(s, plugin, Settings.Feature.EMOJIS).executes(ctx -> {
+                            if (plugin.refuse(ctx.sender(), Settings.Feature.EMOJIS)) return;
                             Settings settings = plugin.service().settings();
                             if (!settings.emojisEnabled || settings.emojis.isEmpty() || !ctx.sender().hasPermission("vystormchat.emoji")) { ctx.reply("emojis-off"); return; }
                             StringBuilder list = new StringBuilder();
                             settings.emojis.forEach((code, symbol) -> list.append(list.isEmpty() ? "" : "  ").append(":").append(code).append(": ").append(symbol));
                             ctx.reply("emojis-list", "list", list.toString());
                         }))
-                        .sub("keywords", s -> s.permission("vystormchat.keywords").playerOnly()
+                        .sub("keywords", s -> gate(s, plugin, Settings.Feature.KEYWORDS).permission("vystormchat.keywords").playerOnly()
                                 .executes(c::listKeywords)
                                 .sub("add", a -> a.arg(Arg.greedy("phrase")).executes(c::addKeyword))
                                 .sub("test", a -> a.arg(Arg.greedy("message")).executes(c::testKeyword))
@@ -61,33 +66,33 @@ final class Commands {
                                         .executes(ctx -> ctx.reply(plugin.profiles().get(ctx.player().getUniqueId()).removeKeyword(ctx.get("phrase")) ? "keyword-removed" : "keyword-missing")))
                                 .sub("pause", a -> a.executes(ctx -> c.keywordState(ctx, false)))
                                 .sub("resume", a -> a.executes(ctx -> c.keywordState(ctx, true))))
-                        .sub("replylock", s -> s.permission("vystormchat.msg").playerOnly()
+                        .sub("replylock", s -> gate(s, plugin, Settings.Feature.PRIVATE_MESSAGES).permission("vystormchat.msg").playerOnly()
                                 .executes(ctx -> plugin.messages().toggleReplyLock(ctx.player())))
                         .sub("reload", s -> s.permission("vystormchat.admin").executes(ctx -> {
                             plugin.reload();
                             ctx.reply("reloaded", "channels", plugin.service().settings().channels.size(), "hooks", plugin.hooks().summary());
                         }))
                         .build(),
-                CommandSpec.command("channel").permission("vystormchat.use").aliases("ch", "channels").playerOnly()
+                gate(CommandSpec.command("channel"), plugin, Settings.Feature.CHAT).permission("vystormchat.use").aliases("ch", "channels").playerOnly()
                         .arg(Arg.word("channel").optional().suggests((ctx, prefix) -> c.channels(ctx.sender())))
                         .arg(Arg.greedy("message").optional())
                         .executes(c::channel)
                         .sub("list", s -> s.executes(ctx -> c.listChannels(ctx.player())))
-                        .sub("join", s -> s.aliases("show").arg(Arg.word("channel").suggests((ctx, prefix) -> c.channels(ctx.sender())))
+                        .sub("join", s -> gate(s, plugin, Settings.Feature.CHANNEL_CHOICE).aliases("show").arg(Arg.word("channel").suggests((ctx, prefix) -> c.channels(ctx.sender())))
                                 .executes(ctx -> c.listen(ctx, true)))
-                        .sub("leave", s -> s.aliases("hide").arg(Arg.word("channel").suggests((ctx, prefix) -> c.channels(ctx.sender())))
+                        .sub("leave", s -> gate(s, plugin, Settings.Feature.CHANNEL_CHOICE).aliases("hide").arg(Arg.word("channel").suggests((ctx, prefix) -> c.channels(ctx.sender())))
                                 .executes(ctx -> c.listen(ctx, false)))
                         .build(),
-                CommandSpec.command("msg").permission("vystormchat.msg").aliases(availableAliases(taken, "tell", "w", "whisper", "m", "pm", "dm"))
+                gate(CommandSpec.command("msg"), plugin, Settings.Feature.PRIVATE_MESSAGES).permission("vystormchat.msg").aliases(availableAliases(taken, "tell", "w", "whisper", "m", "pm", "dm"))
                         .arg(Arg.playerName("player").suggests((ctx, prefix) -> c.players(ctx.sender())))
                         .arg(Arg.greedy("message"))
                         .executes(ctx -> plugin.messages().send(ctx.sender(), ctx.<String>get("player"), ctx.<String>get("message")))
                         .build(),
-                CommandSpec.command("reply").permission("vystormchat.msg").aliases("r").playerOnly()
+                gate(CommandSpec.command("reply"), plugin, Settings.Feature.PRIVATE_MESSAGES).permission("vystormchat.msg").aliases("r").playerOnly()
                         .arg(Arg.greedy("message"))
                         .executes(ctx -> plugin.messages().reply(ctx.player(), ctx.get("message")))
                         .build(),
-                CommandSpec.command("ignore").permission("vystormchat.ignore").aliases("unignore").playerOnly()
+                gate(CommandSpec.command("ignore"), plugin, Settings.Feature.IGNORE).permission("vystormchat.ignore").aliases("unignore").playerOnly()
                         .arg(Arg.playerName("player").optional().suggests((ctx, prefix) -> c.players(ctx.sender())))
                         .executes(ctx -> {
                             String name = ctx.get("player");
@@ -95,15 +100,15 @@ final class Commands {
                         })
                         .sub("list", s -> s.executes(ctx -> c.listIgnored(ctx.player())))
                         .build(),
-                CommandSpec.command("socialspy").permission("vystormchat.spy").aliases("spy").playerOnly()
+                gate(CommandSpec.command("socialspy"), plugin, Settings.Feature.SOCIAL_SPY).permission("vystormchat.spy").aliases("spy").playerOnly()
                         .executes(ctx -> plugin.toggleSpy(ctx.player()))
                         .build(),
-                CommandSpec.command("mute").permission("vystormchat.mute")
+                gate(CommandSpec.command("mute"), plugin, Settings.Feature.MUTES).permission("vystormchat.mute")
                         .arg(Arg.playerName("player").optional().suggests((ctx, prefix) -> c.players(ctx.sender())))
                         .arg(Arg.greedy("time-reason").optional().suggests(List.of("10m", "30m", "1h", "1d", "7d", "perm")))
                         .executes(c::mute)
                         .build(),
-                CommandSpec.command("unmute").permission("vystormchat.mute")
+                gate(CommandSpec.command("unmute"), plugin, Settings.Feature.MUTES).permission("vystormchat.mute")
                         .arg(Arg.playerName("player").suggests((ctx, prefix) -> c.players(ctx.sender())))
                         .executes(ctx -> {
                             if (plugin.refuse(ctx.sender(), Settings.Feature.MUTES)) return;
@@ -112,14 +117,23 @@ final class Commands {
                             plugin.unmute(ctx.sender(), target);
                         })
                         .build(),
-                CommandSpec.command("clearchat").permission("vystormchat.clearchat").aliases("cc", "chatclear")
+                gate(CommandSpec.command("clearchat"), plugin, Settings.Feature.CLEAR_CHAT).permission("vystormchat.clearchat").aliases("cc", "chatclear")
                         .executes(ctx -> plugin.clearChat(ctx.sender()))
                         .build(),
-                CommandSpec.command("slowmode").permission("vystormchat.slowmode").aliases("slow")
+                gate(CommandSpec.command("slowmode"), plugin, Settings.Feature.SLOW_MODE).permission("vystormchat.slowmode").aliases("slow")
                         .arg(Arg.word("seconds").optional().suggests((ctx, prefix) -> List.of(ctx.valueName("off"), "3", "5", "10", "30", "60")))
                         .arg(Arg.word("channel").optional().suggests((ctx, prefix) -> new ArrayList<>(plugin.service().settings().channels.keySet())))
                         .executes(c::slowMode)
                         .build());
+    }
+
+    /**
+     * Keeps a command or subcommand out of help and tab completion while its switch (or chat.enabled) is off, asked at
+     * every completion so a switch applies at once; it still answers the off message.
+     */
+    static CommandSpec.Builder gate(CommandSpec.Builder node, ChatPlugin plugin, Settings.Feature feature) {
+        if (plugin == null) return node;
+        return node.visibleWhen(() -> plugin.service() == null || plugin.service().settings() == null || !plugin.off(feature));
     }
 
     /** Core reports localized alias collisions, but fixed aliases go straight to Bukkit first. */
@@ -128,6 +142,7 @@ final class Commands {
     }
 
     private void listKeywords(CommandContext ctx) {
+        if (plugin.refuse(ctx.sender(), Settings.Feature.KEYWORDS)) return;
         Profile profile = plugin.profiles().get(ctx.player().getUniqueId());
         ctx.reply("keywords-list", "list", String.join(", ", profile.keywords()), "count", profile.keywords().size(),
                 "limit", plugin.service().settings().keywordLimit);
@@ -136,19 +151,20 @@ final class Commands {
 
     private void addKeyword(CommandContext ctx) {
         Settings settings = plugin.service().settings();
-        if (!settings.keywordsEnabled) { ctx.reply("keywords-disabled"); return; }
+        if (!settings.keywordsEnabled) { ctx.reply("feature-off"); return; }
         boolean added = plugin.profiles().get(ctx.player().getUniqueId()).addKeyword(ctx.get("phrase"), settings.keywordLimit);
         ctx.reply(added ? "keyword-added" : "keyword-invalid", "limit", settings.keywordLimit);
     }
 
     private void keywordState(CommandContext ctx, boolean enabled) {
+        if (plugin.refuse(ctx.sender(), Settings.Feature.KEYWORDS)) return;
         plugin.profiles().get(ctx.player().getUniqueId()).keywordAlerts(enabled);
         ctx.reply(enabled ? "keywords-active" : "keywords-paused");
     }
 
     private void testKeyword(CommandContext ctx) {
         Settings settings = plugin.service().settings();
-        if (!settings.keywordsEnabled) { ctx.reply("keywords-disabled"); return; }
+        if (!settings.keywordsEnabled) { ctx.reply("feature-off"); return; }
         Profile profile = plugin.profiles().get(ctx.player().getUniqueId());
         String keyword = KeywordAlerts.match(ctx.get("message"), profile.keywords(), settings.keywordLimit);
         if (keyword == null) ctx.reply("keyword-test-miss");
@@ -159,6 +175,7 @@ final class Commands {
 
     private void channel(CommandContext ctx) {
         Player player = ctx.player();
+        if (plugin.refuse(player, Settings.Feature.CHAT)) return;
         String name = ctx.get("channel");
         if (name == null) { plugin.menu().open(player); return; }
         Settings settings = plugin.service().settings();
@@ -185,6 +202,7 @@ final class Commands {
 
     /** Clickable channel list: click a channel to write there. */
     private void listChannels(Player player) {
+        if (plugin.refuse(player, Settings.Feature.CHAT)) return;
         lang().send(player, "channel-list-header");
         Channel focus = plugin.focus(player);
         Profile profile = plugin.profiles().get(player.getUniqueId());

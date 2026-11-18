@@ -20,6 +20,7 @@ final class PaperChatListener implements Listener {
     /** Mutes first, before party chat toggles and other chat plugins get the message. */
     @EventHandler(priority = EventPriority.LOWEST)
     public void onChatMuted(AsyncChatEvent event) {
+        if (plugin.off(Settings.Feature.CHAT)) return; // chat.enabled off: the server chat stays as it is
         long now = System.currentTimeMillis();
         MuteStore.Mute mute = plugin.mutes().active(event.getPlayer().getUniqueId(), now);
         if (mute == null) return;
@@ -30,6 +31,7 @@ final class PaperChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onChat(AsyncChatEvent event) {
+        if (plugin.off(Settings.Feature.CHAT)) return;
         Player player = event.getPlayer();
         failClosed(event, () -> handle(event), failure -> {
             // never fall back to the server chat: a staff or party message would reach everyone
@@ -59,7 +61,7 @@ final class PaperChatListener implements Listener {
         String raw = PlainTextComponentSerializer.plainText().serialize(event.message());
         Channel channel = null;
         String text = raw;
-        Channel.Prefixed prefixed = Channel.quickPrefix(settings.channels.values(), raw);
+        Channel.Prefixed prefixed = settings.enabled(Settings.Feature.QUICK_PREFIXES) ? Channel.quickPrefix(settings.channels.values(), raw) : null;
         if (prefixed != null && prefixed.channel().writable(player::hasPermission)) {
             channel = prefixed.channel();
             text = prefixed.text();

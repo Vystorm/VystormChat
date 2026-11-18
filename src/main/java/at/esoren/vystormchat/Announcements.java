@@ -58,7 +58,7 @@ final class Announcements {
         for (Announcement a : entries.values()) lastSent.put(a.id(), now);
     }
 
-    boolean enabled() { return plugin.getConfig().getBoolean("announcements.enabled", true); }
+    boolean enabled() { return plugin.getConfig().getBoolean("announcements.enabled", true) && !plugin.off(Settings.Feature.CHAT); }
     List<Announcement> all() { return List.copyOf(entries.values()); }
 
     /** Every 20 seconds from the plugin timer. */
@@ -102,7 +102,7 @@ final class Announcements {
     /** The planner: one button per announcement, plus "new". */
     void open(Player player) {
         Lang lang = lang();
-        if (!enabled()) { lang.send(player, "announce.disabled"); return; }
+        if (!enabled()) { lang.send(player, "feature-off"); return; }
         List<DialogBody> body = new ArrayList<>();
         body.add(DialogBody.plainMessage(lang.component(player, entries.isEmpty() ? "announce.empty" : "announce.intro"), 300));
         List<DialogButton> buttons = new ArrayList<>();

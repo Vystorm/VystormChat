@@ -31,11 +31,12 @@ final class BukkitChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void chat(AsyncPlayerChatEvent event) {
+        if (plugin.off(Settings.Feature.CHAT)) return; // chat.enabled off: the server chat stays as it is
         try {
             String raw = event.getMessage();
             Player player = event.getPlayer();
             Settings settings = plugin.service().settings();
-            Channel.Prefixed prefixed = Channel.quickPrefix(settings.channels.values(), raw);
+            Channel.Prefixed prefixed = settings.enabled(Settings.Feature.QUICK_PREFIXES) ? Channel.quickPrefix(settings.channels.values(), raw) : null;
             Channel channel = prefixed != null && prefixed.channel().writable(player::hasPermission) ? prefixed.channel() : plugin.focus(player);
             String text = prefixed != null && prefixed.channel() == channel ? prefixed.text() : raw;
             ChatService.Outcome outcome = plugin.service().prepare(player, channel, text, ChatService.Source.CHAT, new ArrayList<>(event.getRecipients()));

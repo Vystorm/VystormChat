@@ -1,3 +1,20 @@
+## 1.17.0 — 2026-11-18
+
+- Requires Vystorm Core 0.65.0 or newer. Update Core before you update this plugin.
+- Every feature can now be switched on and off in `config.yml`. All switches are on by default, so a server that updates keeps working as before; the new keys are added to your existing `config.yml` with their comments. Each switch is listed in Core's `/vadmin features` with a one-line description in seven languages and applies at once, without a restart (only `tutorial.enabled` needs one).
+  - The whole plugin: `chat.enabled`. Off: Vystorm Chat leaves the server chat alone (no channels, formats, filters or mutes) and every command of it except `/vchat reload` is switched off. `/msg` and its aliases then go to the vanilla `/msg` at once, without a restart; `/reply` has no vanilla counterpart and answers the off message.
+  - Channels: `quick-prefixes.enabled`, `paid-channels.enabled` (off: every channel is free), `channel-choice.enabled` (off: everybody hears the auto-join channels; the players' choices are kept), `family-links.enabled` (party, city, faction and region chats, forwarded channels and `/vtrade` through the trade channel).
+  - Looks: `name-formats.enabled`, `hover-cards.enabled`, `timestamps.enabled`, `player-formatting.enabled`.
+  - Links: `links.enabled`. Off: links are plain text, neither clickable nor censored or blocked. Before this version the link filter could not be turned off.
+  - Moderation: `social-spy.enabled`, `clear-chat.enabled`, `slow-mode.enabled`.
+  - Other: `chat-menu.enabled` (chat menu, moderation menu and the page in `/vsettings`), `relay.enabled` (off: no message stays in the server chat, so plugins like DiscordSRV see no chat), `tutorial.enabled` (needs a restart).
+  - Keys that already existed keep their names and are now listed as switches too: `notify-nobody-heard`, `client-tabs`, `placeholderapi`, `console-log`, `mentions.plain-names`, `mentions.action-bar`, `moderation.notify-staff`.
+- A switched-off feature answers one shared message, "This feature is switched off on this server.", its commands are hidden from help and tab completion, and its buttons leave the chat menu, the moderation menu and `/vsettings`.
+- Tab completion and help follow a switch at once, without registering the command again.
+- Placeholders: the plugin registers its values with Vystorm Core under the namespace `chat`: the channel the player writes in and its name, the mute and its time left, party, city and faction, the Vault prefix, suffix and group, the number of ignored players, social spy and the last private message partner. Every value also answers off the server thread, so scoreboards, tab lists and chat formats can show it. Examples: `%vystorm_chat_channel_name%` (the channel the player writes in) and `{chat:muted}`. `/vadmin placeholders chat` lists them. A value of a switched-off feature is empty.
+- The off messages of keyword alerts, emoji codes and announcements are now the shared message.
+- README: the compatibility line now says what the build checks, and the stale release note was removed.
+
 ## 1.16.0 — 2026-11-17
 
 - Requires Vystorm Core 0.64.0 or newer. Update Core before you update this plugin.

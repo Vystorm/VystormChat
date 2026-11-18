@@ -2,7 +2,7 @@
 
 **Modern chat channels with menus instead of commands.** Global, local, world, trade, staff, party, city and faction chat out of the box, plus as many own channels as you like. Private messages with reply and ignore, hover cards on every name, `[item]` showcase, mentions with sound, and moderation that actually helps: anti-spam, word and link filter, mutes with reason, slow mode and a rotating chat log. Players never need to remember a command: everything is in the chat menu and in `/vsettings`.
 
-Requires **[Vystorm Core](https://www.spigotmc.org/resources/139848/) 0.64.0 or newer** (free). Supports Spigot/CraftBukkit through the Bukkit chat adapter and retains Paper/Purpur 1.20.6 – 26.x integration. Java 21 or newer; current Minecraft 26.x servers require Java 25. See COMPATIBILITY.md for the exact validation scope.
+Requires **[Vystorm Core](https://www.spigotmc.org/resources/139848/) 0.65.0 or newer** (free). What the build checks: Java 21 bytecode (`--release 21`), compiled against the Paper API 1.21.11 and, in `compat1206` and `test1206`, against Paper 1.20.6, plus unit tests of the Bukkit chat adapter that Spigot/CraftBukkit use. Use the Java version your server needs. See COMPATIBILITY.md for the exact validation scope.
 
 On servers without native dialogs, Core presents message, ignore and moderation forms as chat prompts. Chest menus and all chat features remain available. Unknown configured channel icons fall back to an oak sign; sounds unavailable on the server cannot play.
 
@@ -121,6 +121,14 @@ Use `/vchat keywords test TEXT` to privately preview the first matching phrase w
 
 The trade channel uses Core's `vystorm_core.chat.trade.send` and `.receive` (everyone).
 
+## Switches
+
+Every feature has an on/off switch in `config.yml` (all on by default, listed in Vystorm Core's `/vadmin features`, applied without a restart except `tutorial.enabled`): `chat.enabled` (the whole plugin), `quick-prefixes.enabled`, `paid-channels.enabled`, `channel-choice.enabled`, `notify-nobody-heard`, `family-links.enabled`, `client-tabs`, `name-formats.enabled`, `placeholderapi`, `hover-cards.enabled`, `timestamps.enabled`, `showcase.enabled`, `emojis.enabled`, `links.enabled`, `mentions.enabled`, `mentions.plain-names`, `mentions.action-bar`, `player-formatting.enabled`, `keyword-alerts.enabled`, `private-messages.enabled`, `ignore.enabled`, `social-spy.enabled`, `moderation.spam.enabled`, `moderation.filter.enabled`, `moderation.notify-staff`, `mutes.enabled`, `clear-chat.enabled`, `slow-mode.enabled`, `reports.enabled`, `log.enabled`, `console-log`, `announcements.enabled`, `bubbles.enabled`, `chat-menu.enabled`, `relay.enabled`, `tutorial.enabled`. A switched-off feature answers "This feature is switched off on this server."; profiles, mutes, reports, logs and announcements stay saved.
+
+## Placeholders
+
+With Vystorm Core 0.65.0 the plugin registers the namespace `chat`. Every value is async-safe, so it also answers in scoreboards, tab lists and chat formats off the server thread; a value of a switched-off feature is empty: `channel`, `channel_name`, `muted`, `mute_remaining`, `party_name`, `city_name`, `faction_name`, `prefix`, `suffix`, `group`, `ignored_count`, `spy`, `reply_partner`. Examples: `%vystorm_chat_channel_name%` (the channel the player writes in) and `{chat:muted}`. `/vadmin placeholders chat` lists them.
+
 ## Configuration
 
 `config.yml` (every key is commented in the file):
@@ -151,13 +159,9 @@ The trade channel uses Core's `vystorm_core.chat.trade.send` and `.receive` (eve
 
 Data files in `plugins/VystormChat/`: `players/<uuid>.yml` (focus channel, hidden channels, ignore list, keyword phrases and pause state, personal settings), `mutes.yml`, `logs/chat-YYYY-MM-DD[.n].log`. Texts in `lang/en.yml`, `lang/de.yml` and `lang/zh_cn.yml`.
 
-## Release
-
-- TODO: SpigotMC resource id does not exist yet; add it to the listing links once the resource is created (no update check is registered in the plugin, Vystorm Core handles bStats).
-
 ## Building
 
-Build with JDK 25; plugin and test bytecode targets Java 21. The supplied Core jar must be version 0.64.0 or newer.
+Build with JDK 25; plugin and test bytecode targets Java 21. The supplied Core jar must be version 0.65.0 or newer.
 
 `check` includes `compat1206` (all main sources compiled against Paper 1.20.6) and `test1206` (compatibility tests using the old runtime API). Supply the local server libraries with `-Ppaper1206Libraries=/path/to/smoke-1206/libraries`; the default is `<home>/source/tools/smoke-1206/libraries`. These checks work offline with cached build dependencies and do not start a server. Newer API adapters are supplied by Core, so this plugin needs no additional source set.
 

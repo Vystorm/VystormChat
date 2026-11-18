@@ -57,13 +57,16 @@ public final class ChatPlugin extends JavaPlugin {
 
     static ChatPlugin instance() { return instance; }
 
+    /** Minimum Vystorm Core: placeholders through api.placeholders(). */
+    static final String MIN_CORE = "0.65.0";
+
     /** The Core hub, for the classes of this plugin that hold the plugin. */
     API core() { return core; }
 
     @Override
     public void onEnable() {
-        if (!CoreApi.atLeast("0.64.0")) {
-            getLogger().severe("Vystorm Core 0.64.0 or newer is required; please update Core first.");
+        if (!CoreApi.atLeast(MIN_CORE)) {
+            getLogger().severe("Vystorm Core " + MIN_CORE + " or newer is required; please update Core first.");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -72,7 +75,8 @@ public final class ChatPlugin extends JavaPlugin {
         instance = this;
         if (!core.compat().server().hasDialogs()) getLogger().info("Native dialogs unavailable; chat prompts are used for messages, ignores and moderation.");
         saveDefaultConfig();
-        lang = core.lang().register(this); try { core.registerTutorial(this); } catch (RuntimeException noTutorial) { getLogger().fine("Tutorial not registered: " + noTutorial); }
+        lang = core.lang().register(this);
+        registerTutorial();
         tasks = core.tasks().of(this, "chat");
         io = Executors.newSingleThreadExecutor(runnable -> {
             Thread thread = new Thread(runnable, "VystormChat-io");
@@ -108,7 +112,7 @@ public final class ChatPlugin extends JavaPlugin {
         manager.registerEvents(bubbles, this);
         manager.registerEvents(new Showcase.Clicks(core.compat().inventory()), this);
         TradeBridge.register(this);
-        for (var spec : Commands.specs(this)) core.command().register(this, lang(), spec);
+        registerCommands();
         registerAliases();
 
         for (Player player : getServer().getOnlinePlayers()) {
@@ -125,6 +129,9 @@ public final class ChatPlugin extends JavaPlugin {
         registerSettings();
         registerPlayerMenu();
         registerConfigEditor();
+        declareSwitches();
+        try { registerPlaceholders(core.placeholders()); }
+        catch (RuntimeException failure) { getLogger().log(Level.WARNING, "Placeholders not registered", failure); }
         getLogger().info("Vystorm Chat " + getDescription().getVersion() + ": " + service.settings().channels.size() + " channels");
     }
 
@@ -158,12 +165,47 @@ public final class ChatPlugin extends JavaPlugin {
         chatLog.configure(settings.logEnabled, settings.logMaxMegabytes, settings.logKeepDays);
     }
 
-    /** Reload command: config, language, new channel commands, settings page. */
+    /** The tutorial in /vmenu unless tutorial.enabled is false; read once, because Core lists tutorials when a plugin starts. */
+    void registerTutorial() {
+        if (!getConfig().getBoolean(Settings.Feature.TUTORIAL.path, true)) return;
+        try { core.registerTutorial(this); } catch (RuntimeException noTutorial) { getLogger().fine("Tutorial not registered: " + noTutorial); }
+    }
+
+    /** Every switch in /vadmin features with its one-line description in the admin's language. */
+    private void declareSwitches() {
+        var config = core.settings().config();
+        for (Settings.Feature feature : Settings.Feature.values()) {
+            config.feature(this, feature.path, null, lang.ref(feature.description()));
+            if (feature.needsRestart()) config.activation(this, feature.path, Vystorm.vystorm_core._uiMethods.settings.SettingPolicy.Activation.RESTART);
+        }
+    }
+
+    /** The command trees, registered once; commands of switched-off features stay out of help and tab completion (asked live). */
+    private void registerCommands() {
+        for (var spec : Commands.specs(this)) core.command().register(this, lang(), spec);
+    }
+
+    /** The namespace {@code chat}; every value reads the immutable snapshots of the chat thread, so all are async-safe. */
+    void registerPlaceholders(Vystorm.vystorm_core._advancedMethods.placeholderHandler.PlaceholderInterface registry) {
+        ChatPlaceholders.register(registry, this, new ChatPlaceholders.Source() {
+            @Override public Settings settings() { return service == null ? null : service.settings(); }
+            @Override public Profile profile(java.util.UUID player) { return profiles == null ? null : profiles.cached(player); }
+            @Override public PlayerState state(java.util.UUID player) { return states == null ? null : states.get(player); }
+            @Override public MuteStore.Mute mute(java.util.UUID player, long now) { return mutes == null ? null : mutes.active(player, now); }
+            @Override public java.util.UUID partner(java.util.UUID player) { return messages == null ? null : messages.partner(player); }
+        }, key -> lang == null ? key : lang.ref(key));
+    }
+
+    /**
+     * Reload command: config, language, new channel commands, settings page. Help and tab completion ask the switches
+     * live; the command list is sent again on every reload because new channel aliases may have been added.
+     */
     void reload() {
         load();
         registerAliases();
         registerSettings();
-        for (Player player : getServer().getOnlinePlayers()) player.updateCommands();
+        try { core.command().refresh(); }
+        catch (RuntimeException failure) { getLogger().log(Level.WARNING, "Command list not sent again", failure); }
     }
 
     // ------------------------------------------------------------------ accessors
@@ -246,6 +288,7 @@ public final class ChatPlugin extends JavaPlugin {
     }
 
     void listen(Player player, Channel channel, boolean on) {
+        if (refuse(player, Settings.Feature.CHANNEL_CHOICE)) return;
         if (!channel.leavable()) { lang.send(player, "channel-not-leavable", "channel", channel.displayName()); return; }
         if (on && !channel.readable(player::hasPermission)) { lang.send(player, "channel-no-read", "channel", channel.displayName()); return; }
         profiles.get(player.getUniqueId()).listen(channel, on);
@@ -265,6 +308,7 @@ public final class ChatPlugin extends JavaPlugin {
     }
 
     void openSettings(Player player) {
+        if (refuse(player, Settings.Feature.CHAT_MENU)) return;
         try {
             if (!core.settings().openSection(player, "vystormchat:chat")) lang.send(player, "settings-unavailable");
         } catch (RuntimeException unavailable) {
@@ -273,6 +317,7 @@ public final class ChatPlugin extends JavaPlugin {
     }
 
     void toggleSpy(Player player) {
+        if (refuse(player, Settings.Feature.SOCIAL_SPY)) return;
         if (!player.hasPermission("vystormchat.spy")) { lang.send(player, "no-permission"); return; }
         Profile profile = profiles.get(player.getUniqueId());
         profile.spy(!profile.spy());
@@ -310,6 +355,7 @@ public final class ChatPlugin extends JavaPlugin {
     }
 
     void clearChat(CommandSender by) {
+        if (refuse(by, Settings.Feature.CLEAR_CHAT)) return;
         if (!by.hasPermission("vystormchat.clearchat")) { lang.send(by, "no-permission"); return; }
         int lines = service.settings().clearLines;
         Component blank = Component.text(" ");
@@ -322,6 +368,7 @@ public final class ChatPlugin extends JavaPlugin {
     }
 
     void slowMode(CommandSender by, Channel channel, int seconds) {
+        if (refuse(by, Settings.Feature.SLOW_MODE)) return;
         if (!by.hasPermission("vystormchat.slowmode")) { lang.send(by, "no-permission"); return; }
         service.slowMode(channel == null ? null : channel.id(), seconds);
         String where = channel == null ? lang.plain(by, "all-channels") : channel.displayName();
@@ -398,6 +445,7 @@ public final class ChatPlugin extends JavaPlugin {
 
     private void aliasCommand(CommandSender sender, String alias, String[] args) {
         if (!(sender instanceof Player player)) { lang.send(sender, "player-only"); return; }
+        if (refuse(player, Settings.Feature.CHAT)) return;
         Channel channel = null;
         for (Channel candidate : service.settings().channels.values()) if (candidate.aliases().contains(alias)) channel = candidate;
         if (channel == null) { lang.send(player, "channel-unknown", "channel", alias); return; }
@@ -416,7 +464,7 @@ public final class ChatPlugin extends JavaPlugin {
         }
         try {
             core.gui().registerMenu(this, "chat", lang.ref("vmenu-chat"), org.bukkit.Material.WRITABLE_BOOK,
-                    player -> player.hasPermission("vystormchat.use"), menu::open,
+                    player -> !off(Settings.Feature.CHAT_MENU) && player.hasPermission("vystormchat.use"), menu::open,
                     Vystorm.vystorm_core._uiMethods.menu.MenuCategory.COMMUNITY.group(), lang.ref("vmenu-chat-desc"));
         } catch (RuntimeException failure) {
             getLogger().log(Level.FINE, "No Core main menu entry", failure);
@@ -436,21 +484,23 @@ public final class ChatPlugin extends JavaPlugin {
             var settingsApi = core.settings();
             // only our own section: the config editor's sections belong to this plugin too and must stay
             if (settingsApi instanceof Vystorm.vystorm_core._uiMethods.settings.SettingsRegistry registry) registry.unregister(this, "chat");
+            Settings current = service.settings();
+            if (!current.enabled(Settings.Feature.CHAT_MENU)) return; // chat-menu.enabled off: no page in /vsettings
             List<Setting> list = new ArrayList<>();
-            list.add(Setting.toggle("mention-sound", lang.ref("settings.mention-sound"), lang.ref("settings.mention-sound-desc"),
+            if (current.enabled(Settings.Feature.MENTIONS)) list.add(Setting.toggle("mention-sound", lang.ref("settings.mention-sound"), lang.ref("settings.mention-sound-desc"),
                     p -> profiles.get(p.getUniqueId()).mentionSound(), (p, v) -> { profiles.get(p.getUniqueId()).mentionSound(v); return null; }));
-            list.add(Setting.toggle("message-sound", lang.ref("settings.message-sound"), lang.ref("settings.message-sound-desc"),
+            if (current.enabled(Settings.Feature.PRIVATE_MESSAGES)) list.add(Setting.toggle("message-sound", lang.ref("settings.message-sound"), lang.ref("settings.message-sound-desc"),
                     p -> profiles.get(p.getUniqueId()).messageSound(), (p, v) -> { profiles.get(p.getUniqueId()).messageSound(v); return null; }));
-            if (bubbles != null) list.add(Setting.toggle("bubbles", lang.ref("settings.bubbles"), lang.ref("settings.bubbles-desc"),
+            if (bubbles != null && bubbles.enabled()) list.add(Setting.toggle("bubbles", lang.ref("settings.bubbles"), lang.ref("settings.bubbles-desc"),
                     p -> bubbles.wants(p), (p, v) -> { bubbles.setWants(p, v); return null; }));
-            list.add(Setting.toggle("timestamps", lang.ref("settings.timestamps"), lang.ref("settings.timestamps-desc"),
+            if (current.enabled(Settings.Feature.TIMESTAMPS)) list.add(Setting.toggle("timestamps", lang.ref("settings.timestamps"), lang.ref("settings.timestamps-desc"),
                     p -> profiles.get(p.getUniqueId()).timestamps(), (p, v) -> { profiles.get(p.getUniqueId()).timestamps(v); return null; }));
-            list.add(Setting.toggle("allow-messages", lang.ref("settings.allow-messages"), lang.ref("settings.allow-messages-desc"),
+            if (current.enabled(Settings.Feature.PRIVATE_MESSAGES)) list.add(Setting.toggle("allow-messages", lang.ref("settings.allow-messages"), lang.ref("settings.allow-messages-desc"),
                     p -> profiles.get(p.getUniqueId()).allowMessages(), (p, v) -> { profiles.get(p.getUniqueId()).allowMessages(v); return null; }));
-            list.add(Setting.toggle("spy", lang.ref("settings.spy"), lang.ref("settings.spy-desc"),
+            if (current.enabled(Settings.Feature.SOCIAL_SPY)) list.add(Setting.toggle("spy", lang.ref("settings.spy"), lang.ref("settings.spy-desc"),
                     p -> profiles.get(p.getUniqueId()).spy(), (p, v) -> { profiles.get(p.getUniqueId()).spy(v); return null; }).permission("vystormchat.spy"));
             for (Channel channel : service.settings().channels.values()) {
-                if (!channel.leavable() || list.size() >= 47) continue;
+                if (!channel.leavable() || list.size() >= 47 || !current.enabled(Settings.Feature.CHANNEL_CHOICE)) continue;
                 // shipped channels have translated labels, own channels show their display name
                 String label = lang.has("settings.show." + channel.id()) ? lang.ref("settings.show." + channel.id()) : channel.displayName();
                 Setting toggle = Setting.toggle("show-" + channel.id(), label,

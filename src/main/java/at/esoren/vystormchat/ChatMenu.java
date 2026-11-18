@@ -35,6 +35,7 @@ final class ChatMenu {
     // ------------------------------------------------------------------ main page
 
     void open(Player player) {
+        if (plugin.refuse(player, Settings.Feature.CHAT_MENU)) return;
         if (!plugin.openPanel(player, "chat", "")) openChest(player);
     }
 
@@ -69,7 +70,7 @@ final class ChatMenu {
         if (player.hasPermission("vystormchat.ignore") && !plugin.off(Settings.Feature.IGNORE))
             menu.set(base + 2, Menu.item(lang, player, Material.STRUCTURE_VOID, "menu.ignored", "menu.ignored-lore", "count", profile.ignored.size()), (who, click) -> ignored(who));
         menu.set(base + 4, Menu.item(lang, player, Material.COMPARATOR, "menu.settings", "menu.settings-lore"), (who, click) -> plugin.openSettings(who));
-        if (player.hasPermission("vystormchat.spy"))
+        if (player.hasPermission("vystormchat.spy") && !plugin.off(Settings.Feature.SOCIAL_SPY))
             menu.set(base + 6, Menu.item(lang, player, profile.spy() ? Material.ENDER_EYE : Material.ENDER_PEARL, profile.spy() ? "menu.spy-on" : "menu.spy-off", "menu.spy-lore"),
                     (who, click) -> { plugin.toggleSpy(who); open(who); });
         if (player.hasPermission("vystormchat.moderate"))
@@ -96,7 +97,7 @@ final class ChatMenu {
         lore.add(net.kyori.adventure.text.Component.empty());
         if (write && !focused) lore.add(lang.component(player, "menu.click-focus"));
         if (!write) lore.add(lang.component(player, "menu.cannot-write"));
-        if (read && channel.leavable()) lore.add(lang.component(player, listening ? "menu.click-hide" : "menu.click-show"));
+        if (read && channel.leavable() && !plugin.off(Settings.Feature.CHANNEL_CHOICE)) lore.add(lang.component(player, listening ? "menu.click-hide" : "menu.click-show"));
         plugin.core().compat().platform().editMeta(item, meta -> {
             plugin.core().compat().platform().lore(meta, Menu.lines(lore));
             if (focused) meta.setEnchantmentGlintOverride(true);
@@ -106,7 +107,7 @@ final class ChatMenu {
 
     private void channelClick(Player player, Channel channel, ClickType click) {
         if (click.isRightClick()) {
-            if (channel.leavable() && channel.readable(player::hasPermission)) {
+            if (channel.leavable() && channel.readable(player::hasPermission) && !plugin.off(Settings.Feature.CHANNEL_CHOICE)) {
                 Profile profile = plugin.profiles().get(player.getUniqueId());
                 plugin.listen(player, channel, !profile.listening(channel));
             }
@@ -174,6 +175,7 @@ final class ChatMenu {
     // ------------------------------------------------------------------ moderation
 
     void moderation(Player player) {
+        if (plugin.refuse(player, Settings.Feature.CHAT_MENU)) return;
         if (!plugin.openPanel(player, "moderation", "")) moderationChest(player);
     }
 
@@ -181,11 +183,11 @@ final class ChatMenu {
         if (!player.hasPermission("vystormchat.moderate")) { lang().send(player, "no-permission"); return; }
         Lang lang = lang();
         Menu menu = Menu.create(lang.component(player, "menu.moderation-title"), 3);
-        if (player.hasPermission("vystormchat.clearchat"))
+        if (player.hasPermission("vystormchat.clearchat") && !plugin.off(Settings.Feature.CLEAR_CHAT))
             menu.set(10, Menu.item(lang, player, Material.SPONGE, "menu.clear", "menu.clear-lore"), (who, click) ->
                     dialogs().confirm(plugin, who, lang.ref("dialog.clear-title"), lang.ref("dialog.clear-question"),
                             () -> plugin.clearChat(who), () -> moderation(who), Player::isOnline));
-        if (player.hasPermission("vystormchat.slowmode")) {
+        if (player.hasPermission("vystormchat.slowmode") && !plugin.off(Settings.Feature.SLOW_MODE)) {
             int current = plugin.service().slowMode(null);
             menu.set(12, Menu.item(lang, player, Material.CLOCK, current > 0 ? "menu.slow-on" : "menu.slow-off", "menu.slow-lore",
                     "time", Durations.format(current * 1000L)), (who, click) -> {

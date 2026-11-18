@@ -23,6 +23,7 @@ final class TradeBridge implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onTrade(ChannelChatEvent event) {
         if (event.channel() != ChatChannels.Channel.TRADE) return;
+        if (plugin.off(Settings.Feature.FAMILY_LINKS)) return; // family-links.enabled off: /vtrade stays Core's own
         Player player = event.getPlayer();
         long now = System.currentTimeMillis();
         MuteStore.Mute mute = plugin.mutes().active(player.getUniqueId(), now);
