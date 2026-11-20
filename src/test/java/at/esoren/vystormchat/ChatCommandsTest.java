@@ -54,9 +54,9 @@ class ChatCommandsTest {
     }
 
     @Test
-    void givenAllCommands_whenListed_thenTheTenRootsWithTheirOldAliases() throws Exception {
+    void givenAllCommands_whenListed_thenTheElevenRootsWithTheirOldAliases() throws Exception {
         var trees = trees();
-        assertEquals(List.of("vchat", "channel", "msg", "reply", "ignore", "socialspy", "mute", "unmute", "clearchat", "slowmode"), List.copyOf(trees.keySet()));
+        assertEquals(List.of("vchat", "channel", "msg", "reply", "ignore", "socialspy", "mute", "unmute", "clearchat", "slowmode", "discord"), List.copyOf(trees.keySet()));
         assertEquals(List.of("tell", "w", "whisper", "m", "pm", "dm"), trees.get("msg").fixedAliases());
         for (CommandRegistration r : trees.values()) assertEquals(List.of(), r.conflicts(), r.label());
     }
@@ -74,7 +74,7 @@ class ChatCommandsTest {
     void givenVchat_whenCompletingWithPermissions_thenOnlyAllowedLocalizedSubs() throws Exception {
         CommandRegistration vchat = trees().get("vchat");
         assertEquals(List.of("menü", "report", "emojis", "hilfe"), vchat.suggest(player(Locale.GERMANY, "vystormchat.use"), "vchat", new String[]{""}));
-        assertEquals(List.of("menu", "report", "reports", "mutes", "moderation", "emojis", "reload", "help"),
+        assertEquals(List.of("menu", "report", "reports", "mutes", "moderation", "emojis", "discord", "reload", "help"),
                 vchat.suggest(player(Locale.US, "vystormchat.use", "vystormchat.mute", "vystormchat.moderate", "vystormchat.admin"), "vchat", new String[]{""}));
     }
 

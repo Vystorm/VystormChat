@@ -476,3 +476,80 @@ bubbles:
   radius: 24
   # Characters per line (10-60); at most three lines.
   width: 24
+
+# Discord bridge without a separate plugin. Everything is off until you switch it on. Setup steps: README, section
+# "Discord bridge". Only chat channels listed under discord.channels take part, and only channels with scope global;
+# private messages, staff channels and every channel you do not list never leave the server.
+# What leaves the server: the player name, the player UUID inside the avatar URL (sent to Discord, which loads the
+# head picture from the avatar service), the message text after filters, and the event lines you switch on.
+# Webhook URLs and the bot token are secrets: they are never shown in /vadmin config or written to the log.
+discord:
+  # Level 1, webhooks: chat channels with a webhook post to Discord with the player's name and head. Every other
+  # Discord switch below needs this one.
+  enabled: false
+  # Chat channel id -> Discord. webhook: the URL Discord shows under Channel settings > Integrations > Webhooks
+  # (Minecraft to Discord). discord-id: the Discord channel id (right-click the channel > Copy Channel ID, with
+  # developer mode on), needed for the bot to bring Discord messages into this chat channel. allow-restricted: bridge
+  # a channel although only some players may read it (its read-permission is not given to everyone by default).
+  channels:
+    global:
+      webhook: ""
+      discord-id: ""
+      allow-restricted: false
+  # Picture next to a player's messages. {uuid} = the player's UUID, {uuid-plain} without dashes, {name} = the name.
+  avatar: "https://mc-heads.net/avatar/{uuid}/128"
+  # Name shown above a player's messages ({name} = player name).
+  webhook-name: "{name}"
+  # Messages waiting for Discord at most (10-5000); more are dropped and counted in the log.
+  queue-size: 200
+  user-mentions:
+    # Players may ping Discord users with <@id>. Off: nothing a player writes pings anyone. @everyone, @here and
+    # roles never ping.
+    enabled: false
+  # Server events. Texts are in the language files (discord.events.*), in the server's language. They go to
+  # events.webhook, or when that is empty to the default channel's webhook.
+  events:
+    webhook: ""
+    # A line when a player joins.
+    join:
+      enabled: false
+    # A line when a player leaves.
+    leave:
+      enabled: false
+    # First join instead of the normal join line for players who are new on the server.
+    first-join:
+      enabled: false
+    # The death message.
+    death:
+      enabled: false
+    # Advancements the server announces in chat (no recipes).
+    advancement:
+      enabled: false
+    # A line when the server has started.
+    server-start:
+      enabled: false
+    # A line when the server stops (sent while the plugin shuts down, waits at most three seconds).
+    server-stop:
+      enabled: false
+  # Level 2, the bot: Discord messages in the mapped channels show in Minecraft, after the word filter, link filter and
+  # anti-spam. Needs the "Message Content Intent" in the Discord developer portal. The token belongs into the file
+  # plugins/VystormChat/discord-token.txt (or the environment variable VYSTORM_CHAT_DISCORD_TOKEN); bot-token below is
+  # read only when neither exists.
+  bot:
+    enabled: false
+    # Line in Minecraft. <name> = Discord name, <message> = text, <channel> = channel tag, <channel_name>.
+    format: "<gray>[<#5865f2>Discord</#5865f2>]</gray> <white><name></white><dark_gray>:</dark_gray> <message>"
+    player-count:
+      # The bot's status shows how many players are online.
+      enabled: false
+  bot-token: ""
+  # Discord user ids whose messages never show in Minecraft.
+  blocked-users: []
+  invite:
+    # /discord shows this invite link to players.
+    enabled: false
+    link: ""
+  reports:
+    # Player reports (/vchat report) are also posted to this webhook, for example a staff channel.
+    enabled: false
+    webhook: ""

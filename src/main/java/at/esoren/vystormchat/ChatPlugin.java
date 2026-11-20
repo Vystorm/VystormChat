@@ -95,6 +95,10 @@ public final class ChatPlugin extends JavaPlugin {
         menu = new ChatMenu(this);
         reports = new Reports(this, new ReportStore(getDataFolder().toPath().resolve("reports.yml"), getLogger(), core.data().files()));
         announcements = new Announcements(this, getDataFolder().toPath().resolve("announcements.yml"));
+        DiscordRest.userAgent = "DiscordBot (https://vystorm.net, " + getDescription().getVersion() + ") VystormChat";
+        discordEvents = new DiscordEvents(this);
+        discord = new DiscordBridge(discordEvents, DiscordRest.jdk(java.time.Duration.ofSeconds(10)), DiscordGateway.jdk(),
+                System::currentTimeMillis, null, null);
         load();
         chatLog.start();
         enabled = true;
@@ -124,6 +128,9 @@ public final class ChatPlugin extends JavaPlugin {
         tasks.timer(100L, 100L, profiles::flush);
         tasks.timer(1200L, 1200L, showcase::cleanup);
         tasks.timer(400L, 400L, announcements::tick);
+        discordEvents.register();
+        tasks.asyncTimer(10L, 10L, discord::pulse);
+        tasks.later(1L, discord::started); // the first tick: the server has finished starting
 
         registerMenu();
         registerSettings();
@@ -140,6 +147,7 @@ public final class ChatPlugin extends JavaPlugin {
         enabled = false;
         if (panels != null) { panels.close(); panels = null; }
         if (bubbles != null) bubbles.removeAll();
+        if (discord != null) { discord.close(); discord = null; }
         if (tasks != null) tasks.close();
         if (profiles != null) profiles.close();
         if (mutes != null) mutes.saveNow();
@@ -186,6 +194,10 @@ public final class ChatPlugin extends JavaPlugin {
         service.configure(settings);
         mutes.enabled(settings.mutesEnabled);
         chatLog.configure(settings.logEnabled, settings.logMaxMegabytes, settings.logKeepDays);
+        if (discord != null) {
+            try { discord.configure(settings); }
+            catch (RuntimeException failure) { getLogger().log(Level.WARNING, "Discord bridge not configured", failure); }
+        }
     }
 
     /** The tutorial in /vmenu unless tutorial.enabled is false; read once, because Core lists tutorials when a plugin starts. */
@@ -200,7 +212,15 @@ public final class ChatPlugin extends JavaPlugin {
             config.feature(plugin, feature.path, lang.ref(feature.label()), lang.ref(feature.description()));
             if (feature.needsRestart()) config.activation(plugin, feature.path, Vystorm.vystorm_core._uiMethods.settings.SettingPolicy.Activation.RESTART);
         }
+        // the Discord rows of /vadmin config that are no switches (webhook URLs and the token are secrets: never listed)
+        for (String[] row : DISCORD_ROWS) config.label(plugin, row[0], lang.ref("discord.config." + row[1]), lang.ref("discord.config." + row[1] + "-desc"));
+        config.range(plugin, "discord.queue-size", 10, 5000, 10);
     }
+
+    /** config.yml path, language key below discord.config. */
+    static final String[][] DISCORD_ROWS = {
+            {"discord.avatar", "avatar"}, {"discord.webhook-name", "webhook-name"}, {"discord.queue-size", "queue-size"},
+            {"discord.blocked-users", "blocked-users"}, {"discord.bot.format", "format"}, {"discord.invite.link", "invite-link"}};
 
     /** The command trees, registered once; commands of switched-off features stay out of help and tab completion (asked live). */
     private void registerCommands() {
@@ -258,6 +278,10 @@ public final class ChatPlugin extends JavaPlugin {
     }
     void forgetPanels(java.util.UUID player) { if (panels != null) panels.forget(player); }
     Reports reports() { return reports; }
+    private DiscordBridge discord;
+    private DiscordEvents discordEvents;
+    /** The Discord bridge; null in tests and after disable. */
+    DiscordBridge discord() { return discord; }
     private Announcements announcements;
     Announcements announcements() { return announcements; }
 
@@ -543,5 +567,7 @@ public final class ChatPlugin extends JavaPlugin {
 
     private void registerConfigEditor() {
         core.settings().config().register(this, "config.yml", this::reload);
+        // secret by name in Core's editor already (token, webhook); hidden as well so no Core version ever shows them
+        core.settings().config().hidden(this, "discord.bot-token");
     }
 }

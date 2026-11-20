@@ -51,7 +51,7 @@ class SwitchesTest {
         YamlConfiguration config = shippedConfig();
         for (Settings.Feature feature : Settings.Feature.values()) {
             assertTrue(config.isBoolean(feature.path), feature.path);
-            assertTrue(config.getBoolean(feature.path), feature.path);
+            assertEquals(feature.defaultOn, config.getBoolean(feature.path), feature.path + " ships with its default (the Discord bridge off)");
             String parent = feature.path.contains(".") ? feature.path.substring(0, feature.path.lastIndexOf('.')) : feature.path;
             assertFalse(config.getComments(feature.path).isEmpty() && config.getComments(parent).isEmpty(), "comment for " + feature.path);
         }
@@ -69,7 +69,7 @@ class SwitchesTest {
 
     @Test void givenAConfigFrom1_16_whenRead_thenEveryFeatureStaysOn() {
         Settings old = new Settings(YamlConfiguration.loadConfiguration(new File("src/test/resources/config-1.16.yml")), Logger.getLogger("test"));
-        for (Settings.Feature feature : Settings.Feature.values()) assertTrue(old.enabled(feature), feature.name());
+        for (Settings.Feature feature : Settings.Feature.values()) assertEquals(feature.defaultOn, old.enabled(feature), feature.name() + ": a missing key counts as its default");
     }
 
     @Test void givenAConfigFrom1_16_whenCoreMergesDefaults_thenEveryNewSwitchIsAddedAndOldValuesStay() throws Exception {
@@ -87,7 +87,9 @@ class SwitchesTest {
         YamlConfiguration merged = YamlConfiguration.loadConfiguration(data.resolve("config.yml").toFile());
         for (Settings.Feature feature : Settings.Feature.values()) assertTrue(merged.isBoolean(feature.path), feature.path);
         Settings settings = new Settings(merged, Logger.getLogger("test"));
-        assertEquals(Set.of(Settings.Feature.CONSOLE_LOG), settings.off, "an existing value is never changed");
+        Set<Settings.Feature> expected = EnumSet.of(Settings.Feature.CONSOLE_LOG);
+        for (Settings.Feature feature : Settings.Feature.values()) if (!feature.defaultOn) expected.add(feature);
+        assertEquals(expected, settings.off, "an existing value is never changed; new switches arrive with their default");
         assertEquals(8, settings.channels.size());
         assertTrue(Files.readString(data.resolve("config.yml")).contains("The whole plugin"), "comments come along");
     }
@@ -269,7 +271,9 @@ class SwitchesTest {
         ChatPlugin plugin = plugin(settings());
         Map<String, CommandSpec> trees = byName(Commands.specs(plugin, alias -> false));
         assertTrue(trees.values().stream().noneMatch(CommandSpec::hidden));
-        assertTrue(trees.values().stream().allMatch(root -> root.visibleTo(null)));
+        // /discord follows discord.invite.enabled, which ships off (1.18.0)
+        assertFalse(trees.get("discord").visibleTo(null), "discord.invite.enabled ships off");
+        assertTrue(trees.values().stream().allMatch(root -> root.visibleTo(null) || root.name().equals("discord")));
         assertTrue(trees.get("vchat").children().values().stream().allMatch(sub -> sub.visibleTo(null)));
         // the same built trees follow the switches: no second registration needed
         plugin.service().configure(settings(Settings.Feature.PRIVATE_MESSAGES, Settings.Feature.CHANNEL_CHOICE, Settings.Feature.REPORTS));
@@ -281,7 +285,7 @@ class SwitchesTest {
         for (CommandSpec root : trees.values()) assertFalse(root.visibleTo(null), root.name());
         assertTrue(trees.get("vchat").children().get("reload").visibleTo(null), "reload stays");
         plugin.service().configure(settings());
-        assertTrue(trees.values().stream().allMatch(root -> root.visibleTo(null)));
+        assertTrue(trees.values().stream().allMatch(root -> root.visibleTo(null) || root.name().equals("discord")));
         assertTrue(trees.get("channel").children().get("join").visibleTo(null));
     }
 

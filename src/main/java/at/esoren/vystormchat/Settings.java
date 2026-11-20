@@ -15,7 +15,8 @@ final class Settings {
     enum FilterAction { CENSOR, BLOCK }
 
     /**
-     * Every feature with its on/off key in config.yml (all on by default; a missing key counts as on). The description
+     * Every feature with its on/off key in config.yml (on by default except the Discord bridge; a missing key counts as
+     * its default). Features with {@code needs} do nothing while one of those is off ({@link #active}). The description
      * in {@code /vadmin features} is the language key {@code switches.<id>}. Keys that existed before 1.17.0 keep
      * their names. While {@link #CHAT} is off every other feature counts as off too.
      */
@@ -57,11 +58,37 @@ final class Settings {
         CHAT_MENU("chat-menu.enabled"),
         RELAY("relay.enabled"),
         /** Read once when the plugin starts. */
-        TUTORIAL("tutorial.enabled");
+        TUTORIAL("tutorial.enabled"),
+        // Discord bridge (1.18.0): off by default, a missing key counts as off
+        /** Level 1: chat channels with a webhook post to Discord. Every other Discord switch needs this one. */
+        DISCORD("discord.enabled", false),
+        DISCORD_USER_MENTIONS("discord.user-mentions.enabled", false, DISCORD),
+        DISCORD_JOIN("discord.events.join.enabled", false, DISCORD),
+        DISCORD_LEAVE("discord.events.leave.enabled", false, DISCORD),
+        DISCORD_FIRST_JOIN("discord.events.first-join.enabled", false, DISCORD),
+        DISCORD_DEATH("discord.events.death.enabled", false, DISCORD),
+        DISCORD_ADVANCEMENT("discord.events.advancement.enabled", false, DISCORD),
+        DISCORD_SERVER_START("discord.events.server-start.enabled", false, DISCORD),
+        DISCORD_SERVER_STOP("discord.events.server-stop.enabled", false, DISCORD),
+        /** Level 2: the bot connects to the Discord gateway; Discord messages show in Minecraft. */
+        DISCORD_BOT("discord.bot.enabled", false, DISCORD),
+        DISCORD_PLAYER_COUNT("discord.bot.player-count.enabled", false, DISCORD_BOT),
+        DISCORD_INVITE("discord.invite.enabled", false, DISCORD),
+        DISCORD_REPORTS("discord.reports.enabled", false, DISCORD, REPORTS);
 
         final String path;
+        /** The value of a missing key. */
+        final boolean defaultOn;
+        /** Switches this one needs; while one of them is off this one does nothing. */
+        final List<Feature> needs;
 
-        Feature(String path) { this.path = path; }
+        Feature(String path) { this(path, true); }
+
+        Feature(String path, boolean defaultOn, Feature... needs) {
+            this.path = path;
+            this.defaultOn = defaultOn;
+            this.needs = List.of(needs);
+        }
 
         /** Language key of the one-line description. */
         String description() { return "switches." + name().toLowerCase(Locale.ROOT).replace('_', '-'); }
@@ -126,7 +153,7 @@ final class Settings {
 
     Settings(FileConfiguration config, Logger log) {
         Set<Feature> switchedOff = java.util.EnumSet.noneOf(Feature.class);
-        for (Feature feature : Feature.values()) if (!config.getBoolean(feature.path, true)) switchedOff.add(feature);
+        for (Feature feature : Feature.values()) if (!config.getBoolean(feature.path, feature.defaultOn)) switchedOff.add(feature);
         off = java.util.Collections.unmodifiableSet(switchedOff);
         channels = Channel.parseAll(config.getConfigurationSection("channels"), log);
         if (channels.isEmpty()) {
@@ -223,6 +250,25 @@ final class Settings {
         logKeepDays = Math.max(0, config.getInt("log.keep-days", 30));
 
         regionLookup = channels.values().stream().anyMatch(channel -> channel.scope() == Channel.Scope.REGION);
+        discord = new DiscordConfig(config.getConfigurationSection("discord"), log, DiscordConfig.allowLocalForTests);
+    }
+
+    /** The Discord bridge's channels, webhooks and texts (the token is read by the bridge itself). */
+    final DiscordConfig discord;
+
+    /** Switched on and every switch it needs switched on too. */
+    boolean active(Feature feature) {
+        return enabled(feature) && missing(feature) == null;
+    }
+
+    /** The first switch {@code feature} needs that is off (deepest first), or null. */
+    Feature missing(Feature feature) {
+        for (Feature need : feature.needs) {
+            Feature deeper = missing(need);
+            if (deeper != null) return deeper;
+            if (!enabled(need)) return need;
+        }
+        return null;
     }
 
     /** Add only the new section's missing leaves, preserving existing owner settings. */

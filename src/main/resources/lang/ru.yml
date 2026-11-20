@@ -250,10 +250,28 @@ settings:
     city: Показать город чат
     faction: Показать чат фракции
 commands:
+  discord:
+    description: "Ссылка-приглашение на сервер Discord"
+    aliases: []
   vchat:
     description: Меню чата, приглушения, модерация и перезагрузка
     aliases: []
     sub:
+      discord:
+        name: discord
+        aliases: []
+        description: "Мост в Discord: статус и тестовая строка"
+        sub:
+          status:
+            name: "status"
+            aliases: []
+            description: "Соединение, очередь и последняя ошибка"
+          test:
+            name: "test"
+            aliases: []
+            description: "Отправить тестовую строку в Discord-часть канала"
+            args:
+              channel: "КАНАЛ"
       report:
         name: report
         aliases: []
@@ -475,6 +493,19 @@ panel:
   inventory: "Инвентарь"
   inventory-view: "Посмотреть исходный инвентарь"
 switches:
+  discord: "Каналы чата с вебхуком в discord.channels отправляют свои сообщения в Discord с именем и головой игрока. Все остальные переключатели Discord требуют этот."
+  discord-user-mentions: "Игроки могут упоминать пользователей Discord по их ID. @everyone, @here и роли никогда не уведомляют."
+  discord-join: "Отправляет строку в Discord, когда игрок заходит."
+  discord-leave: "Отправляет строку в Discord, когда игрок выходит."
+  discord-first-join: "Новые игроки получают приветствие вместо обычной строки о входе."
+  discord-death: "Отправляет сообщения о смерти в Discord."
+  discord-advancement: "Отправляет достижения, которые сервер объявляет в чате."
+  discord-server-start: "Отправляет строку, когда сервер запустился."
+  discord-server-stop: "Отправляет строку, когда сервер останавливается."
+  discord-bot: "Бот подключается к Discord и показывает в Minecraft сообщения из связанных каналов Discord. Нужны токен бота и Message Content Intent."
+  discord-player-count: "Статус бота показывает, сколько игроков онлайн."
+  discord-invite: "/discord показывает игрокам ссылку-приглашение из discord.invite.link."
+  discord-reports: "Новые жалобы игроков также отправляются в discord.reports.webhook. Также нужен reports.enabled."
   chat: "Весь плагин: каналы, форматы, фильтры и команды"
   quick-prefixes: "Быстрые префиксы отправляют сообщение в канал"
   paid-channels: "Каналы с ценой за сообщение"
@@ -526,6 +557,19 @@ placeholder:
   spy: "true или false: слежка включена"
   reply_partner: "Последний собеседник в личке"
 switch-names:
+  discord: "Мост в Discord (вебхуки)"
+  discord-user-mentions: "Упоминания пользователей Discord"
+  discord-join: "Discord: строка о входе"
+  discord-leave: "Discord: строка о выходе"
+  discord-first-join: "Discord: первый вход"
+  discord-death: "Discord: сообщения о смерти"
+  discord-advancement: "Discord: достижения"
+  discord-server-start: "Discord: запуск сервера"
+  discord-server-stop: "Discord: остановка сервера"
+  discord-bot: "Бот Discord"
+  discord-player-count: "Статус бота Discord"
+  discord-invite: "Ссылка-приглашение (/discord)"
+  discord-reports: "Жалобы в Discord"
   chat: "Каналы"
   quick-prefixes: "Быстрые префиксы"
   paid-channels: "Платные каналы"
@@ -564,3 +608,50 @@ switch-names:
   tutorial: "Обучение"
 feature-needs: "<red>Для этого нужна функция «{name}» ({switch}), а она отключена на этом сервере."
 config-broken: "<red>{file} не перезагружен: ошибка YAML в {problem}. Файл не изменён; действуют последние рабочие настройки."
+
+# ---------------------------------------------------------------- Discord bridge (1.18.0)
+discord:
+  word-on: "вкл."
+  word-off: "выкл."
+  status-header: "<gold>Мост в Discord"
+  status-switches: "<gray>Вебхуки: <white>{webhooks}</white>, бот: <white>{bot}"
+  status-channels: "<gray>Связанные каналы: <white>{channels}"
+  status-token: "<gray>Токен бота из: <white>{source}"
+  status-queue: "<gray>Очередь: <white>{queued}</white> ждут, <white>{sent}</white> отправлено, <white>{dropped}</white> отброшено"
+  status-error: "<gray>Последняя ошибка: <white>{error}"
+  token-environment: "переменная окружения"
+  token-file: "discord-token.txt"
+  token-config: "config.yml (лучше перенести в discord-token.txt)"
+  token-none: "нет"
+  test-line: "Тестовое сообщение из Minecraft ({channel}, отправил {player})"
+  test-queued: "<green>Тестовая строка для {channel} отправляется в Discord. /vchat discord status покажет ошибки."
+  test-unmapped: "<red>{channel} не связан: укажите для него вебхук (или discord-id при включённом боте) в discord.channels."
+  test-failed: "<red>Не удалось поставить тестовую строку в очередь (очередь полна или мост остановлен)."
+  invite: "<gray>Присоединяйтесь к нам в Discord: <aqua>{link}"
+  invite-missing: "<red>Ссылка-приглашение в Discord не задана (discord.invite.link)."
+  file: "[файл]"
+  reply: "(ответ {name})"
+  presence: "Онлайн {online} из {max} игроков"
+  report: "**Жалоба** от {reporter} на **{player}**: {reason}"
+  events:
+    join: "**{player}** зашёл на сервер"
+    leave: "**{player}** покинул сервер"
+    first-join: "**{player}** зашёл впервые. Добро пожаловать!"
+    death: "{message}"
+    death-plain: "{player} погиб"
+    advancement: "**{player}** получил достижение **{advancement}**"
+    server-start: "Сервер запущен"
+    server-stop: "Сервер остановлен"
+  config:
+    avatar: "Аватар"
+    avatar-desc: "Картинка рядом с сообщениями игрока в Discord (адрес сервиса голов с UUID игрока)."
+    webhook-name: "Имя в Discord"
+    webhook-name-desc: "Имя над сообщениями игрока в Discord."
+    queue-size: "Размер очереди"
+    queue-size-desc: "Не больше стольких сообщений ждут отправки в Discord; остальные отбрасываются и учитываются в логе."
+    blocked-users: "Заблокированные пользователи Discord"
+    blocked-users-desc: "ID пользователей Discord, чьи сообщения никогда не показываются в Minecraft."
+    format: "Строка сообщений из Discord"
+    format-desc: "Как сообщение из Discord выглядит в Minecraft."
+    invite-link: "Ссылка-приглашение"
+    invite-link-desc: "Ссылка-приглашение в Discord, которую показывает /discord."

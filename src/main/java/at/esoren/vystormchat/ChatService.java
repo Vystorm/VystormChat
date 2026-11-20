@@ -263,6 +263,9 @@ final class ChatService {
         plugin.chatLog().log(delivery.channel.id(), delivery.sender.getName() + ": " + delivery.plain);
         keywordAlerts.after(plugin, delivery);
         if (plugin.bubbles() != null) plugin.bubbles().after(delivery);
+        // Discord bridge: only queues (mapped global channels only; mutes and filters already ran)
+        DiscordBridge discord = plugin.discord();
+        if (discord != null) discord.chat(delivery.channel, delivery.sender.getUniqueId(), delivery.sender.getName(), delivery.plain);
         UUID sender = delivery.sender.getUniqueId();
         if (!delivery.hits.isEmpty()) {
             long now = System.currentTimeMillis();

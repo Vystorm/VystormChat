@@ -4,7 +4,7 @@ main: at.esoren.vystormchat.ChatPlugin
 api-version: '1.20.6'
 author: Esoren
 depend: [vystorm_core]
-softdepend: [Vault, VaultUnlocked, PlaceholderAPI, VystormCityClaim, Vystorm-Factions]
+softdepend: [Vault, VaultUnlocked, PlaceholderAPI, VystormCityClaim, Vystorm-Factions, DiscordSRV]
 # Enabled before Vystorm Parties so mutes are checked before the party chat toggle sees a message.
 loadbefore: [VystormParties]
 website: https://vystorm.net

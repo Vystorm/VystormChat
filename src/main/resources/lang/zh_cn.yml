@@ -258,10 +258,28 @@ settings:
 # （全服生效；由管理员在 Core 配置 commands.localized-aliases 中选择语言）；子命令的 "name"/"aliases" 在所有语言中
 # 都可使用，英文始终有效。所有命令一览：/vhelp
 commands:
+  discord:
+    description: "Discord 服务器的邀请链接"
+    aliases: []
   vchat:
     description: "聊天菜单、禁言、管理和重载"
     aliases: [聊天]
     sub:
+      discord:
+        name: discord
+        aliases: []
+        description: "Discord 桥接：状态和测试消息"
+        sub:
+          status:
+            name: "status"
+            aliases: []
+            description: "连接、队列和最后一个错误"
+          test:
+            name: "test"
+            aliases: []
+            description: "向频道的 Discord 端发送一条测试消息"
+            args:
+              channel: "频道"
       report:
         name: report
         aliases: []
@@ -483,6 +501,19 @@ panel:
   inventory: "背包"
   inventory-view: "查看原始背包"
 switches:
+  discord: "discord.channels 下设置了 Webhook 的聊天频道会把消息连同玩家名字和头像发送到 Discord。其他所有 Discord 开关都需要它。"
+  discord-user-mentions: "玩家可以通过用户 ID 提及 Discord 用户。@everyone、@here 和身份组永远不会通知。"
+  discord-join: "玩家加入时向 Discord 发送一行消息。"
+  discord-leave: "玩家离开时向 Discord 发送一行消息。"
+  discord-first-join: "新玩家会收到欢迎消息，而不是普通的加入消息。"
+  discord-death: "把死亡消息发送到 Discord。"
+  discord-advancement: "发送服务器在聊天中公布的进度。"
+  discord-server-start: "服务器启动完成后发送一行消息。"
+  discord-server-stop: "服务器关闭时发送一行消息。"
+  discord-bot: "机器人连接 Discord，并在 Minecraft 中显示已关联 Discord 频道的消息。需要机器人令牌和 Message Content Intent。"
+  discord-player-count: "机器人的状态显示在线玩家数量。"
+  discord-invite: "/discord 向玩家显示 discord.invite.link 中的邀请链接。"
+  discord-reports: "新的玩家举报也会发送到 discord.reports.webhook。同时需要 reports.enabled。"
   chat: "整个插件：频道、格式、过滤和命令"
   quick-prefixes: "快捷前缀把一条消息发到某个频道"
   paid-channels: "每条消息收费的频道"
@@ -534,6 +565,19 @@ placeholder:
   spy: "true 或 false：监听已开启"
   reply_partner: "最近的私信对象"
 switch-names:
+  discord: "Discord 桥接（Webhook）"
+  discord-user-mentions: "Discord 用户提及"
+  discord-join: "Discord：加入消息"
+  discord-leave: "Discord：离开消息"
+  discord-first-join: "Discord：首次加入"
+  discord-death: "Discord：死亡消息"
+  discord-advancement: "Discord：进度"
+  discord-server-start: "Discord：服务器启动"
+  discord-server-stop: "Discord：服务器关闭"
+  discord-bot: "Discord 机器人"
+  discord-player-count: "Discord 机器人状态"
+  discord-invite: "邀请链接（/discord）"
+  discord-reports: "举报发送到 Discord"
   chat: "频道"
   quick-prefixes: "快捷前缀"
   paid-channels: "付费频道"
@@ -572,3 +616,50 @@ switch-names:
   tutorial: "教程"
 feature-needs: "<red>这需要 “{name}”（{switch}），但它已在本服务器上关闭。"
 config-broken: "<red>{file} 未重新加载：YAML 错误位于 {problem}。文件保持不变，继续使用上次有效的设置。"
+
+# ---------------------------------------------------------------- Discord bridge (1.18.0)
+discord:
+  word-on: "开"
+  word-off: "关"
+  status-header: "<gold>Discord 桥接"
+  status-switches: "<gray>Webhook：<white>{webhooks}</white>，机器人：<white>{bot}"
+  status-channels: "<gray>已桥接的频道：<white>{channels}"
+  status-token: "<gray>机器人令牌来源：<white>{source}"
+  status-queue: "<gray>队列：<white>{queued}</white> 条等待，<white>{sent}</white> 条已发送，<white>{dropped}</white> 条已丢弃"
+  status-error: "<gray>最后一个错误：<white>{error}"
+  token-environment: "环境变量"
+  token-file: "discord-token.txt"
+  token-config: "config.yml（最好移到 discord-token.txt）"
+  token-none: "无"
+  test-line: "来自 Minecraft 的测试消息（{channel}，由 {player} 发送）"
+  test-queued: "<green>{channel} 的测试消息正在发往 Discord。/vchat discord status 会显示错误。"
+  test-unmapped: "<red>{channel} 未桥接：请在 discord.channels 下为它设置 Webhook（或在机器人开启时设置 discord-id）。"
+  test-failed: "<red>测试消息无法加入队列（队列已满或桥接已停止）。"
+  invite: "<gray>欢迎加入我们的 Discord：<aqua>{link}"
+  invite-missing: "<red>尚未设置 Discord 邀请链接（discord.invite.link）。"
+  file: "[文件]"
+  reply: "（回复 {name}）"
+  presence: "{online}/{max} 名玩家在线"
+  report: "{reporter} 对 **{player}** 的**举报**：{reason}"
+  events:
+    join: "**{player}** 加入了服务器"
+    leave: "**{player}** 离开了服务器"
+    first-join: "**{player}** 第一次加入服务器，欢迎！"
+    death: "{message}"
+    death-plain: "{player} 死了"
+    advancement: "**{player}** 取得了进度 **{advancement}**"
+    server-start: "服务器已启动"
+    server-stop: "服务器已关闭"
+  config:
+    avatar: "头像图片"
+    avatar-desc: "Discord 中玩家消息旁的图片（带玩家 UUID 的头像服务地址）。"
+    webhook-name: "Discord 中的名字"
+    webhook-name-desc: "Discord 中玩家消息上方显示的名字。"
+    queue-size: "队列大小"
+    queue-size-desc: "最多这么多条消息等待发往 Discord；更多的会被丢弃并记入日志。"
+    blocked-users: "屏蔽的 Discord 用户"
+    blocked-users-desc: "这些 Discord 用户 ID 的消息永远不会显示在 Minecraft 中。"
+    format: "Discord 消息的格式"
+    format-desc: "来自 Discord 的消息在 Minecraft 中的样子。"
+    invite-link: "邀请链接"
+    invite-link-desc: "/discord 显示的 Discord 邀请链接。"

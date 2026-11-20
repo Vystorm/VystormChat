@@ -258,10 +258,28 @@ settings:
 # extra root commands (server-wide; the admin chooses the languages in Core's config commands.localized-aliases);
 # "name"/"aliases" of a subcommand work in every language, English always works. Overview of all commands: /vhelp
 commands:
+  discord:
+    description: "Invite link to the Discord server"
+    aliases: []
   vchat:
     description: "Chat menu, mutes, moderation and reload"
     aliases: []
     sub:
+      discord:
+        name: discord
+        aliases: []
+        description: "Discord bridge: status and test line"
+        sub:
+          status:
+            name: "status"
+            aliases: []
+            description: "Connection, queue and last error"
+          test:
+            name: "test"
+            aliases: []
+            description: "Send a test line to the Discord side of a channel"
+            args:
+              channel: "CHANNEL"
       report:
         name: report
         aliases: []
@@ -483,6 +501,19 @@ panel:
   inventory: "Inventory"
   inventory-view: "View original inventory"
 switches:
+  discord: "Chat channels with a webhook under discord.channels post their messages to Discord with the player's name and head. Every other Discord switch needs this one."
+  discord-user-mentions: "Players may ping Discord users by their user id mention. @everyone, @here and roles never ping."
+  discord-join: "Posts a line to Discord when a player joins."
+  discord-leave: "Posts a line to Discord when a player leaves."
+  discord-first-join: "New players get a welcome line instead of the normal join line."
+  discord-death: "Posts death messages to Discord."
+  discord-advancement: "Posts the advancements the server announces in chat."
+  discord-server-start: "Posts a line when the server has started."
+  discord-server-stop: "Posts a line when the server stops."
+  discord-bot: "The bot connects to Discord and shows messages from the mapped Discord channels in Minecraft. Needs a bot token and the Message Content Intent."
+  discord-player-count: "The bot's status shows how many players are online."
+  discord-invite: "/discord shows players the invite link from discord.invite.link."
+  discord-reports: "New player reports are also posted to discord.reports.webhook. Needs reports.enabled too."
   chat: "The whole plugin: channels, formats, filters and commands"
   quick-prefixes: "Quick prefixes send one message to a channel"
   paid-channels: "Channels with a price per message"
@@ -534,6 +565,19 @@ placeholder:
   spy: "true or false: social spy is on"
   reply_partner: "Last private message partner"
 switch-names:
+  discord: "Discord bridge (webhooks)"
+  discord-user-mentions: "Discord user pings"
+  discord-join: "Discord: join line"
+  discord-leave: "Discord: leave line"
+  discord-first-join: "Discord: first join line"
+  discord-death: "Discord: death messages"
+  discord-advancement: "Discord: advancements"
+  discord-server-start: "Discord: server start"
+  discord-server-stop: "Discord: server stop"
+  discord-bot: "Discord bot"
+  discord-player-count: "Discord bot status"
+  discord-invite: "Invite link (/discord)"
+  discord-reports: "Reports to Discord"
   chat: "Channels"
   quick-prefixes: "Quick prefixes"
   paid-channels: "Paid channels"
@@ -572,3 +616,50 @@ switch-names:
   tutorial: "Tutorial"
 feature-needs: "<red>This needs “{name}” ({switch}), which is switched off on this server."
 config-broken: "<red>{file} was not reloaded: YAML error at {problem}. The file was left unchanged; the last working settings stay in use."
+
+# ---------------------------------------------------------------- Discord bridge (1.18.0)
+discord:
+  word-on: "on"
+  word-off: "off"
+  status-header: "<gold>Discord bridge"
+  status-switches: "<gray>Webhooks: <white>{webhooks}</white>, bot: <white>{bot}"
+  status-channels: "<gray>Bridged channels: <white>{channels}"
+  status-token: "<gray>Bot token from: <white>{source}"
+  status-queue: "<gray>Queue: <white>{queued}</white> waiting, <white>{sent}</white> sent, <white>{dropped}</white> dropped"
+  status-error: "<gray>Last error: <white>{error}"
+  token-environment: "environment variable"
+  token-file: "discord-token.txt"
+  token-config: "config.yml (better move it to discord-token.txt)"
+  token-none: "none"
+  test-line: "Test message from Minecraft ({channel}, sent by {player})"
+  test-queued: "<green>The test line for {channel} is on its way to Discord. /vchat discord status shows errors."
+  test-unmapped: "<red>{channel} is not bridged: give it a webhook (or a discord-id with the bot on) under discord.channels."
+  test-failed: "<red>The test line could not be queued (queue full or bridge stopped)."
+  invite: "<gray>Join us on Discord: <aqua>{link}"
+  invite-missing: "<red>No Discord invite link is set (discord.invite.link)."
+  file: "[file]"
+  reply: "(reply to {name})"
+  presence: "{online} of {max} players online"
+  report: "**Report** from {reporter} about **{player}**: {reason}"
+  events:
+    join: "**{player}** joined the server"
+    leave: "**{player}** left the server"
+    first-join: "**{player}** joined for the first time. Welcome!"
+    death: "{message}"
+    death-plain: "{player} died"
+    advancement: "**{player}** has made the advancement **{advancement}**"
+    server-start: "The server has started"
+    server-stop: "The server has stopped"
+  config:
+    avatar: "Avatar picture"
+    avatar-desc: "Picture next to a player's messages in Discord (a head service address with the player's UUID)."
+    webhook-name: "Name in Discord"
+    webhook-name-desc: "Name above a player's messages in Discord."
+    queue-size: "Queue size"
+    queue-size-desc: "Messages waiting for Discord at most; more are dropped and counted in the log."
+    blocked-users: "Blocked Discord users"
+    blocked-users-desc: "Discord user ids whose messages never show in Minecraft."
+    format: "Line for Discord messages"
+    format-desc: "How a message from Discord looks in Minecraft."
+    invite-link: "Invite link"
+    invite-link-desc: "The Discord invite link that /discord shows."

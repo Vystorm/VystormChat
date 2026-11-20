@@ -153,7 +153,7 @@ class ConfigAndLangTest {
         Settings settings = shipped();
         for (String key : List.of("reports.enabled", "private-messages.enabled", "ignore.enabled", "mutes.enabled"))
             assertTrue(config.isBoolean(key) && config.getBoolean(key), key + " ships as true");
-        for (Settings.Feature feature : Settings.Feature.values()) assertTrue(settings.enabled(feature), feature.name());
+        for (Settings.Feature feature : Settings.Feature.values()) assertEquals(feature.defaultOn, settings.enabled(feature), feature.name());
     }
 
     @Test
@@ -161,7 +161,7 @@ class ConfigAndLangTest {
         YamlConfiguration config = new YamlConfiguration();
         config.loadFromString("private-messages:\n  sound: none\nmoderation:\n  clear-lines: 50\n");
         Settings settings = new Settings(config, Logger.getLogger("test"));
-        for (Settings.Feature feature : Settings.Feature.values()) assertTrue(settings.enabled(feature), feature.name());
+        for (Settings.Feature feature : Settings.Feature.values()) assertEquals(feature.defaultOn, settings.enabled(feature), feature.name());
     }
 
     @Test
@@ -174,7 +174,7 @@ class ConfigAndLangTest {
             config.set(entry.getKey(), false);
             Settings settings = new Settings(config, Logger.getLogger("test"));
             for (Settings.Feature feature : Settings.Feature.values())
-                assertEquals(feature != entry.getValue(), settings.enabled(feature), entry.getKey() + " -> " + feature);
+                assertEquals(feature.defaultOn && feature != entry.getValue(), settings.enabled(feature), entry.getKey() + " -> " + feature);
         }
     }
 

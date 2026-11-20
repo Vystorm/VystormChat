@@ -258,10 +258,28 @@ settings:
 # sind zusätzliche Hauptbefehle (serverweit; der Admin wählt die Sprachen in Cores Konfig commands.localized-aliases);
 # "name"/"aliases" eines Unterbefehls gehen in jeder Sprache, Englisch geht immer. Übersicht aller Befehle: /vhilfe
 commands:
+  discord:
+    description: "Einladungslink zum Discord-Server"
+    aliases: []
   vchat:
     description: "Chatmenü, Stummschaltungen, Moderation und Neuladen"
     aliases: []
     sub:
+      discord:
+        name: discord
+        aliases: []
+        description: "Discord-Brücke: Status und Testzeile"
+        sub:
+          status:
+            name: "status"
+            aliases: []
+            description: "Verbindung, Warteschlange und letzter Fehler"
+          test:
+            name: "test"
+            aliases: []
+            description: "Eine Testzeile an die Discord-Seite eines Kanals schicken"
+            args:
+              channel: "KANAL"
       report:
         name: report
         aliases: []
@@ -483,6 +501,19 @@ panel:
   inventory: "Inventar"
   inventory-view: "Originalinventar ansehen"
 switches:
+  discord: "Chatkanäle mit einem Webhook unter discord.channels schicken ihre Nachrichten mit Name und Kopf des Spielers zu Discord. Alle anderen Discord-Schalter brauchen diesen."
+  discord-user-mentions: "Spieler dürfen Discord-Nutzer über deren Nutzer-ID-Erwähnung anpingen. @everyone, @here und Rollen pingen nie."
+  discord-join: "Schickt eine Zeile zu Discord, wenn ein Spieler den Server betritt."
+  discord-leave: "Schickt eine Zeile zu Discord, wenn ein Spieler den Server verlässt."
+  discord-first-join: "Neue Spieler bekommen statt der normalen Beitrittszeile eine Begrüßung."
+  discord-death: "Schickt Todesnachrichten zu Discord."
+  discord-advancement: "Schickt die Fortschritte, die der Server im Chat ankündigt."
+  discord-server-start: "Schickt eine Zeile, wenn der Server gestartet ist."
+  discord-server-stop: "Schickt eine Zeile, wenn der Server stoppt."
+  discord-bot: "Der Bot verbindet sich mit Discord und zeigt Nachrichten aus den zugeordneten Discord-Kanälen in Minecraft. Braucht einen Bot-Token und den Message Content Intent."
+  discord-player-count: "Der Status des Bots zeigt, wie viele Spieler online sind."
+  discord-invite: "/discord zeigt Spielern den Einladungslink aus discord.invite.link."
+  discord-reports: "Neue Spielermeldungen gehen zusätzlich an discord.reports.webhook. Braucht auch reports.enabled."
   chat: "Das ganze Plugin: Kanäle, Formate, Filter und Befehle"
   quick-prefixes: "Kurzpräfixe schicken eine Nachricht in einen Kanal"
   paid-channels: "Kanäle mit Preis pro Nachricht"
@@ -534,6 +565,19 @@ placeholder:
   spy: "true oder false: Mitlesen ist an"
   reply_partner: "Letzter Partner privater Nachrichten"
 switch-names:
+  discord: "Discord-Brücke (Webhooks)"
+  discord-user-mentions: "Discord-Nutzer anpingen"
+  discord-join: "Discord: Beitrittszeile"
+  discord-leave: "Discord: Abschiedszeile"
+  discord-first-join: "Discord: erster Beitritt"
+  discord-death: "Discord: Todesnachrichten"
+  discord-advancement: "Discord: Fortschritte"
+  discord-server-start: "Discord: Serverstart"
+  discord-server-stop: "Discord: Serverstopp"
+  discord-bot: "Discord-Bot"
+  discord-player-count: "Discord-Bot-Status"
+  discord-invite: "Einladungslink (/discord)"
+  discord-reports: "Meldungen an Discord"
   chat: "Kanäle"
   quick-prefixes: "Schnellpräfixe"
   paid-channels: "Bezahlte Kanäle"
@@ -572,3 +616,50 @@ switch-names:
   tutorial: "Tutorial"
 feature-needs: "<red>Dafür braucht es „{name}“ ({switch}), das auf diesem Server ausgeschaltet ist."
 config-broken: "<red>{file} wurde nicht neu geladen: YAML-Fehler bei {problem}. Die Datei bleibt unverändert; die letzten funktionierenden Einstellungen bleiben aktiv."
+
+# ---------------------------------------------------------------- Discord bridge (1.18.0)
+discord:
+  word-on: "an"
+  word-off: "aus"
+  status-header: "<gold>Discord-Brücke"
+  status-switches: "<gray>Webhooks: <white>{webhooks}</white>, Bot: <white>{bot}"
+  status-channels: "<gray>Verbundene Kanäle: <white>{channels}"
+  status-token: "<gray>Bot-Token aus: <white>{source}"
+  status-queue: "<gray>Warteschlange: <white>{queued}</white> wartend, <white>{sent}</white> gesendet, <white>{dropped}</white> verworfen"
+  status-error: "<gray>Letzter Fehler: <white>{error}"
+  token-environment: "Umgebungsvariable"
+  token-file: "discord-token.txt"
+  token-config: "config.yml (besser in discord-token.txt verschieben)"
+  token-none: "keiner"
+  test-line: "Testnachricht aus Minecraft ({channel}, gesendet von {player})"
+  test-queued: "<green>Die Testzeile für {channel} ist unterwegs zu Discord. /vchat discord status zeigt Fehler."
+  test-unmapped: "<red>{channel} ist nicht verbunden: gib dem Kanal unter discord.channels einen Webhook (oder eine discord-id bei eingeschaltetem Bot)."
+  test-failed: "<red>Die Testzeile konnte nicht eingereiht werden (Warteschlange voll oder Brücke gestoppt)."
+  invite: "<gray>Komm auf unseren Discord: <aqua>{link}"
+  invite-missing: "<red>Es ist kein Discord-Einladungslink gesetzt (discord.invite.link)."
+  file: "[Datei]"
+  reply: "(Antwort an {name})"
+  presence: "{online} von {max} Spielern online"
+  report: "**Meldung** von {reporter} über **{player}**: {reason}"
+  events:
+    join: "**{player}** hat den Server betreten"
+    leave: "**{player}** hat den Server verlassen"
+    first-join: "**{player}** ist zum ersten Mal da. Willkommen!"
+    death: "{message}"
+    death-plain: "{player} ist gestorben"
+    advancement: "**{player}** hat den Fortschritt **{advancement}** erzielt"
+    server-start: "Der Server ist gestartet"
+    server-stop: "Der Server wurde gestoppt"
+  config:
+    avatar: "Avatarbild"
+    avatar-desc: "Bild neben den Nachrichten eines Spielers in Discord (Adresse eines Kopf-Dienstes mit der UUID des Spielers)."
+    webhook-name: "Name in Discord"
+    webhook-name-desc: "Name über den Nachrichten eines Spielers in Discord."
+    queue-size: "Größe der Warteschlange"
+    queue-size-desc: "Höchstens so viele Nachrichten warten auf Discord; weitere werden verworfen und im Log gezählt."
+    blocked-users: "Gesperrte Discord-Nutzer"
+    blocked-users-desc: "Discord-Nutzer-IDs, deren Nachrichten nie in Minecraft erscheinen."
+    format: "Zeile für Discord-Nachrichten"
+    format-desc: "So sieht eine Nachricht aus Discord in Minecraft aus."
+    invite-link: "Einladungslink"
+    invite-link-desc: "Der Discord-Einladungslink, den /discord zeigt."

@@ -249,10 +249,28 @@ settings:
     city: Mostre o bate-papo da cidade
     faction: Mostrar conversa de facção
 commands:
+  discord:
+    description: "Link de convite para o servidor do Discord"
+    aliases: []
   vchat:
     description: Menu de bate-papo, mudo, moderação e recarga
     aliases: []
     sub:
+      discord:
+        name: discord
+        aliases: []
+        description: "Ponte do Discord: status e linha de teste"
+        sub:
+          status:
+            name: "status"
+            aliases: []
+            description: "Conexão, fila e último erro"
+          test:
+            name: "test"
+            aliases: []
+            description: "Envia uma linha de teste ao lado Discord de um canal"
+            args:
+              channel: "CANAL"
       report:
         name: report
         aliases: []
@@ -472,6 +490,19 @@ panel:
   inventory: "Inventário"
   inventory-view: "Ver inventário original"
 switches:
+  discord: "Canais de chat com um webhook em discord.channels enviam suas mensagens ao Discord com o nome e a cabeça do jogador. Todos os outros interruptores do Discord precisam deste."
+  discord-user-mentions: "Jogadores podem mencionar usuários do Discord pelo ID. @everyone, @here e cargos nunca notificam."
+  discord-join: "Envia uma linha ao Discord quando um jogador entra."
+  discord-leave: "Envia uma linha ao Discord quando um jogador sai."
+  discord-first-join: "Jogadores novos recebem uma linha de boas-vindas no lugar da linha de entrada normal."
+  discord-death: "Envia as mensagens de morte ao Discord."
+  discord-advancement: "Envia as conquistas que o servidor anuncia no chat."
+  discord-server-start: "Envia uma linha quando o servidor terminou de iniciar."
+  discord-server-stop: "Envia uma linha quando o servidor para."
+  discord-bot: "O bot se conecta ao Discord e mostra no Minecraft as mensagens dos canais do Discord associados. Precisa de um token de bot e do Message Content Intent."
+  discord-player-count: "O status do bot mostra quantos jogadores estão online."
+  discord-invite: "/discord mostra aos jogadores o link de convite de discord.invite.link."
+  discord-reports: "Novas denúncias de jogadores também vão para discord.reports.webhook. Precisa também de reports.enabled."
   chat: "O plugin inteiro: canais, formatos, filtros e comandos"
   quick-prefixes: "Prefixos rápidos mandam uma mensagem a um canal"
   paid-channels: "Canais com preço por mensagem"
@@ -523,6 +554,19 @@ placeholder:
   spy: "true ou false: a espionagem está ligada"
   reply_partner: "Último parceiro de mensagens privadas"
 switch-names:
+  discord: "Ponte do Discord (webhooks)"
+  discord-user-mentions: "Menções a usuários do Discord"
+  discord-join: "Discord: linha de entrada"
+  discord-leave: "Discord: linha de saída"
+  discord-first-join: "Discord: primeira entrada"
+  discord-death: "Discord: mensagens de morte"
+  discord-advancement: "Discord: conquistas"
+  discord-server-start: "Discord: início do servidor"
+  discord-server-stop: "Discord: parada do servidor"
+  discord-bot: "Bot do Discord"
+  discord-player-count: "Status do bot do Discord"
+  discord-invite: "Link de convite (/discord)"
+  discord-reports: "Denúncias para o Discord"
   chat: "Canais"
   quick-prefixes: "Prefixos rápidos"
   paid-channels: "Canais pagos"
@@ -561,3 +605,50 @@ switch-names:
   tutorial: "Tutorial"
 feature-needs: "<red>Isto precisa de “{name}” ({switch}), que está desligado neste servidor."
 config-broken: "<red>{file} não foi recarregado: erro de YAML em {problem}. O arquivo não foi alterado; as últimas configurações válidas continuam em uso."
+
+# ---------------------------------------------------------------- Discord bridge (1.18.0)
+discord:
+  word-on: "ligado"
+  word-off: "desligado"
+  status-header: "<gold>Ponte do Discord"
+  status-switches: "<gray>Webhooks: <white>{webhooks}</white>, bot: <white>{bot}"
+  status-channels: "<gray>Canais ligados: <white>{channels}"
+  status-token: "<gray>Token do bot de: <white>{source}"
+  status-queue: "<gray>Fila: <white>{queued}</white> aguardando, <white>{sent}</white> enviadas, <white>{dropped}</white> descartadas"
+  status-error: "<gray>Último erro: <white>{error}"
+  token-environment: "variável de ambiente"
+  token-file: "discord-token.txt"
+  token-config: "config.yml (melhor mover para discord-token.txt)"
+  token-none: "nenhum"
+  test-line: "Mensagem de teste do Minecraft ({channel}, enviada por {player})"
+  test-queued: "<green>A linha de teste de {channel} está a caminho do Discord. /vchat discord status mostra erros."
+  test-unmapped: "<red>{channel} não está ligado: dê a ele um webhook (ou um discord-id com o bot ligado) em discord.channels."
+  test-failed: "<red>Não foi possível colocar a linha de teste na fila (fila cheia ou ponte parada)."
+  invite: "<gray>Entre no nosso Discord: <aqua>{link}"
+  invite-missing: "<red>Nenhum link de convite do Discord foi definido (discord.invite.link)."
+  file: "[arquivo]"
+  reply: "(resposta a {name})"
+  presence: "{online} de {max} jogadores online"
+  report: "**Denúncia** de {reporter} sobre **{player}**: {reason}"
+  events:
+    join: "**{player}** entrou no servidor"
+    leave: "**{player}** saiu do servidor"
+    first-join: "**{player}** entrou pela primeira vez. Bem-vindo!"
+    death: "{message}"
+    death-plain: "{player} morreu"
+    advancement: "**{player}** conseguiu a conquista **{advancement}**"
+    server-start: "O servidor iniciou"
+    server-stop: "O servidor parou"
+  config:
+    avatar: "Imagem de avatar"
+    avatar-desc: "Imagem ao lado das mensagens de um jogador no Discord (endereço de um serviço de cabeças com o UUID do jogador)."
+    webhook-name: "Nome no Discord"
+    webhook-name-desc: "Nome acima das mensagens de um jogador no Discord."
+    queue-size: "Tamanho da fila"
+    queue-size-desc: "No máximo estas mensagens esperam pelo Discord; as demais são descartadas e contadas no log."
+    blocked-users: "Usuários do Discord bloqueados"
+    blocked-users-desc: "IDs de usuários do Discord cujas mensagens nunca aparecem no Minecraft."
+    format: "Linha das mensagens do Discord"
+    format-desc: "Como uma mensagem do Discord aparece no Minecraft."
+    invite-link: "Link de convite"
+    invite-link-desc: "O link de convite do Discord que /discord mostra."

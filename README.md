@@ -11,6 +11,10 @@ On servers without native dialogs, Core presents message, ignore and moderation 
 **Speech bubbles (1.12.0)**
 - Public messages float above the writer's head for a few seconds for nearby recipients; switchable per player in `/vsettings`.
 
+**Discord bridge (1.18.0, off by default)**
+- Chat channels you choose post to Discord through a webhook, with the player's name and head; join, leave, first join, death, advancement, server start and stop lines each have their own switch.
+- With a bot, messages from Discord show in the chat channel, after the word filter, link filter and anti-spam. See [Discord bridge](#discord-bridge) below.
+
 **Channels**
 - Channels from `config.yml`, each with its own format, tag, colour, read and write permission, world list, cooldown, optional price per message (Vault) and client tab.
 - Scopes: `global`, `world`, `local` (radius), `region` (everyone in the same Vystorm Core region: city, estate, arena ...), `party`, `city`, `faction`.
@@ -70,7 +74,7 @@ Use `/vchat keywords test TEXT` to privately preview the first matching phrase w
 - Chat uses Paper's async chat event where available and Bukkit's async chat event on Spigot/CraftBukkit. Player positions, groups and ranks are snapshots taken on the server thread. The Bukkit adapter schedules component delivery on the server thread and preserves ordinary recipient filters and cancellation checks.
 - Files are written in the background with atomic replace; broken files are kept as `.corrupt-<time>` instead of being overwritten.
 - A message that cannot be processed is never sent to anyone else: the sender gets it back with an error note (a staff or party message can never leak into global chat).
-- Only the channels in `relay.only-channels` (default: global) stay in the server chat, where DiscordSRV, chat bridges and loggers see them. Staff, party, faction, local and all other channels are taken out of the server chat and delivered by Vystorm Chat itself, so no other plugin relays them; our own chat log, console log, mentions and client tabs work the same.
+- Only the channels in `relay.only-channels` (default: global) stay in the server chat, where DiscordSRV, chat bridges and loggers see them. Staff, party, faction, local and all other channels are taken out of the server chat and delivered by Vystorm Chat itself, so no other plugin relays them; our own chat log, console log, mentions and client tabs work the same. This stays as it is with the built-in Discord bridge, which has its own channel list (`discord.channels`); a channel in both lists would reach Discord twice when DiscordSRV is installed too, so the console warns once.
 
 ## Commands
 
@@ -90,6 +94,8 @@ Use `/vchat keywords test TEXT` to privately preview the first matching phrase w
 | `/clearchat` (`/cc`) | clear the chat |
 | `/slowmode [seconds \| off] [CHANNEL]` | slow mode |
 | `/vchat [menu \| help \| mutes \| moderation \| reload]` | menu, help, staff pages, reload |
+| `/vchat discord [status]`, `/vchat discord test CHANNEL` | Discord bridge: bridged channels, bot connection, token source, queue, last error; a test line (`vystormchat.admin`) |
+| `/discord` | the Discord invite link from `discord.invite.link` (only while no other plugin owns `/discord`) |
 
 ## Permissions
 
@@ -125,6 +131,8 @@ The trade channel uses Core's `vystorm_core.chat.trade.send` and `.receive` (eve
 
 Every feature has an on/off switch in `config.yml` (all on by default, listed in Vystorm Core's `/vadmin features`, applied without a restart except `tutorial.enabled`): `chat.enabled` (the whole plugin), `quick-prefixes.enabled`, `paid-channels.enabled`, `channel-choice.enabled`, `notify-nobody-heard`, `family-links.enabled`, `client-tabs`, `name-formats.enabled`, `placeholderapi`, `hover-cards.enabled`, `timestamps.enabled`, `showcase.enabled`, `emojis.enabled`, `links.enabled`, `mentions.enabled`, `mentions.plain-names`, `mentions.action-bar`, `player-formatting.enabled`, `keyword-alerts.enabled`, `private-messages.enabled`, `ignore.enabled`, `social-spy.enabled`, `moderation.spam.enabled`, `moderation.filter.enabled`, `moderation.notify-staff`, `mutes.enabled`, `clear-chat.enabled`, `slow-mode.enabled`, `reports.enabled`, `log.enabled`, `console-log`, `announcements.enabled`, `bubbles.enabled`, `chat-menu.enabled`, `relay.enabled`, `tutorial.enabled`. A switched-off feature answers "This feature is switched off on this server."; profiles, mutes, reports, logs and announcements stay saved.
 
+The Discord switches are off by default and need `discord.enabled`: `discord.enabled`, `discord.user-mentions.enabled`, `discord.events.join.enabled`, `discord.events.leave.enabled`, `discord.events.first-join.enabled`, `discord.events.death.enabled`, `discord.events.advancement.enabled`, `discord.events.server-start.enabled`, `discord.events.server-stop.enabled`, `discord.bot.enabled`, `discord.bot.player-count.enabled` (also needs `discord.bot.enabled`), `discord.invite.enabled`, `discord.reports.enabled` (also needs `reports.enabled`). A switch whose parent is off does nothing; the console names the missing switch at start and reload.
+
 ## Placeholders
 
 With Vystorm Core 0.65.0 the plugin registers the namespace `chat`. Every value is async-safe, so it also answers in scoreboards, tab lists and chat formats off the server thread; a value of a switched-off feature is empty: `channel`, `channel_name`, `muted`, `mute_remaining`, `party_name`, `city_name`, `faction_name`, `prefix`, `suffix`, `group`, `ignored_count`, `spy`, `reply_partner`. Examples: `%vystorm_chat_channel_name%` (the channel the player writes in) and `{chat:muted}`. `/vadmin placeholders chat` lists them.
@@ -156,6 +164,15 @@ With Vystorm Core 0.65.0 the plugin registers the namespace `chat`. Every value 
 | `private-messages.*` | on | enabled, formats, sound |
 | `ignore.enabled`, `mutes.enabled`, `reports.enabled` | `true` | switch ignore lists, mutes or player reports off; saved data is kept |
 | `log.*` | on, 10 MB, 30 days | |
+| `discord.channels.<id>.webhook` / `.discord-id` / `.allow-restricted` | global, empty | webhook URL (Minecraft to Discord), Discord channel id (for the bot), bridge a channel only some players may read |
+| `discord.avatar` | `https://mc-heads.net/avatar/{uuid}/128` | picture next to a player's messages; `{uuid}`, `{uuid-plain}`, `{name}` |
+| `discord.webhook-name` | `{name}` | name above a player's messages |
+| `discord.queue-size` | `200` | messages waiting for Discord at most (10–5000) |
+| `discord.events.webhook` | empty | where event lines go; empty = the default channel's webhook |
+| `discord.bot.format` | `[Discord] <name>: <message>` (with colours) | how Discord messages look in Minecraft |
+| `discord.bot-token` | empty | read only when `discord-token.txt` and `VYSTORM_CHAT_DISCORD_TOKEN` are missing |
+| `discord.blocked-users` | `[]` | Discord user ids whose messages never show in Minecraft |
+| `discord.invite.link`, `discord.reports.webhook` | empty | link for `/discord`; webhook for player reports |
 
 Data files in `plugins/VystormChat/`: `players/<uuid>.yml` (focus channel, hidden channels, ignore list, keyword phrases and pause state, personal settings), `mutes.yml`, `logs/chat-YYYY-MM-DD[.n].log`. Texts in seven languages: `lang/en.yml`, `de`, `fr`, `it`, `pt_br`, `ru` and `zh_cn`.
 
@@ -166,6 +183,40 @@ Build with JDK 25; plugin and test bytecode targets Java 21. The supplied Core j
 `check` includes `compat1206` (all main sources compiled against Paper 1.20.6) and `test1206` (compatibility tests using the old runtime API). Supply the local server libraries with `-Ppaper1206Libraries=/path/to/smoke-1206/libraries`; the default is `<home>/source/tools/smoke-1206/libraries`. These checks work offline with cached build dependencies and do not start a server. Newer API adapters are supplied by Core, so this plugin needs no additional source set.
 
 `./gradlew build -PvystormCoreJar=path/to/Vystorm_Core.jar` → `build/libs/VystormChat-<version>.jar`
+
+## Discord bridge
+
+Vystorm Chat talks to Discord itself, without DiscordSRV and without a Discord library. There are two levels, both off by default.
+
+**Level 1, webhooks (Minecraft to Discord).** No bot is needed.
+
+1. In Discord: Channel settings → Integrations → Webhooks → New Webhook → Copy Webhook URL.
+2. In `config.yml`: set `discord.enabled: true` and paste the URL into `discord.channels.global.webhook` (use the id of any chat channel instead of `global`; one webhook per channel). Keep the URL secret: whoever has it can post into that channel.
+3. Optional: switch on the event lines under `discord.events` (join, leave, first join, death, advancement, server start, server stop). They go to `discord.events.webhook`, or to the default channel's webhook when that is empty.
+4. `/vchat reload`, then `/vchat discord test global` sends a test line. `/vchat discord status` shows errors.
+
+**Level 2, the bot (Discord to Minecraft).**
+
+1. Go to the Discord developer portal (discord.com/developers/applications), create an application, open "Bot", and copy the token (Reset Token).
+2. On the same "Bot" page switch on **Message Content Intent**. This is a privileged intent: without it Discord refuses the connection (close code 4014) and the console says so. The bot asks for nothing else than server messages and their content.
+3. Invite the bot: OAuth2 → URL Generator, scope `bot`, bot permissions "View Channels" and "Send Messages" (permission value 3072). The link looks like `https://discord.com/oauth2/authorize?client_id=APPLICATION_ID&scope=bot&permissions=3072`.
+4. Put the token into the file `plugins/VystormChat/discord-token.txt` (one line), or into the environment variable `VYSTORM_CHAT_DISCORD_TOKEN`. `discord.bot-token` in `config.yml` works too, but the file keeps the token out of the config and its backups.
+5. Turn on developer mode in Discord (User settings → Advanced), right-click the Discord channel → Copy Channel ID, and put it into `discord.channels.global.discord-id` (in quotes).
+6. Set `discord.bot.enabled: true` and run `/vchat reload`. `/vchat discord status` shows `ready` when the bot is connected.
+
+What the bot does: messages in a mapped Discord channel show in the chat channel as `[Discord] Name: text` (`discord.bot.format`). They pass the word filter, link filter and anti-spam like a player without bypass rights; only players who may read the channel and have not hidden it see them. Files show as "[file]", with the link only when links to that site are allowed. Replies, mentions and Discord emoji become plain text, markdown is removed. Messages from bots and webhooks (also the bridge's own posts) are ignored, so nothing loops. `discord.blocked-users` keeps single Discord users out. A channel that only has a `discord-id` and no webhook is posted to by the bot as `**Name**: text`. Optional: `discord.bot.player-count.enabled` shows the player count as the bot's status.
+
+**Which channels take part.** Only chat channels listed under `discord.channels`, and only channels with scope `global`. Private messages and local, world, party, city, faction and region chats never leave the server. A channel whose read permission not everyone has by default (the staff channel) needs `allow-restricted: true`; the trade channel uses Core's trade permission, which everyone has, so it can be bridged like global. Muted players, blocked messages and censored words reach Discord the way players see them: not at all, or censored. Nothing a player writes pings @everyone, @here or a role; `discord.user-mentions.enabled` allows pinging Discord users by their id mention.
+
+**Other extras.** `discord.invite.enabled` with `discord.invite.link` gives players `/discord` with a clickable invite (left out when another plugin owns `/discord`). `discord.reports.enabled` with `discord.reports.webhook` posts every new player report to a staff channel as well.
+
+**Limits and safety.** Discord's rate limits are kept per webhook and channel, and a "too many requests" answer makes that channel wait as long as Discord asks. Waiting messages stay in a queue of `discord.queue-size` (200); further messages are dropped and the console says how many. A deleted webhook or a wrong token stops that channel until `/vchat reload`. Nothing of this runs on the server thread. The token and the webhook URLs never appear in the console, in `/vadmin config` or in `/vchat discord status`.
+
+**Together with DiscordSRV.** `relay.only-channels` works as before: the channels listed there stay in the server chat, where DiscordSRV sees them. If you keep DiscordSRV, do not bridge the same channel in both; the console warns once when both are active.
+
+**Privacy.** With the bridge on, these leave the server: the player's name, the player's UUID inside the avatar URL (Discord loads the head picture from that address, by default mc-heads.net), the text of messages in bridged channels after the filters, the event lines you switched on, and with `discord.reports.enabled` the reporter, the reported player and the reason. They go to Discord through the webhooks and the bot you set up. From Discord, the plugin receives the messages of the channels the bot can see, and shows only those of mapped channels.
+
+**Not included.** Linking Minecraft and Discord accounts, Discord slash commands, roles or rank sync, and console channels.
 
 ## Player reports and moderation cases
 

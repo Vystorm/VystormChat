@@ -39,7 +39,11 @@ final class Reports {
             plugin.lang().send(p, "player-unknown", "player", name);
             return;
         }
-        result(p, store.submit(p.getUniqueId(), p.getName(), target.getUniqueId(), Objects.toString(target.getName(), name), reason, System.currentTimeMillis()));
+        String targetName = Objects.toString(target.getName(), name);
+        ReportStore.Result outcome = store.submit(p.getUniqueId(), p.getName(), target.getUniqueId(), targetName, reason, System.currentTimeMillis());
+        result(p, outcome);
+        // discord.reports.enabled: a copy for the staff webhook, only for a report that was really saved
+        if (outcome == ReportStore.Result.SAVED && plugin.discord() != null) plugin.discord().report(p.getName(), targetName, reason);
     }
     private void prompt(Player p, String key, String initial, boolean moderator, Consumer<String> action) {
         p.closeInventory();

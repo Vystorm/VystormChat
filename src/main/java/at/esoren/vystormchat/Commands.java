@@ -34,6 +34,16 @@ final class Commands {
 
     static List<CommandSpec> specs(ChatPlugin plugin, java.util.function.Predicate<String> taken) {
         Commands c = new Commands(plugin);
+        List<CommandSpec> specs = new ArrayList<>(base(plugin, taken, c));
+        // /discord (invite link) only while no other plugin (DiscordSRV ...) owns the name; it is a soft dependency, so it is loaded first
+        if (!taken.test("discord"))
+            specs.add(gate(CommandSpec.command("discord"), plugin, Settings.Feature.DISCORD_INVITE).permission("vystormchat.use")
+                    .executes(c::discordInvite).build());
+        else if (plugin != null) plugin.getLogger().info("/discord belongs to another plugin; Vystorm Chat's invite command is left out.");
+        return specs;
+    }
+
+    private static List<CommandSpec> base(ChatPlugin plugin, java.util.function.Predicate<String> taken, Commands c) {
         return List.of(
                 gate(CommandSpec.command("vchat"), plugin, Settings.Feature.CHAT).permission("vystormchat.use").aliases("chatmenu")
                         .executes(ctx -> {
@@ -68,6 +78,10 @@ final class Commands {
                                 .sub("resume", a -> a.executes(ctx -> c.keywordState(ctx, true))))
                         .sub("replylock", s -> gate(s, plugin, Settings.Feature.PRIVATE_MESSAGES).permission("vystormchat.msg").playerOnly()
                                 .executes(ctx -> plugin.messages().toggleReplyLock(ctx.player())))
+                        // not gated: the status must also answer (and name the switch) while the bridge is off
+                        .sub("discord", s -> s.permission("vystormchat.admin").executes(c::discordStatus)
+                                .sub("status", a -> a.executes(c::discordStatus))
+                                .sub("test", a -> a.arg(Arg.word("channel").suggests((ctx, prefix) -> c.discordChannels())).executes(c::discordTest)))
                         .sub("reload", s -> s.permission("vystormchat.admin").executes(ctx -> {
                             plugin.reload();
                             if (plugin.configProblem() != null) ctx.reply("config-broken", "file", "config.yml", "problem", plugin.configProblem());
@@ -170,6 +184,57 @@ final class Commands {
         String keyword = KeywordAlerts.match(ctx.get("message"), profile.keywords(), settings.keywordLimit);
         if (keyword == null) ctx.reply("keyword-test-miss");
         else ctx.reply("keyword-test-hit", "keyword", keyword);
+    }
+
+    // ------------------------------------------------------------------ Discord
+
+    /** Tells the sender which switch is missing; true when {@code feature} cannot run. */
+    private boolean needs(CommandContext ctx, Settings.Feature feature) {
+        Settings settings = plugin.service().settings();
+        Settings.Feature missing = !settings.enabled(feature) ? feature : settings.missing(feature);
+        if (missing == null) return false;
+        ctx.reply("feature-needs", "switch", missing.path, "name", lang().plain(ctx.sender(), missing.label()));
+        return true;
+    }
+
+    /** {@code /vchat discord [status]}: switches, bridged channels, token source, queue and the last error; no secrets. */
+    private void discordStatus(CommandContext ctx) {
+        DiscordBridge bridge = plugin.discord();
+        Settings settings = plugin.service().settings();
+        CommandSender sender = ctx.sender();
+        ctx.reply("discord.status-header");
+        String on = lang().plain(sender, "discord.word-on"), off = lang().plain(sender, "discord.word-off");
+        if (bridge == null) { ctx.reply("discord.status-switches", "webhooks", off, "bot", off); return; }
+        DiscordBridge.Status status = bridge.status();
+        ctx.reply("discord.status-switches", "webhooks", settings.active(Settings.Feature.DISCORD) ? on : off, "bot", status.bot());
+        ctx.reply("discord.status-channels", "channels", status.webhooks().isEmpty() ? "-" : status.webhooks());
+        ctx.reply("discord.status-token", "source", lang().plain(sender, "discord.token-" + status.token().name().toLowerCase(java.util.Locale.ROOT)));
+        ctx.reply("discord.status-queue", "queued", status.queued(), "sent", status.sent(), "dropped", status.dropped());
+        ctx.reply("discord.status-error", "error", status.error().isEmpty() ? "-" : status.error());
+        if (!settings.active(Settings.Feature.DISCORD)) needs(ctx, Settings.Feature.DISCORD);
+    }
+
+    private void discordTest(CommandContext ctx) {
+        if (needs(ctx, Settings.Feature.DISCORD)) return;
+        DiscordBridge bridge = plugin.discord();
+        String problem = bridge == null ? "discord.test-failed" : bridge.test(ctx.get("channel"), ctx.sender().getName());
+        if (problem == null) ctx.reply("discord.test-queued", "channel", ctx.<String>get("channel"));
+        else ctx.reply(problem, "channel", ctx.<String>get("channel"));
+    }
+
+    private List<String> discordChannels() {
+        return new ArrayList<>(plugin.service().settings().discord.links.keySet());
+    }
+
+    /** {@code /discord}: the invite link from {@code discord.invite.link}, clickable. */
+    private void discordInvite(CommandContext ctx) {
+        if (needs(ctx, Settings.Feature.DISCORD_INVITE)) return;
+        String link = plugin.service().settings().discord.invite;
+        if (link.isEmpty() || !link.startsWith("https://")) { ctx.reply("discord.invite-missing"); return; }
+        Component line = lang().component(ctx.sender(), "discord.invite", "link", link)
+                .clickEvent(ClickEvent.openUrl(link))
+                .hoverEvent(HoverEvent.showText(lang().component(ctx.sender(), "link-hover", "url", link)));
+        plugin.core().compat().platform().sendMessage(ctx.sender(), line);
     }
 
     // ------------------------------------------------------------------ channel
