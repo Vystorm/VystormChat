@@ -130,6 +130,29 @@ class SwitchesTest {
         verify(plugin, never()).mutes();
     }
 
+    @Test void givenFamilyLinksOff_whenAPlayerWritesIntoAFamilyLinkChannel_thenTheAnswerNamesTheSwitch() throws Exception {
+        ChatPlugin plugin = plugin(settings(Settings.Feature.FAMILY_LINKS));
+        Player sender = mock(Player.class);
+        UUID id = UUID.randomUUID();
+        when(sender.getUniqueId()).thenReturn(id);
+        when(sender.hasPermission(anyString())).thenReturn(true);
+        doReturn(mock(MuteStore.class)).when(plugin).mutes();
+        States states = mock(States.class);
+        when(states.get(id)).thenReturn(PlayerState.basic(id, "Alex", UUID.randomUUID(), "world", 0, 0, 0));
+        doReturn(states).when(plugin).states();
+        when(lang(plugin).plain(sender, Settings.Feature.FAMILY_LINKS.label())).thenReturn("Party, city and region chats");
+        ChatService.Outcome outcome = plugin.service().prepare(sender, TestChannels.one("scope: global\nforward-command: partychat"),
+                "hello", ChatService.Source.CHAT, List.of());
+        ChatService.Denied denied = (ChatService.Denied) outcome;
+        assertEquals("feature-needs", denied.key());
+        assertArrayEquals(new Object[]{"switch", "family-links.enabled", "name", "Party, city and region chats"}, denied.placeholders());
+    }
+
+    @Test void givenEveryLanguage_whenRead_thenTheNeedsMessageNamesTheSwitch() {
+        for (String code : LANGUAGES)
+            assertTrue(YamlConfiguration.loadConfiguration(new File("src/main/resources/lang/" + code + ".yml")).getString("feature-needs", "").matches(".*\\{name}.*\\{switch}.*"), code);
+    }
+
     @Test void givenChatOff_whenThePlayerChats_thenTheServerChatIsLeftAlone() throws Exception {
         for (boolean on : List.of(false)) {
             ChatPlugin plugin = plugin(settings(Settings.Feature.CHAT));

@@ -1,3 +1,11 @@
+## 1.17.1 — 2026-11-20
+
+- A `config.yml` with a YAML syntax error is no longer overwritten. Before, the plugin replaced such a file on start and on `/vchat reload` with only the three keyword-alert keys, and every other setting was lost. Now the file stays exactly as it is, the console names the line and column of the error, and `/vchat reload` answers with the same position and keeps the last working settings until the file is fixed.
+- A broken `announcements.yml` is no longer replaced by an empty file: the plugin leaves it as it is and, before the next announcement change has to write it, copies it to `announcements.yml.broken-<date>` (named in the console).
+- `/vadmin features` shows every switch of the plugin with a readable name in the admin's language, for example "Mentions without @" and "Staff notes on blocked messages", instead of a name built from the config key such as "Moderation › Notify staff". The names exist in all seven languages.
+- A player who writes into a party, city, faction or region chat, or into a channel forwarded to another plugin's command, while `family-links.enabled` is off now reads "This needs “Vystorm family links” (family-links.enabled), which is switched off on this server." instead of "This feature is switched off on this server.", so the admin knows which switch to turn on.
+- README: names the platforms the plugin was tested on (Paper and Purpur 26.2, Paper 1.20.6, Spigot 26.2) and lists all seven language files.
+
 ## 1.17.0 — 2026-11-18
 
 - Requires Vystorm Core 0.65.0 or newer. Update Core before you update this plugin.

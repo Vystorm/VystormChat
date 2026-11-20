@@ -2,7 +2,7 @@
 
 **Modern chat channels with menus instead of commands.** Global, local, world, trade, staff, party, city and faction chat out of the box, plus as many own channels as you like. Private messages with reply and ignore, hover cards on every name, `[item]` showcase, mentions with sound, and moderation that actually helps: anti-spam, word and link filter, mutes with reason, slow mode and a rotating chat log. Players never need to remember a command: everything is in the chat menu and in `/vsettings`.
 
-Requires **[Vystorm Core](https://www.spigotmc.org/resources/139848/) 0.65.0 or newer** (free). What the build checks: Java 21 bytecode (`--release 21`), compiled against the Paper API 1.21.11 and, in `compat1206` and `test1206`, against Paper 1.20.6, plus unit tests of the Bukkit chat adapter that Spigot/CraftBukkit use. Use the Java version your server needs. See COMPATIBILITY.md for the exact validation scope.
+Requires **[Vystorm Core](https://www.spigotmc.org/resources/139848/) 0.65.0 or newer** (free). What the build checks: Java 21 bytecode (`--release 21`), compiled against the Paper API 1.21.11 and, in `compat1206` and `test1206`, against Paper 1.20.6, plus unit tests of the Bukkit chat adapter that Spigot/CraftBukkit use. Use the Java version your server needs. See COMPATIBILITY.md for the exact validation scope. Tested on Paper and Purpur 26.2, Paper 1.20.6 and Spigot 26.2.
 
 On servers without native dialogs, Core presents message, ignore and moderation forms as chat prompts. Chest menus and all chat features remain available. Unknown configured channel icons fall back to an oak sign; sounds unavailable on the server cannot play.
 
@@ -157,7 +157,7 @@ With Vystorm Core 0.65.0 the plugin registers the namespace `chat`. Every value 
 | `ignore.enabled`, `mutes.enabled`, `reports.enabled` | `true` | switch ignore lists, mutes or player reports off; saved data is kept |
 | `log.*` | on, 10 MB, 30 days | |
 
-Data files in `plugins/VystormChat/`: `players/<uuid>.yml` (focus channel, hidden channels, ignore list, keyword phrases and pause state, personal settings), `mutes.yml`, `logs/chat-YYYY-MM-DD[.n].log`. Texts in `lang/en.yml`, `lang/de.yml` and `lang/zh_cn.yml`.
+Data files in `plugins/VystormChat/`: `players/<uuid>.yml` (focus channel, hidden channels, ignore list, keyword phrases and pause state, personal settings), `mutes.yml`, `logs/chat-YYYY-MM-DD[.n].log`. Texts in seven languages: `lang/en.yml`, `de`, `fr`, `it`, `pt_br`, `ru` and `zh_cn`.
 
 ## Building
 

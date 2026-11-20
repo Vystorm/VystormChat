@@ -129,7 +129,7 @@ public final class ChatPlugin extends JavaPlugin {
         registerSettings();
         registerPlayerMenu();
         registerConfigEditor();
-        declareSwitches();
+        declareSwitches(core.settings().config(), this, lang);
         try { registerPlaceholders(core.placeholders()); }
         catch (RuntimeException failure) { getLogger().log(Level.WARNING, "Placeholders not registered", failure); }
         getLogger().info("Vystorm Chat " + getDescription().getVersion() + ": " + service.settings().channels.size() + " channels");
@@ -151,10 +151,33 @@ public final class ChatPlugin extends JavaPlugin {
         if (showcase != null) showcase.clear();
     }
 
-    /** (Re)reads config.yml and the language files. */
-    void load() {
+    /** The YAML error of config.yml found by the last load ("line L, column C: ..."), null when it parsed. */
+    private String configProblem;
+    private boolean configLoaded;
+
+    String configProblem() { return configProblem; }
+
+    /**
+     * Reads config.yml for start and reload. A file with a YAML error is never saved over (Bukkit hands back an empty
+     * config, and saving the keyword defaults wrote a file with only those three keys, 1.17.1): the file stays
+     * byte-identical, the error is logged once and false is returned. At start getConfig() then holds the jar defaults.
+     */
+    boolean readConfig() {
+        configProblem = YamlCheck.problem(new java.io.File(getDataFolder(), "config.yml"));
+        if (configProblem != null) {
+            getLogger().severe("config.yml has a YAML error at " + configProblem + ". The file was left unchanged; "
+                    + (configLoaded ? "the last working settings stay in use." : "the default settings are used.") + " Fix it and run /vchat reload.");
+            return false;
+        }
         reloadConfig();
         if (Settings.addKeywordDefaults(getConfig())) saveConfig();
+        return true;
+    }
+
+    /** (Re)reads config.yml and the language files. */
+    void load() {
+        if (!readConfig() && configLoaded) return; // a broken config.yml on reload: keep the last good settings
+        configLoaded = true;
         if (lang != null) lang.reload();
         Settings settings = new Settings(getConfig(), getLogger());
         settings.dropMissingForwards(command -> core.compat().platform().getCommandMap().getCommand(command) != null, getLogger());
@@ -172,11 +195,10 @@ public final class ChatPlugin extends JavaPlugin {
     }
 
     /** Every switch in /vadmin features with its one-line description in the admin's language. */
-    private void declareSwitches() {
-        var config = core.settings().config();
+    static void declareSwitches(Vystorm.vystorm_core._uiMethods.settings.ConfigEditorInterface config, org.bukkit.plugin.Plugin plugin, Lang lang) {
         for (Settings.Feature feature : Settings.Feature.values()) {
-            config.feature(this, feature.path, null, lang.ref(feature.description()));
-            if (feature.needsRestart()) config.activation(this, feature.path, Vystorm.vystorm_core._uiMethods.settings.SettingPolicy.Activation.RESTART);
+            config.feature(plugin, feature.path, lang.ref(feature.label()), lang.ref(feature.description()));
+            if (feature.needsRestart()) config.activation(plugin, feature.path, Vystorm.vystorm_core._uiMethods.settings.SettingPolicy.Activation.RESTART);
         }
     }
 

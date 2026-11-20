@@ -70,7 +70,8 @@ final class Commands {
                                 .executes(ctx -> plugin.messages().toggleReplyLock(ctx.player())))
                         .sub("reload", s -> s.permission("vystormchat.admin").executes(ctx -> {
                             plugin.reload();
-                            ctx.reply("reloaded", "channels", plugin.service().settings().channels.size(), "hooks", plugin.hooks().summary());
+                            if (plugin.configProblem() != null) ctx.reply("config-broken", "file", "config.yml", "problem", plugin.configProblem());
+                            else ctx.reply("reloaded", "channels", plugin.service().settings().channels.size(), "hooks", plugin.hooks().summary());
                         }))
                         .build(),
                 gate(CommandSpec.command("channel"), plugin, Settings.Feature.CHAT).permission("vystormchat.use").aliases("ch", "channels").playerOnly()

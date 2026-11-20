@@ -40,11 +40,19 @@ final class Announcements {
     private final Map<Integer, Announcement> entries = new TreeMap<>();
     private final Map<Integer, Long> lastSent = new HashMap<>();
     private int nextId = 1;
+    /** The YAML error the file had when it was read; the file is copied aside before the first write (1.17.1). */
+    private String problem;
 
     Announcements(ChatPlugin plugin, Path file) {
         this.plugin = plugin;
         this.file = file;
         if (!Files.exists(file)) return;
+        problem = YamlCheck.problem(file.toFile());
+        if (problem != null) {
+            plugin.getLogger().severe("announcements.yml has a YAML error at " + problem
+                    + "; its announcements are not loaded. The file stays as it is until an announcement changes, then it is copied aside first.");
+            return;
+        }
         ConfigurationSection all = YamlConfiguration.loadConfiguration(file.toFile()).getConfigurationSection("announcements");
         if (all != null) for (String key : all.getKeys(false)) try {
             int id = Integer.parseInt(key);
@@ -84,11 +92,15 @@ final class Announcements {
             String p = "announcements." + a.id() + ".";
             y.set(p + "text", a.text()); y.set(p + "minutes", a.minutes()); y.set(p + "world", a.world()); y.set(p + "enabled", a.enabled());
         }
-        try { Files.createDirectories(file.getParent()); plugin.core().data().files().write(file, y.saveToString().getBytes(StandardCharsets.UTF_8)); return true; }
+        try {
+            Files.createDirectories(file.getParent());
+            if (problem != null && Files.exists(file)) YamlCheck.backup(file.toFile(), plugin.getLogger());
+            problem = null;
+            plugin.core().data().files().write(file, y.saveToString().getBytes(StandardCharsets.UTF_8)); return true; }
         catch (IOException failure) { plugin.getLogger().warning("announcements.yml not saved: " + failure.getMessage()); return false; }
     }
 
-    private boolean put(Announcement a) {
+    boolean put(Announcement a) {
         Announcement old = entries.put(a.id(), a);
         if (save()) { lastSent.putIfAbsent(a.id(), System.currentTimeMillis()); return true; }
         if (old == null) entries.remove(a.id()); else entries.put(a.id(), old);

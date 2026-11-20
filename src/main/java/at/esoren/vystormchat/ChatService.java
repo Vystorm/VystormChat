@@ -109,7 +109,8 @@ final class ChatService {
         String problem = Visibility.writeProblem(channel, state, sender::hasPermission);
         if (problem != null) return new Denied(problem, "channel", channel.displayName());
         // family-links.enabled off: party, city, faction and region chats and forwarded channels are switched off
-        if (!s.enabled(Settings.Feature.FAMILY_LINKS) && familyLink(channel)) return new Denied("feature-off");
+        if (!s.enabled(Settings.Feature.FAMILY_LINKS) && familyLink(channel))
+            return new Denied("feature-needs", "switch", Settings.Feature.FAMILY_LINKS.path, "name", plugin.lang().plain(sender, Settings.Feature.FAMILY_LINKS.label()));
 
         String text = clean(input);
         if (text.isEmpty()) return new Ignored();
