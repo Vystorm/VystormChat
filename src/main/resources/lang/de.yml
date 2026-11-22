@@ -549,6 +549,7 @@ switches:
   bubbles: "Sprechblasen über dem Schreiber"
   chat-menu: "Chatmenü, Moderationsmenü und die Einstellungsseite"
   relay: "Gelistete Kanäle bleiben für andere Plugins im Server-Chat"
+  rankings: "Rangliste chat:messages für Tafeln und Platzhalter: zählt Nachrichten in öffentlichen Kanälen (braucht Vystorm Core 0.67.0)"
   tutorial: "Tutorial im Hauptmenü (braucht einen Neustart)"
 placeholder:
   channel: "Id des Kanals, in dem der Spieler schreibt"
@@ -613,6 +614,7 @@ switch-names:
   bubbles: "Sprechblasen"
   chat-menu: "Chatmenü und Einstellungen"
   relay: "Weiterleitung an andere Plugins"
+  rankings: "Ranglisten"
   tutorial: "Tutorial"
 feature-needs: "<red>Dafür braucht es „{name}“ ({switch}), das auf diesem Server ausgeschaltet ist."
 config-broken: "<red>{file} wurde nicht neu geladen: YAML-Fehler bei {problem}. Die Datei bleibt unverändert; die letzten funktionierenden Einstellungen bleiben aktiv."
@@ -663,3 +665,7 @@ discord:
     format-desc: "So sieht eine Nachricht aus Discord in Minecraft aus."
     invite-link: "Einladungslink"
     invite-link-desc: "Der Discord-Einladungslink, den /discord zeigt."
+rankings:
+  messages:
+    label: "Fleißigste Schreiber"
+    description: "Nachrichten eines Spielers in öffentlichen Kanälen (keine Privatnachrichten, Gruppen- oder Team-Kanäle)"

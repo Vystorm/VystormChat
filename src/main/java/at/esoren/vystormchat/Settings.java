@@ -57,6 +57,8 @@ final class Settings {
         BUBBLES("bubbles.enabled"),
         CHAT_MENU("chat-menu.enabled"),
         RELAY("relay.enabled"),
+        /** The ranking chat:messages in Core's placeholders (1.19.0; needs Core 0.67.0). Off: nothing is counted or offered. */
+        RANKINGS("rankings.enabled"),
         /** Read once when the plugin starts. */
         TUTORIAL("tutorial.enabled"),
         // Discord bridge (1.18.0): off by default, a missing key counts as off

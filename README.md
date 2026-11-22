@@ -129,13 +129,33 @@ The trade channel uses Core's `vystorm_core.chat.trade.send` and `.receive` (eve
 
 ## Switches
 
-Every feature has an on/off switch in `config.yml` (all on by default, listed in Vystorm Core's `/vadmin features`, applied without a restart except `tutorial.enabled`): `chat.enabled` (the whole plugin), `quick-prefixes.enabled`, `paid-channels.enabled`, `channel-choice.enabled`, `notify-nobody-heard`, `family-links.enabled`, `client-tabs`, `name-formats.enabled`, `placeholderapi`, `hover-cards.enabled`, `timestamps.enabled`, `showcase.enabled`, `emojis.enabled`, `links.enabled`, `mentions.enabled`, `mentions.plain-names`, `mentions.action-bar`, `player-formatting.enabled`, `keyword-alerts.enabled`, `private-messages.enabled`, `ignore.enabled`, `social-spy.enabled`, `moderation.spam.enabled`, `moderation.filter.enabled`, `moderation.notify-staff`, `mutes.enabled`, `clear-chat.enabled`, `slow-mode.enabled`, `reports.enabled`, `log.enabled`, `console-log`, `announcements.enabled`, `bubbles.enabled`, `chat-menu.enabled`, `relay.enabled`, `tutorial.enabled`. A switched-off feature answers "This feature is switched off on this server."; profiles, mutes, reports, logs and announcements stay saved.
+Every feature has an on/off switch in `config.yml` (all on by default, listed in Vystorm Core's `/vadmin features`, applied without a restart except `tutorial.enabled`): `chat.enabled` (the whole plugin), `quick-prefixes.enabled`, `paid-channels.enabled`, `channel-choice.enabled`, `notify-nobody-heard`, `family-links.enabled`, `client-tabs`, `name-formats.enabled`, `placeholderapi`, `hover-cards.enabled`, `timestamps.enabled`, `showcase.enabled`, `emojis.enabled`, `links.enabled`, `mentions.enabled`, `mentions.plain-names`, `mentions.action-bar`, `player-formatting.enabled`, `keyword-alerts.enabled`, `private-messages.enabled`, `ignore.enabled`, `social-spy.enabled`, `moderation.spam.enabled`, `moderation.filter.enabled`, `moderation.notify-staff`, `mutes.enabled`, `clear-chat.enabled`, `slow-mode.enabled`, `reports.enabled`, `log.enabled`, `console-log`, `announcements.enabled`, `bubbles.enabled`, `chat-menu.enabled`, `relay.enabled`, `rankings.enabled` (the ranking below, 1.19.0), `tutorial.enabled`. A switched-off feature answers "This feature is switched off on this server."; profiles, mutes, reports, logs and announcements stay saved.
 
 The Discord switches are off by default and need `discord.enabled`: `discord.enabled`, `discord.user-mentions.enabled`, `discord.events.join.enabled`, `discord.events.leave.enabled`, `discord.events.first-join.enabled`, `discord.events.death.enabled`, `discord.events.advancement.enabled`, `discord.events.server-start.enabled`, `discord.events.server-stop.enabled`, `discord.bot.enabled`, `discord.bot.player-count.enabled` (also needs `discord.bot.enabled`), `discord.invite.enabled`, `discord.reports.enabled` (also needs `reports.enabled`). A switch whose parent is off does nothing; the console names the missing switch at start and reload.
 
 ## Placeholders
 
 With Vystorm Core 0.65.0 the plugin registers the namespace `chat`. Every value is async-safe, so it also answers in scoreboards, tab lists and chat formats off the server thread; a value of a switched-off feature is empty: `channel`, `channel_name`, `muted`, `mute_remaining`, `party_name`, `city_name`, `faction_name`, `prefix`, `suffix`, `group`, `ignored_count`, `spy`, `reply_partner`. Examples: `%vystorm_chat_channel_name%` (the channel the player writes in) and `{chat:muted}`. `/vadmin placeholders chat` lists them.
+
+## Rankings (1.19.0)
+
+With Vystorm Core 0.67.0 or newer the plugin offers one ranking in its namespace `chat`:
+
+| Source id | Counts |
+| --- | --- |
+| `chat:messages` | Messages a player wrote in public channels |
+
+Only channels everyone can read count: no read permission, no party, city or faction scope, not forwarded to another plugin. In the shipped config that is `global`, `local` and `world`; `trade` (it has a read permission) and `staff` do not count, and private messages never do. The plugin keeps only the number per player (with the last known name) in `message-counts.yml`, never a message, and writes it at most once a minute and when the server stops. Counting starts with 1.19.0. With `rankings.enabled: false` nothing is counted.
+
+Vystorm Boards 1.21.0 or newer shows it on a board; put a text element above as heading:
+
+```yaml
+elements:
+  - {type: text, text: "<yellow>Most active chatters", x: 16, y: 12, size: 22}
+  - {type: top, source: "chat:messages", x: 16, y: 48, width: 480, rows: 10, highlight: true}
+```
+
+Placeholders, with `<n>` = 1 to 100: `%vystorm_chat_top_messages_<n>_name%`, `%vystorm_chat_top_messages_<n>_value%` (formatted in the viewer's language; `_raw` for the plain number, `_uuid` for the UUID), `%vystorm_chat_rank_messages%` and `%vystorm_chat_value_messages%` for the viewer (`-` if none). Short form in Vystorm texts: `{chat:top_messages:1:name}`, `{chat:rank_messages}`. `/vadmin placeholders rankings` lists it. With an older Core the plugin offers no ranking and works as before.
 
 ## Configuration
 

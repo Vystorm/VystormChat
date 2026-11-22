@@ -549,6 +549,7 @@ switches:
   bubbles: "Speech bubbles above the writer"
   chat-menu: "Chat menu, moderation menu and the settings page"
   relay: "Listed channels stay in the server chat for other plugins"
+  rankings: "Ranking chat:messages for boards and placeholders: counts public channel messages (needs Vystorm Core 0.67.0)"
   tutorial: "Tutorial in the main menu (needs a restart)"
 placeholder:
   channel: "Id of the channel the player writes in"
@@ -613,6 +614,7 @@ switch-names:
   bubbles: "Speech bubbles"
   chat-menu: "Chat menu and settings"
   relay: "Relay control"
+  rankings: "Rankings"
   tutorial: "Tutorial"
 feature-needs: "<red>This needs “{name}” ({switch}), which is switched off on this server."
 config-broken: "<red>{file} was not reloaded: YAML error at {problem}. The file was left unchanged; the last working settings stay in use."
@@ -663,3 +665,7 @@ discord:
     format-desc: "How a message from Discord looks in Minecraft."
     invite-link: "Invite link"
     invite-link-desc: "The Discord invite link that /discord shows."
+rankings:
+  messages:
+    label: "Most active chatters"
+    description: "Messages a player wrote in public channels (no private messages, group or staff channels)"

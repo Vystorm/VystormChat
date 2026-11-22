@@ -549,6 +549,7 @@ switches:
   bubbles: "发送者头顶的聊天气泡"
   chat-menu: "聊天菜单、管理菜单和设置页"
   relay: "列出的频道留在服务器聊天中供其他插件使用"
+  rankings: "用于展板和占位符的排名 chat:messages：统计公共频道消息（需要 Vystorm Core 0.67.0）"
   tutorial: "主菜单中的教程（需要重启）"
 placeholder:
   channel: "玩家发言所在频道的 id"
@@ -613,6 +614,7 @@ switch-names:
   bubbles: "对话气泡"
   chat-menu: "聊天菜单和设置"
   relay: "转发控制"
+  rankings: "排名"
   tutorial: "教程"
 feature-needs: "<red>这需要 “{name}”（{switch}），但它已在本服务器上关闭。"
 config-broken: "<red>{file} 未重新加载：YAML 错误位于 {problem}。文件保持不变，继续使用上次有效的设置。"
@@ -663,3 +665,7 @@ discord:
     format-desc: "来自 Discord 的消息在 Minecraft 中的样子。"
     invite-link: "邀请链接"
     invite-link-desc: "/discord 显示的 Discord 邀请链接。"
+rankings:
+  messages:
+    label: "最活跃的聊天者"
+    description: "玩家在公共频道发送的消息数（不含私信、团体频道和管理频道）"

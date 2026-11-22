@@ -88,6 +88,8 @@ public final class ChatPlugin extends JavaPlugin {
         profiles = new ProfileStore(getDataFolder().toPath().resolve("players"), getLogger(), core.data().files());
         mutes = new MuteStore(getDataFolder().toPath().resolve("mutes.yml"), getLogger(), io, core.data().files());
         mutes.load();
+        messageCounts = new MessageCounts(getDataFolder().toPath().resolve("message-counts.yml"), getLogger(), io, core.data().files());
+        messageCounts.load();
         chatLog = new ChatLog(getDataFolder().toPath().resolve("logs"), getLogger(), ZoneId.systemDefault());
         service = new ChatService(this);
         messages = new PrivateMessages(this);
@@ -127,6 +129,7 @@ public final class ChatPlugin extends JavaPlugin {
         tasks.timer(40L, 100L, () -> states.slow(getServer().getOnlinePlayers()));
         tasks.timer(100L, 100L, profiles::flush);
         tasks.timer(1200L, 1200L, showcase::cleanup);
+        tasks.timer(1200L, 1200L, messageCounts::flush);   // message-counts.yml at most once a minute
         tasks.timer(400L, 400L, announcements::tick);
         discordEvents.register();
         tasks.asyncTimer(10L, 10L, discord::pulse);
@@ -139,6 +142,8 @@ public final class ChatPlugin extends JavaPlugin {
         declareSwitches(core.settings().config(), this, lang);
         try { registerPlaceholders(core.placeholders()); }
         catch (RuntimeException failure) { getLogger().log(Level.WARNING, "Placeholders not registered", failure); }
+        rankingsReady = true;
+        applyRankings();
         getLogger().info("Vystorm Chat " + getDescription().getVersion() + ": " + service.settings().channels.size() + " channels");
     }
 
@@ -151,6 +156,7 @@ public final class ChatPlugin extends JavaPlugin {
         if (tasks != null) tasks.close();
         if (profiles != null) profiles.close();
         if (mutes != null) mutes.saveNow();
+        if (messageCounts != null) messageCounts.saveNow();
         if (io != null) {
             io.shutdown();
             try { io.awaitTermination(5, TimeUnit.SECONDS); } catch (InterruptedException interrupted) { Thread.currentThread().interrupt(); }
@@ -197,6 +203,45 @@ public final class ChatPlugin extends JavaPlugin {
         if (discord != null) {
             try { discord.configure(settings); }
             catch (RuntimeException failure) { getLogger().log(Level.WARNING, "Discord bridge not configured", failure); }
+        }
+        if (rankingsReady) applyRankings();   // rankings.enabled applies on /vchat reload without a restart
+    }
+
+    // ---- ranking chat:messages (1.19.0, Core 0.67.0) ----
+
+    /** Core capability of rankings as placeholders (Core 0.67.0). */
+    static final String RANKINGS_CAPABILITY = "placeholder-rankings";
+    /** Public channel messages per player (message-counts.yml). */
+    private MessageCounts messageCounts;
+    /** Set once the placeholders are registered at start; loads before that do not offer the ranking yet. */
+    private boolean rankingsReady, rankingsRefused;
+
+    MessageCounts messageCounts() { return messageCounts; }
+
+    /** Offers or removes the ranking after the settings were read; nothing at all on a Core older than 0.67.0. */
+    private void applyRankings() {
+        if (core == null) return;
+        Throwable refused = rankings(CoreApi.has(RANKINGS_CAPABILITY), this, core::placeholders,
+                service.settings().enabled(Settings.Feature.RANKINGS), () -> messageCounts, key -> lang == null ? key : lang.ref(key));
+        if (refused != null && !rankingsRefused) {
+            rankingsRefused = true;
+            getLogger().warning("Rankings not offered: " + refused);
+        }
+    }
+
+    /**
+     * Declares (or removes) the ranking when Core has rankings. The class naming Core's ranking types is only loaded
+     * inside this check. Returns the refusal (logged once by the caller), null when it worked or there was nothing to do.
+     */
+    static Throwable rankings(boolean coreHasRankings, org.bukkit.plugin.Plugin plugin,
+                              java.util.function.Supplier<Vystorm.vystorm_core._advancedMethods.placeholderHandler.PlaceholderInterface> registry,
+                              boolean on, java.util.function.Supplier<MessageCounts> counts, java.util.function.UnaryOperator<String> ref) {
+        if (!coreHasRankings) return null;
+        try {
+            ChatRankings.apply(plugin, registry.get(), on, counts, ref);
+            return null;
+        } catch (RuntimeException | LinkageError refused) {
+            return refused;
         }
     }
 

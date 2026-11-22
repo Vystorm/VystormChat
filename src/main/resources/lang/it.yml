@@ -539,6 +539,7 @@ switches:
   bubbles: "Fumetti sopra chi scrive"
   chat-menu: "Menu chat, menu moderazione e pagina impostazioni"
   relay: "I canali elencati restano nella chat del server per altri plugin"
+  rankings: "Classifica chat:messages per bacheche e placeholder: conta i messaggi nei canali pubblici (richiede Vystorm Core 0.67.0)"
   tutorial: "Tutorial nel menu principale (serve un riavvio)"
 placeholder:
   channel: "Id del canale in cui scrive il giocatore"
@@ -603,6 +604,7 @@ switch-names:
   bubbles: "Fumetti"
   chat-menu: "Menu chat e impostazioni"
   relay: "Controllo dell'inoltro"
+  rankings: "Classifiche"
   tutorial: "Tutorial"
 feature-needs: "<red>Questo richiede «{name}» ({switch}), che è disattivato su questo server."
 config-broken: "<red>{file} non è stato ricaricato: errore YAML in {problem}. Il file non è stato modificato; restano attive le ultime impostazioni valide."
@@ -653,3 +655,7 @@ discord:
     format-desc: "Come appare in Minecraft un messaggio da Discord."
     invite-link: "Link di invito"
     invite-link-desc: "Il link di invito Discord che mostra /discord."
+rankings:
+  messages:
+    label: "Giocatori più loquaci"
+    description: "Messaggi di un giocatore nei canali pubblici (niente messaggi privati, canali di gruppo o dello staff)"

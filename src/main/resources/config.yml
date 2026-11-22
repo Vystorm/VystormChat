@@ -460,6 +460,13 @@ keyword-alerts:
 announcements:
   enabled: true
 
+# Ranking for Vystorm Boards and placeholders: chat:messages, the messages a player wrote in public channels (no read
+# permission, no party, city or faction scope, not forwarded to another plugin). Private messages, staff and group
+# channels never count; only the number is kept in message-counts.yml, never a message. Needs Vystorm Core 0.67.0 or
+# newer for the ranking. Off: nothing is counted and the ranking is not offered.
+rankings:
+  enabled: true
+
 # Tutorial in the Vystorm Core main menu (/vmenu -> Tutorials). Needs a server restart to apply.
 tutorial:
   enabled: true

@@ -541,6 +541,7 @@ switches:
   bubbles: "Bulles au-dessus de l'auteur"
   chat-menu: "Menu du chat, menu de modération et page des réglages"
   relay: "Les canaux listés restent dans le chat du serveur pour d'autres plugins"
+  rankings: "Classement chat:messages pour les panneaux et les placeholders : compte les messages des canaux publics (nécessite Vystorm Core 0.67.0)"
   tutorial: "Tutoriel dans le menu principal (redémarrage nécessaire)"
 placeholder:
   channel: "Id du canal où écrit le joueur"
@@ -605,6 +606,7 @@ switch-names:
   bubbles: "Bulles de parole"
   chat-menu: "Menu du chat et paramètres"
   relay: "Contrôle du relais"
+  rankings: "Classements"
   tutorial: "Tutoriel"
 feature-needs: "<red>Cela nécessite « {name} » ({switch}), qui est désactivé sur ce serveur."
 config-broken: "<red>{file} n'a pas été rechargé : erreur YAML à {problem}. Le fichier n'a pas été modifié ; les derniers réglages valides restent actifs."
@@ -655,3 +657,7 @@ discord:
     format-desc: "Apparence d'un message venant de Discord dans Minecraft."
     invite-link: "Lien d'invitation"
     invite-link-desc: "Le lien d'invitation Discord affiché par /discord."
+rankings:
+  messages:
+    label: "Joueurs les plus bavards"
+    description: "Messages d'un joueur dans les canaux publics (sans messages privés, canaux de groupe ou du staff)"

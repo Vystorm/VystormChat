@@ -261,6 +261,9 @@ final class ChatService {
     void after(Delivery delivery) {
         Settings s = settings;
         plugin.chatLog().log(delivery.channel.id(), delivery.sender.getName() + ": " + delivery.plain);
+        // ranking chat:messages: one more for the sender, public channels only (MessageCounts.counts)
+        MessageCounts counts = plugin.messageCounts();
+        if (counts != null && s.enabled(Settings.Feature.RANKINGS)) counts.count(delivery.sender.getUniqueId(), delivery.sender.getName(), delivery.channel);
         keywordAlerts.after(plugin, delivery);
         if (plugin.bubbles() != null) plugin.bubbles().after(delivery);
         // Discord bridge: only queues (mapped global channels only; mutes and filters already ran)

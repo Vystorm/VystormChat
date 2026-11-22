@@ -538,6 +538,7 @@ switches:
   bubbles: "Balões de fala acima de quem escreve"
   chat-menu: "Menu do chat, menu de moderação e página de ajustes"
   relay: "Canais listados ficam no chat do servidor para outros plugins"
+  rankings: "Ranking chat:messages para painéis e placeholders: conta mensagens em canais públicos (requer Vystorm Core 0.67.0)"
   tutorial: "Tutorial no menu principal (precisa reiniciar)"
 placeholder:
   channel: "Id do canal em que o jogador escreve"
@@ -602,6 +603,7 @@ switch-names:
   bubbles: "Balões de fala"
   chat-menu: "Menu do chat e configurações"
   relay: "Controle do repasse"
+  rankings: "Rankings"
   tutorial: "Tutorial"
 feature-needs: "<red>Isto precisa de “{name}” ({switch}), que está desligado neste servidor."
 config-broken: "<red>{file} não foi recarregado: erro de YAML em {problem}. O arquivo não foi alterado; as últimas configurações válidas continuam em uso."
@@ -652,3 +654,7 @@ discord:
     format-desc: "Como uma mensagem do Discord aparece no Minecraft."
     invite-link: "Link de convite"
     invite-link-desc: "O link de convite do Discord que /discord mostra."
+rankings:
+  messages:
+    label: "Jogadores mais falantes"
+    description: "Mensagens de um jogador em canais públicos (sem mensagens privadas, canais de grupo ou da equipe)"

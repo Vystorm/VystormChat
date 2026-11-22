@@ -1,3 +1,11 @@
+## 1.19.0 — 2026-11-22
+
+- New ranking `chat:messages`: the players who wrote the most messages in public channels. Vystorm Boards shows it on a board with `{type: top, source: "chat:messages", rows: 10}`, and the same values are placeholders, for example `%vystorm_chat_top_messages_1_name%` and `%vystorm_chat_rank_messages%`.
+- Only channels everyone can read count: no read permission, no party, city or faction scope, and not forwarded to another plugin. In the shipped config these are `global`, `local` and `world`. Private messages, `staff`, `trade` (it has a read permission) and the party, city and faction channels never count.
+- Counting starts with this update. The plugin keeps only a number per player, with the last known name, in the new file `message-counts.yml`, never a message or a channel. It is written at most once a minute and when the server stops. Older versions do not read the file.
+- Showing the ranking on a board needs Vystorm Core 0.67.0 or newer and Vystorm Boards 1.21.0 or newer. The plugin itself still runs with Vystorm Core 0.65.0 or newer; with an older Core it offers no ranking and everything else works as before.
+- New switch `rankings.enabled`, on by default and listed in `/vadmin features` as "Rankings" in seven languages. Off, or with `chat.enabled` off, nothing is counted and the ranking is not offered; `/vchat reload` applies it without a restart.
+
 ## 1.18.0 — 2026-11-20
 
 - Discord bridge, built in. It needs no extra plugin and no Discord library, and everything is off until you switch it on. Setup steps are in the README under "Discord bridge".
