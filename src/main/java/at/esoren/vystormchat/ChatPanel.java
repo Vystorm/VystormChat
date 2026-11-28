@@ -16,7 +16,8 @@ import org.bukkit.entity.Player;
 /** Shared, pure presentation for the chat screens. Services supply localized snapshots, never live inventories. */
 final class ChatPanel {
     static final int PAGE_SIZE = 8;
-    enum Kind { BUTTON, TOGGLE, NUMBER }
+    /** FORM: one text field (its label in {@code value}) and a submit button ({@code label}); the text is the value. */
+    enum Kind { BUTTON, TOGGLE, NUMBER, FORM }
     record Control(String id, String label, Material icon, String target, Kind kind, Object value,
                    boolean handover, String confirmation) {}
     record Field(String label, Object value) {}
@@ -121,6 +122,8 @@ final class ChatPanel {
                     .onChange((a, value) -> run(a, c, value, ctx, actions));
             case NUMBER -> Ui.number(c.id(), c.label()).range(0, 3600, 1).decimals(0).value(((Number) c.value()).doubleValue())
                     .onChange((a, value) -> run(a, c, value, ctx, actions));
+            case FORM -> Ui.form(c.id(), c.label()).child(Ui.input(c.id() + "-text", c.value()).maxLength(256))
+                    .onSubmit((a, values) -> run(a, c, values.get(c.id() + "-text") instanceof String text ? text : "", ctx, actions));
         };
     }
 

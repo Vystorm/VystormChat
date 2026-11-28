@@ -168,6 +168,18 @@ menu:
     <gray>Motif: <white>{reason}
     <gray>Par: <white>{by}
     <yellow>Cliquez pour annuler
+  keywords: "<gold>Mots-clés"
+  keywords-lore: "<gray>Enregistrées : {count}/{limit}\n<yellow>Cliquer pour gérer"
+  keywords-title: "Alertes mots-clés"
+  keyword-entry: "<white>{keyword}"
+  keyword-entry-lore: "<yellow>Cliquer pour retirer"
+  keyword-add: "<gold>Ajouter"
+  keyword-add-lore: "<gray>Saisir un mot ou une phrase"
+  keyword-alerts-on: "<green>Alertes : oui"
+  keyword-alerts-off: "<gray>Alertes : non"
+  keyword-alerts-lore: "<gray>Les phrases restent enregistrées\n<yellow>Cliquer pour basculer"
+  keyword-test: "<aqua>Tester"
+  keyword-test-lore: "<gray>Vous seul voyez le résultat"
 announce:
   prefix: "<gold>📢 </gold>"
   disabled: "<gray>Les annonces sont désactivées sur ce serveur."
@@ -195,6 +207,10 @@ announce:
   error-world: "<red>Aucun monde nommé {world}."
   error-storage: "<red>Les annonces n’ont pas pu être enregistrées."
 dialog:
+  keyword-add-title: "Ajouter un mot-clé"
+  keyword-add-question: "Mot ou phrase, de 2 à 48 caractères. Majuscules et minuscules ne comptent pas."
+  keyword-test-title: "Tester les mots-clés"
+  keyword-test-question: "Saisissez un message d'exemple. Il n'est pas envoyé dans le chat."
   cancel: Annuler
   send: Envoyer
   message-title: Message privé
@@ -492,6 +508,15 @@ panel:
   read-only: "Copie en lecture seule. Les objets ne peuvent pas être déplacés."
   inventory: "Inventaire"
   inventory-view: "Voir l’inventaire original"
+  keywords: "Mots-clés"
+  keywords-desc: "Recevez un signal quand le chat contient une de vos phrases."
+  keyword-count: "Enregistrées"
+  keyword-add: "Ajouter"
+  keyword-phrase: "Mot ou phrase"
+  keyword-remove: "Retirer"
+  keyword-alerts: "Alertes"
+  keyword-test: "Tester"
+  keyword-sample: "Message test"
 switches:
   discord: "Les canaux de discussion avec un webhook sous discord.channels envoient leurs messages sur Discord avec le nom et la tête du joueur. Tous les autres interrupteurs Discord ont besoin de celui-ci."
   discord-user-mentions: "Les joueurs peuvent mentionner des utilisateurs Discord par leur identifiant. @everyone, @here et les rôles ne notifient jamais."

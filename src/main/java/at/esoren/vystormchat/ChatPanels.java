@@ -22,7 +22,7 @@ import static at.esoren.vystormchat.ChatPanel.*;
 
 /** Loaded only after the Core capability guard. Snapshots and actions reuse the existing chat services. */
 final class ChatPanels {
-    static final List<String> NAMES = List.of("chat", "ignored", "moderation", "mutes", "reports", "report", "showcase");
+    static final List<String> NAMES = List.of("chat", "ignored", "moderation", "mutes", "reports", "report", "showcase", "keywords");
     private final ChatPlugin plugin;
     private final Panels panels;
     private final Map<String, ChatPanel> screens = new HashMap<>();
@@ -87,6 +87,7 @@ final class ChatPanels {
             case "mutes" -> p.hasPermission("vystormchat.mute");
             case "moderation" -> p.hasPermission("vystormchat.moderate");
             case "reports", "report" -> p.hasPermission("vystormchat.use") && p.hasPermission("vystormchat.moderate");
+            case "keywords" -> p.hasPermission("vystormchat.use") && p.hasPermission("vystormchat.keywords");
             case "showcase" -> true; // A shared, read-only inventory link has no additional permission.
             default -> p.hasPermission("vystormchat.use");
         };
@@ -105,6 +106,7 @@ final class ChatPanels {
             case "reports" -> plugin.reports().listChest(p, page(arg));
             case "report" -> { if (caseId(arg) != null) plugin.reports().detailChest(p, caseId(arg), casePage(arg)); }
             case "showcase" -> { if (uuid(arg) != null) plugin.showcase().openChest(p, uuid(arg)); }
+            case "keywords" -> plugin.menu().keywordsChest(p);
             default -> { }
         }
     }
@@ -128,6 +130,7 @@ final class ChatPanels {
             case "reports", "report" -> Settings.Feature.REPORTS;
             case "chat", "moderation" -> Settings.Feature.CHAT_MENU;
             case "showcase" -> Settings.Feature.SHOWCASE;
+            case "keywords" -> Settings.Feature.KEYWORDS;
             default -> null;
         };
     }
@@ -144,6 +147,7 @@ final class ChatPanels {
             case "clear" -> Settings.Feature.CLEAR_CHAT;
             case "slow" -> Settings.Feature.SLOW_MODE;
             case "settings" -> Settings.Feature.CHAT_MENU;
+            case "keywords", "keyword-add", "keyword-remove", "keyword-alerts", "keyword-test" -> Settings.Feature.KEYWORDS;
             default -> null;
         };
     }
@@ -242,7 +246,20 @@ final class ChatPanels {
                 if (id == null || plugin.showcase().stored(id) == null) return error(p, "showcase-expired");
                 plugin.showcase().openChest(p, id);
             }
-            case "chat", "ignored", "moderation", "mutes", "reports" -> {
+            case "keyword-add", "keyword-remove", "keyword-alerts", "keyword-test" -> {
+                if (!permission(p, "keywords")) return error(p, "no-permission");
+                UUID id = p.getUniqueId();
+                Keywords.Reply reply = switch (action) {
+                    case "keyword-add" -> Keywords.add(plugin, id, value instanceof String text ? text : "");
+                    case "keyword-remove" -> Keywords.remove(plugin, id, target);
+                    case "keyword-alerts" -> value instanceof Boolean on ? Keywords.state(plugin, id, on) : null;
+                    default -> Keywords.test(plugin, id, value instanceof String text ? text : "");
+                };
+                if (reply == null) return error(p, "panel.stale");
+                String message = text(p, reply.key(), reply.placeholders());
+                return reply.ok() ? Result.ok(message) : Result.error(message);
+            }
+            case "chat", "ignored", "moderation", "mutes", "reports", "keywords" -> {
                 if (!allowed(p, action)) return error(p, "no-permission");
                 switch (action) {
                     case "chat" -> plugin.menu().open(p);
@@ -250,6 +267,7 @@ final class ChatPanels {
                     case "moderation" -> plugin.menu().moderation(p);
                     case "mutes" -> plugin.menu().mutes(p);
                     case "reports" -> plugin.reports().list(p, 0);
+                    case "keywords" -> plugin.menu().keywords(p);
                     default -> { }
                 }
             }
@@ -269,6 +287,7 @@ final class ChatPanels {
             case "reports" -> reports(p);
             case "report" -> report(p, caseId(arg));
             case "showcase" -> showcase(p, uuid(arg));
+            case "keywords" -> keywords(p);
             default -> empty(p, name, "panel.stale");
         };
     }
@@ -303,6 +322,7 @@ final class ChatPanels {
         controls.add(button(p, "settings", "menu.settings", Material.COMPARATOR, "", true));
         if (!off(Settings.Feature.REPORTS)) controls.add(button(p, "submit", "reports.submit", Material.WRITABLE_BOOK, "", true));
         if (permission(p, "ignore") && !off(Settings.Feature.IGNORE)) footer.add(button(p, "ignored", "menu.ignored-title", Material.STRUCTURE_VOID, "", true));
+        if (permission(p, "keywords") && !off(Settings.Feature.KEYWORDS)) footer.add(button(p, "keywords", "panel.keywords", Material.NAME_TAG, "", true));
         if (permission(p, "moderate")) footer.add(button(p, "moderation", "menu.moderation-title", Material.IRON_BARS, "", true));
         return new Data(text(p, "menu.title"), text(p, "vmenu-chat-desc"), Material.WRITABLE_BOOK, true, rows, List.of(), controls, footer, true);
     }
@@ -344,6 +364,25 @@ final class ChatPanels {
                 List.of(new Control("unmute", text(p, "dialog.unmute-title"), Material.SHEARS, m.player().toString(), Kind.BUTTON, null, false, text(p, "dialog.unmute-question"))))).toList();
         return new Data(text(p, "menu.mutes-title"), text(p, "panel.select"), Material.PAPER, true, rows, List.of(),
                 List.of(button(p, "mute-player", "menu.mute-player", Material.LEAD, "", true)), List.of(back(p, "moderation")), false);
+    }
+
+    private Data keywords(Player p) {
+        Profile profile = plugin.profiles().get(p.getUniqueId());
+        List<Row> rows = new ArrayList<>();
+        java.util.Set<String> keys = new java.util.HashSet<>();
+        for (String keyword : profile.keywords()) {
+            // Row keys come from the phrase, never its position; removing goes by the phrase itself.
+            String key = "k" + Integer.toHexString(keyword.toLowerCase(Locale.ROOT).hashCode());
+            while (!keys.add(key)) key += "x";
+            Control remove = new Control("keyword-remove", text(p, "panel.keyword-remove"), Material.BARRIER, keyword, Kind.BUTTON, null, false, null);
+            rows.add(new Row(key, keyword, "", Ui.item(Material.NAME_TAG), List.of(), List.of(remove)));
+        }
+        List<Field> fields = List.of(new Field(text(p, "panel.keyword-count"), profile.keywords().size() + "/" + plugin.service().settings().keywordLimit));
+        List<Control> controls = List.of(
+                new Control("keyword-add", text(p, "panel.keyword-add"), Material.NAME_TAG, "", Kind.FORM, text(p, "panel.keyword-phrase"), false, null),
+                new Control("keyword-alerts", text(p, "panel.keyword-alerts"), Material.BELL, "", Kind.TOGGLE, profile.keywordAlerts(), false, null),
+                new Control("keyword-test", text(p, "panel.keyword-test"), Material.SPYGLASS, "", Kind.FORM, text(p, "panel.keyword-sample"), false, null));
+        return new Data(text(p, "menu.keywords-title"), text(p, "panel.keywords-desc"), Material.NAME_TAG, true, rows, fields, controls, List.of(back(p, "chat")), false);
     }
 
     private String status(Player p, ReportStore.Report r) {
@@ -422,6 +461,7 @@ final class ChatPanels {
             case "mutes" -> "menu.mutes-title";
             case "reports", "report" -> "reports.title";
             case "showcase" -> "panel.inventory";
+            case "keywords" -> "menu.keywords-title";
             default -> "menu.title";
         };
     }

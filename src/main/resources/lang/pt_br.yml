@@ -168,6 +168,18 @@ menu:
     <gray>Razão: <white>{reason}
     <gray>Por: <white>{by}
     <yellow>Clique para soltar
+  keywords: "<gold>Palavras-chave"
+  keywords-lore: "<gray>Salvas: {count}/{limit}\n<yellow>Clique para gerenciar"
+  keywords-title: "Alertas de palavras"
+  keyword-entry: "<white>{keyword}"
+  keyword-entry-lore: "<yellow>Clique para remover"
+  keyword-add: "<gold>Adicionar"
+  keyword-add-lore: "<gray>Digite uma palavra ou frase"
+  keyword-alerts-on: "<green>Alertas ativos"
+  keyword-alerts-off: "<gray>Alertas: pausa"
+  keyword-alerts-lore: "<gray>As frases continuam salvas\n<yellow>Clique para alternar"
+  keyword-test: "<aqua>Testar"
+  keyword-test-lore: "<gray>Só você vê o resultado"
 announce:
   prefix: "<gold>📢 </gold>"
   disabled: "<gray>Anúncios estão desligados neste servidor."
@@ -195,6 +207,10 @@ announce:
   error-world: "<red>Não existe mundo chamado {world}."
   error-storage: "<red>Não foi possível salvar os anúncios."
 dialog:
+  keyword-add-title: "Adicionar palavra-chave"
+  keyword-add-question: "Palavra ou frase, de 2 a 48 caracteres. Maiúsculas e minúsculas não importam."
+  keyword-test-title: "Testar palavras-chave"
+  keyword-test-question: "Digite uma mensagem de exemplo. Ela não é enviada ao chat."
   cancel: Cancelar
   send: Enviar
   message-title: Mensagem particular
@@ -489,6 +505,15 @@ panel:
   read-only: "Cópia somente para leitura. Os itens não podem ser movidos."
   inventory: "Inventário"
   inventory-view: "Ver inventário original"
+  keywords: "Palavras-chave"
+  keywords-desc: "Receba um aviso quando o chat mencionar uma das suas frases."
+  keyword-count: "Salvas"
+  keyword-add: "Adicionar"
+  keyword-phrase: "Palavra/frase"
+  keyword-remove: "Remover"
+  keyword-alerts: "Alertas ativos"
+  keyword-test: "Testar"
+  keyword-sample: "Mensagem teste"
 switches:
   discord: "Canais de chat com um webhook em discord.channels enviam suas mensagens ao Discord com o nome e a cabeça do jogador. Todos os outros interruptores do Discord precisam deste."
   discord-user-mentions: "Jogadores podem mencionar usuários do Discord pelo ID. @everyone, @here e cargos nunca notificam."

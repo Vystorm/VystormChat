@@ -264,6 +264,62 @@ class ChatPanelsTest {
         verify(reports, times(1)).detailChest(any(), any(), anyInt());
     }
 
+    @Test void givenKeywords_whenRendered_thenListRemoveAddPauseTestAndBackExist() {
+        assertTrue(profile.addKeyword("Iron golem", 10));
+        JsonObject doc = render("keywords", "");
+        assertTrue(PanelTesting.ids(doc).containsAll(List.of("summary", "entries", "keyword-remove", "keyword-add", "keyword-add-text",
+                "keyword-alerts", "keyword-test", "keyword-test-text", "chat")), doc.toString());
+        assertTrue(doc.toString().contains("Iron golem") && doc.toString().contains("1/10"), doc.toString());
+        assertTrue(PanelTesting.find(doc, "keyword-alerts").get("value").getAsBoolean());
+        assertTrue(PanelTesting.ids(render("chat", "")).contains("keywords"));
+        deny("keywords");
+        assertFalse(PanelTesting.ids(render("chat", "")).contains("keywords"));
+        assertNull(PanelTesting.find(render("keywords", ""), "keyword-add"));
+    }
+
+    @Test void givenKeywordActions_whenRun_thenTheyChangeTheProfileLikeTheCommands() {
+        var actions = panels.actions("keywords");
+        assertTrue(actions.run(player, "keyword-add", "", "Iron  golem ").success());
+        assertEquals(List.of("Iron golem"), profile.keywords());
+        assertFalse(actions.run(player, "keyword-add", "", "iron golem").success(), "duplicates are refused");
+        assertFalse(actions.run(player, "keyword-add", "", "x").success(), "too short");
+        var hit = actions.run(player, "keyword-test", "", "look, an IRON GOLEM");
+        assertTrue(hit.success());
+        assertEquals(lang.plain("en", "keyword-test-hit", "keyword", "Iron golem"), hit.message());
+        assertTrue(actions.run(player, "keyword-alerts", "", false).success());
+        assertFalse(profile.keywordAlerts());
+        assertTrue(actions.run(player, "keyword-alerts", "", true).success());
+        assertTrue(profile.keywordAlerts());
+        assertTrue(actions.run(player, "keyword-remove", "Iron golem", null).success());
+        assertTrue(profile.keywords().isEmpty());
+        assertFalse(actions.run(player, "keyword-remove", "Iron golem", null).success(), "a second click finds nothing");
+        deny("keywords");
+        assertFalse(actions.run(player, "keyword-add", "", "Creeper").success());
+        assertTrue(profile.keywords().isEmpty());
+    }
+
+    @Test void givenKeywordScreen_whenCoreFallsBack_thenTheKeywordChestOpens() {
+        Map<String, PanelSpec> specs = new HashMap<>();
+        doAnswer(call -> { specs.put(call.getArgument(0), call.getArgument(1)); return null; }).when(core).register(anyString(), any());
+        panels.register();
+        specs.get("keywords").fallback().accept(player);
+        verify(menu).keywordsChest(player);
+        deny("keywords");
+        specs.get("keywords").fallback().accept(player);
+        verify(menu, times(1)).keywordsChest(player);
+    }
+
+    @Test void givenKeywordLabels_whenTranslated_thenEveryTileAndButtonFitsFourteenCharacters() {
+        List<String> keys = List.of("panel.keywords", "panel.keyword-add", "panel.keyword-phrase", "panel.keyword-remove", "panel.keyword-alerts",
+                "panel.keyword-test", "panel.keyword-sample", "menu.keywords", "menu.keyword-add", "menu.keyword-alerts-on",
+                "menu.keyword-alerts-off", "menu.keyword-test");
+        for (String code : ChatPanelTest.LANGUAGES) for (String key : keys) {
+            String text = lang.plain(code, key);
+            assertFalse(text.isBlank() || text.equals(key), code + " " + key);
+            assertTrue(text.codePointCount(0, text.length()) <= 14, code + " " + key + ": " + text);
+        }
+    }
+
     @Test void givenDeniedScreen_whenOpened_thenNoPanelOrFallbackIsRequested() {
         deny("mute");
         assertTrue(panels.open(player, "mutes", ""));

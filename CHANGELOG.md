@@ -1,3 +1,11 @@
+## 1.20.0 — 2026-11-27
+
+- New: a Keywords page in the chat menu. Players open `/vchat menu` (or the chat menu from `/vmenu`) and press "Keywords". The page lists their saved phrases with a Remove button each, has a text field to add a phrase, a switch to pause or resume the alerts and a test field that shows privately whether a text would match. Until now this was only possible with `/vchat keywords add|remove|pause|resume|test`.
+- Every button does exactly what the command does and answers with the same message: the same length rule (2 to 48 characters), the same phrase limit (`keyword-alerts.max-keywords`), no duplicates, and the test never sends anything to chat.
+- On a Vystorm Screen the page has the text fields inline. Players without screens (Spigot, Paper 1.20.6, or screens switched off) get the same page as a chest menu; adding and testing ask for the text in a dialog. The chest chat menu has the new Keywords button as well.
+- The page follows the permission `vystormchat.keywords` and the switch `keyword-alerts.enabled`: without either the button is not shown. The commands stay and work as before. Texts in all seven languages.
+- Still requires Vystorm Core 0.65.0 or newer.
+
 ## 1.19.0 — 2026-11-22
 
 - New ranking `chat:messages`: the players who wrote the most messages in public channels. Vystorm Boards shows it on a board with `{type: top, source: "chat:messages", rows: 10}`, and the same values are placeholders, for example `%vystorm_chat_top_messages_1_name%` and `%vystorm_chat_rank_messages%`.

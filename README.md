@@ -40,7 +40,8 @@ On servers without native dialogs, Core presents message, ignore and moderation 
 - Players format their own messages only with permissions: colours, hex colours, bold/italic/..., magic, gradients, `&` codes. Click, hover and other tags are never parsed.
 
 **Personal keyword alerts**
-- Save words or phrases with `/vchat keywords add PHRASE`; list with `/vchat keywords`, remove with `remove PHRASE`, or `pause` / `resume` without losing the list.
+- The chat menu has a Keywords page (`/vchat menu`, button "Keywords"): your phrases with a remove button, a text field to add one, a switch to pause or resume the alerts and a test field. Players without the client mod get the same page as a chest, where adding and testing ask for the text in a dialog.
+- The commands do the same: save words or phrases with `/vchat keywords add PHRASE`; list with `/vchat keywords`, remove with `remove PHRASE`, or `pause` / `resume` without losing the list.
 - Case-insensitive literal substring matches in received channel messages show an action-bar hint and use your mention sound setting. Phrases and pause state survive restarts.
 - Only normal recipients receive alerts: no self messages, spy copies, private messages or channels forwarded to another plugin. A normal mention takes priority. Filters run before matching.
 - Defaults: 10 phrases of 2–48 characters and one alert per recipient every 10 seconds. Lowering the limit activates only the first N saved phrases; the remaining phrases stay saved.
@@ -64,7 +65,7 @@ Use `/vchat keywords test TEXT` to privately preview the first matching phrase w
 - Moderation page in the chat menu: clear chat, slow mode with one click, mute list with unmute, mute dialog.
 
 **Menus and settings**
-- Chat menu (`/channel`, `/vchat`, or Vystorm Core main menu → Community → Chat): channels, private message dialog, reply, ignore list, settings, social spy, moderation.
+- Chat menu (`/channel`, `/vchat`, or Vystorm Core main menu → Community → Chat): channels, private message dialog, reply, ignore list, keyword alerts, settings, social spy, moderation.
 - Vystorm Core player menu (sneak + right-click a player): message, ignore and (staff) mute.
 - `/vsettings` → Chat: mention sound, private message sound, timestamps, allow private messages, social spy, and a show/hide switch per channel.
 - Every config value can be edited in game with `/vadmin config` (Vystorm Core).

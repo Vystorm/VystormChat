@@ -73,7 +73,7 @@ final class Commands {
                                 .sub("add", a -> a.arg(Arg.greedy("phrase")).executes(c::addKeyword))
                                 .sub("test", a -> a.arg(Arg.greedy("message")).executes(c::testKeyword))
                                 .sub("remove", a -> a.arg(Arg.greedy("phrase").suggests((ctx, prefix) -> plugin.profiles().get(ctx.player().getUniqueId()).keywords()))
-                                        .executes(ctx -> ctx.reply(plugin.profiles().get(ctx.player().getUniqueId()).removeKeyword(ctx.get("phrase")) ? "keyword-removed" : "keyword-missing")))
+                                        .executes(ctx -> reply(ctx, Keywords.remove(plugin, ctx.player().getUniqueId(), ctx.get("phrase")))))
                                 .sub("pause", a -> a.executes(ctx -> c.keywordState(ctx, false)))
                                 .sub("resume", a -> a.executes(ctx -> c.keywordState(ctx, true))))
                         .sub("replylock", s -> gate(s, plugin, Settings.Feature.PRIVATE_MESSAGES).permission("vystormchat.msg").playerOnly()
@@ -164,27 +164,21 @@ final class Commands {
         ctx.reply(!plugin.service().settings().keywordsEnabled ? "keywords-disabled" : profile.keywordAlerts() ? "keywords-active" : "keywords-paused");
     }
 
+    // The keyword menu (ChatMenu, ChatPanels) runs the same Keywords actions.
     private void addKeyword(CommandContext ctx) {
-        Settings settings = plugin.service().settings();
-        if (!settings.keywordsEnabled) { ctx.reply("feature-off"); return; }
-        boolean added = plugin.profiles().get(ctx.player().getUniqueId()).addKeyword(ctx.get("phrase"), settings.keywordLimit);
-        ctx.reply(added ? "keyword-added" : "keyword-invalid", "limit", settings.keywordLimit);
+        reply(ctx, Keywords.add(plugin, ctx.player().getUniqueId(), ctx.get("phrase")));
     }
 
     private void keywordState(CommandContext ctx, boolean enabled) {
         if (plugin.refuse(ctx.sender(), Settings.Feature.KEYWORDS)) return;
-        plugin.profiles().get(ctx.player().getUniqueId()).keywordAlerts(enabled);
-        ctx.reply(enabled ? "keywords-active" : "keywords-paused");
+        reply(ctx, Keywords.state(plugin, ctx.player().getUniqueId(), enabled));
     }
 
     private void testKeyword(CommandContext ctx) {
-        Settings settings = plugin.service().settings();
-        if (!settings.keywordsEnabled) { ctx.reply("feature-off"); return; }
-        Profile profile = plugin.profiles().get(ctx.player().getUniqueId());
-        String keyword = KeywordAlerts.match(ctx.get("message"), profile.keywords(), settings.keywordLimit);
-        if (keyword == null) ctx.reply("keyword-test-miss");
-        else ctx.reply("keyword-test-hit", "keyword", keyword);
+        reply(ctx, Keywords.test(plugin, ctx.player().getUniqueId(), ctx.get("message")));
     }
+
+    private static void reply(CommandContext ctx, Keywords.Reply reply) { ctx.reply(reply.key(), reply.placeholders()); }
 
     // ------------------------------------------------------------------ Discord
 

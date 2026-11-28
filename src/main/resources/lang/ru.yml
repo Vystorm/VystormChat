@@ -169,6 +169,18 @@ menu:
     <gray>Причина: <white>{reason}
     <gray>К: <white>{by}
     <yellow>Кликните на Unmute
+  keywords: "<gold>Ключевые слова"
+  keywords-lore: "<gray>Сохранено: {count}/{limit}\n<yellow>Нажмите для управления"
+  keywords-title: "Оповещения по словам"
+  keyword-entry: "<white>{keyword}"
+  keyword-entry-lore: "<yellow>Нажмите, чтобы удалить"
+  keyword-add: "<gold>Добавить"
+  keyword-add-lore: "<gray>Введите слово или фразу"
+  keyword-alerts-on: "<green>Сигналы: вкл"
+  keyword-alerts-off: "<gray>Сигналы: пауза"
+  keyword-alerts-lore: "<gray>Фразы остаются сохранёнными\n<yellow>Нажмите, чтобы переключить"
+  keyword-test: "<aqua>Проверить"
+  keyword-test-lore: "<gray>Результат видите только вы"
 announce:
   prefix: "<gold>📢 </gold>"
   disabled: "<gray>Объявления на этом сервере отключены."
@@ -196,6 +208,10 @@ announce:
   error-world: "<red>Мира {world} нет."
   error-storage: "<red>Не удалось сохранить объявления."
 dialog:
+  keyword-add-title: "Добавить ключевое слово"
+  keyword-add-question: "Слово или фраза, от 2 до 48 символов. Регистр букв не важен."
+  keyword-test-title: "Проверить ключевые слова"
+  keyword-test-question: "Введите пример сообщения. Оно не будет отправлено в чат."
   cancel: Отмена
   send: Отправить
   message-title: Частное сообщение
@@ -492,6 +508,15 @@ panel:
   read-only: "Снимок только для просмотра. Перемещать предметы нельзя."
   inventory: "Инвентарь"
   inventory-view: "Посмотреть исходный инвентарь"
+  keywords: "Ключевые слова"
+  keywords-desc: "Подсказка, когда в чате встречается одна из ваших фраз."
+  keyword-count: "Сохранено"
+  keyword-add: "Добавить"
+  keyword-phrase: "Слово/фраза"
+  keyword-remove: "Удалить"
+  keyword-alerts: "Оповещения"
+  keyword-test: "Проверить"
+  keyword-sample: "Пример текста"
 switches:
   discord: "Каналы чата с вебхуком в discord.channels отправляют свои сообщения в Discord с именем и головой игрока. Все остальные переключатели Discord требуют этот."
   discord-user-mentions: "Игроки могут упоминать пользователей Discord по их ID. @everyone, @here и роли никогда не уведомляют."

@@ -20,7 +20,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 /**
  * The chat menu ({@code /channel}, {@code /vchat}, Vystorm Core main menu → Community → Chat): every channel with
- * focus and show/hide on click, private message, reply, ignore list, personal settings, social spy and, for staff,
+ * focus and show/hide on click, private message, reply, ignore list, keyword alerts, personal settings, social spy and, for staff,
  * clear chat, slow mode and mutes. Every button runs the same code as the matching command.
  */
 final class ChatMenu {
@@ -70,6 +70,9 @@ final class ChatMenu {
         if (player.hasPermission("vystormchat.ignore") && !plugin.off(Settings.Feature.IGNORE))
             menu.set(base + 2, Menu.item(lang, player, Material.STRUCTURE_VOID, "menu.ignored", "menu.ignored-lore", "count", profile.ignored.size()), (who, click) -> ignored(who));
         menu.set(base + 4, Menu.item(lang, player, Material.COMPARATOR, "menu.settings", "menu.settings-lore"), (who, click) -> plugin.openSettings(who));
+        if (player.hasPermission("vystormchat.keywords") && !plugin.off(Settings.Feature.KEYWORDS))
+            menu.set(base + 5, Menu.item(lang, player, Material.NAME_TAG, "menu.keywords", "menu.keywords-lore",
+                    "count", profile.keywords().size(), "limit", settings.keywordLimit), (who, click) -> keywords(who));
         if (player.hasPermission("vystormchat.spy") && !plugin.off(Settings.Feature.SOCIAL_SPY))
             menu.set(base + 6, Menu.item(lang, player, profile.spy() ? Material.ENDER_EYE : Material.ENDER_PEARL, profile.spy() ? "menu.spy-on" : "menu.spy-off", "menu.spy-lore"),
                     (who, click) -> { plugin.toggleSpy(who); open(who); });
@@ -170,6 +173,57 @@ final class ChatMenu {
                     plugin.ignoreCommand(who, name.trim());
                     ignored(who);
                 }, () -> {}, p -> p.isOnline() && p.hasPermission("vystormchat.ignore"));
+    }
+
+    // ------------------------------------------------------------------ keyword alerts
+
+    /** The player's keywords: remove, add, pause/resume and test, the same actions as {@code /vchat keywords}. */
+    void keywords(Player player) {
+        if (plugin.refuse(player, Settings.Feature.KEYWORDS)) return;
+        if (!player.hasPermission("vystormchat.keywords")) { lang().send(player, "no-permission"); return; }
+        if (!plugin.openPanel(player, "keywords", "")) keywordsChest(player);
+    }
+
+    void keywordsChest(Player player) {
+        if (!player.hasPermission("vystormchat.keywords")) { lang().send(player, "no-permission"); return; }
+        if (plugin.off(Settings.Feature.KEYWORDS)) return;
+        Lang lang = lang();
+        Profile profile = plugin.profiles().get(player.getUniqueId());
+        List<String> keywords = profile.keywords();
+        Menu menu = Menu.create(lang.component(player, "menu.keywords-title"), Math.clamp((Math.min(45, keywords.size()) + 8) / 9 + 1, 2, 6));
+        for (int i = 0; i < keywords.size() && i < 45; i++) {
+            String keyword = keywords.get(i);
+            menu.set(i, Menu.item(lang, player, Material.NAME_TAG, "menu.keyword-entry", "menu.keyword-entry-lore", "keyword", keyword),
+                    (who, click) -> keywordRun(who, () -> Keywords.remove(plugin, who.getUniqueId(), keyword)));
+        }
+        int last = menu.getInventory().getSize() - 9;
+        menu.set(last, Menu.item(lang, player, Material.ARROW, "menu.back", null), (who, click) -> open(who));
+        menu.set(last + 3, Menu.item(lang, player, Material.WRITABLE_BOOK, "menu.keyword-add", "menu.keyword-add-lore"),
+                (who, click) -> keywordPrompt(who, "dialog.keyword-add-title", "dialog.keyword-add-question",
+                        text -> Keywords.add(plugin, who.getUniqueId(), text)));
+        boolean on = profile.keywordAlerts();
+        menu.set(last + 4, Menu.item(lang, player, on ? Material.BELL : Material.GRAY_DYE, on ? "menu.keyword-alerts-on" : "menu.keyword-alerts-off", "menu.keyword-alerts-lore"),
+                (who, click) -> keywordRun(who, () -> Keywords.state(plugin, who.getUniqueId(), !plugin.profiles().get(who.getUniqueId()).keywordAlerts())));
+        menu.set(last + 5, Menu.item(lang, player, Material.SPYGLASS, "menu.keyword-test", "menu.keyword-test-lore"),
+                (who, click) -> keywordPrompt(who, "dialog.keyword-test-title", "dialog.keyword-test-question",
+                        text -> Keywords.test(plugin, who.getUniqueId(), text)));
+        menu.open(player);
+    }
+
+    private void keywordPrompt(Player who, String title, String question, java.util.function.Function<String, Keywords.Reply> action) {
+        if (!who.hasPermission("vystormchat.keywords") || plugin.refuse(who, Settings.Feature.KEYWORDS)) return;
+        dialogs().prompt(plugin, who, lang().ref(title), lang().ref(question), "", text -> {
+                    if (!who.hasPermission("vystormchat.keywords") || plugin.off(Settings.Feature.KEYWORDS)) return;
+                    if (text == null || text.isBlank()) { keywords(who); return; }
+                    keywordRun(who, () -> action.apply(text));
+                }, () -> { if (who.isOnline()) keywords(who); }, p -> p.isOnline() && p.hasPermission("vystormchat.keywords"));
+    }
+
+    private void keywordRun(Player who, java.util.function.Supplier<Keywords.Reply> action) {
+        if (!who.hasPermission("vystormchat.keywords") || plugin.off(Settings.Feature.KEYWORDS)) return;
+        Keywords.Reply reply = action.get();
+        lang().send(who, reply.key(), reply.placeholders());
+        keywords(who);
     }
 
     // ------------------------------------------------------------------ moderation
